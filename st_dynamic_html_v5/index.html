@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    html, body { margin: 0; padding: 0; background: #F8FAFC; width: 100%; height: auto; overflow: hidden; }
+    #content { width: 100%; border: none; display: block; }
+  </style>
+</head>
+<body>
+  <iframe id="content"></iframe>
+  <script>
+    window.sendToPython = function(data) {
+      window.parent.postMessage({
+        isStreamlitMessage: true,
+        type: "streamlit:setComponentValue",
+        dataType: "json",
+        value: data
+      }, "*");
+    };
+
+    window.parent.postMessage({
+      isStreamlitMessage: true,
+      type: "streamlit:componentReady",
+      apiVersion: 1
+    }, "*");
+
+    let lastHtml = null;
+    let lastHeight = 0;
+    let resizeTimer = null;
+
+    function resizeFrame() {
+      try {
+        const iframe = document.getElementById("content");
+        if (!iframe || !iframe.contentWindow || !iframe.contentWindow.document) return;
+        const doc = iframe.contentWindow.document;
+        if (!doc.body) return;
+
+        const main = doc.querySelector('main') || doc.body;
+        const targetH = Math.max(main.scrollHeight || doc.body.scrollHeight, 1100);
+
+        if (Math.abs(targetH - lastHeight) > 30) {
+          lastHeight = targetH;
+          iframe.style.height = targetH + "px";
+          window.parent.postMessage({
+            isStreamlitMessage: true,
+            type: "streamlit:setFrameHeight",
+            height: targetH + 25
+          }, "*");
+        }
+      } catch(e) {}
+    }
+
+    window.addEventListener("message", (event) => {
+      if (event.data && event.data.type === "streamlit:render") {
+        const newHtml = event.data.args.html;
+        const iframe = document.getElementById("content");
+        
+        if (lastHtml !== newHtml) {
+            iframe.srcdoc = newHtml;
+            lastHtml = newHtml;
+            lastHeight = 0;
+            iframe.onload = () => {
+              clearTimeout(resizeTimer);
+              resizeTimer = setTimeout(resizeFrame, 200);
+            };
+        }
+      }
+    });
+  </script>
+</body>
+</html>

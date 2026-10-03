@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    html, body { margin: 0; padding: 0; background: #F8FAFC; width: 100vw; height: 100vh; overflow: hidden; }
+    iframe { width: 100%; height: 100vh; border: none; }
+  </style>
+</head>
+<body>
+  <iframe id="content"></iframe>
+  <script>
+    // Tell Streamlit we are ready
+    window.parent.postMessage({
+      isStreamlitMessage: true,
+      type: "streamlit:componentReady",
+      apiVersion: 1
+    }, "*");
+
+    // Listen for render events from Streamlit or action events from our srcdoc iframe
+    window.addEventListener("message", (event) => {
+      // 1. Render HTML from Streamlit
+      if (event.data && event.data.type === "streamlit:render") {
+        const iframe = document.getElementById("content");
+        iframe.srcdoc = event.data.args.html;
+        
+        // Ask Streamlit to allocate ample height
+        setTimeout(() => {
+            window.parent.postMessage({
+              isStreamlitMessage: true,
+              type: "streamlit:setFrameHeight",
+              height: 1200
+            }, "*");
+        }, 100);
+      }
+      
+      // 2. Forward actions from our nested iframe up to Streamlit!
+      if (event.data && event.data.action) {
+        window.parent.postMessage({
+          isStreamlitMessage: true,
+          type: "setComponentValue",
+          value: event.data
+        }, "*");
+      }
+    });
+  </script>
+</body>
+</html>

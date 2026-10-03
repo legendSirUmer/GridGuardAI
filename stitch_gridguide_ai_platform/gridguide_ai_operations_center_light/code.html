@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="web_dashboard" name="shell-type"/>
+<title>GridGuide AI - Operational Overview</title>
+<style>
+    @layer base {
+      html, body { margin:0; padding:0; }
+      body { overscroll-behavior:none; }
+      main > :first-child { margin-top:0 !important; }
+      main > :last-child { margin-bottom:0 !important; }
+    }
+    ::-webkit-scrollbar { display:none; }
+  </style>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              200: '#bfdbfe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#F8FAFC] text-slate-800 font-sans antialiased selection:bg-blue-100 selection:text-blue-700">
+<!-- Left Sidebar -->
+<aside class="fixed left-0 top-0 h-screen w-64 bg-white border-r border-slate-200 flex flex-col z-50 justify-between">
+<div class="flex flex-col">
+<!-- App Brand Header -->
+<div class="h-16 px-6 flex items-center gap-3 border-b border-slate-100">
+<div class="h-9 w-9 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-sm shadow-blue-500/30">
+<span class="material-symbols-outlined text-xl">bolt</span>
+</div>
+<div class="flex flex-col">
+<span class="font-bold text-slate-900 text-base leading-tight tracking-tight">GridGuide AI</span>
+<span class="text-xs text-slate-500 font-medium">Grid Intelligence</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="p-4 space-y-1.5 overflow-y-auto">
+<a aria-current="page" class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-medium text-sm bg-blue-50 text-blue-600 transition-colors shadow-sm" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span>Overview</span>
+</a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-medium text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+<span>Investigate</span>
+</a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-medium text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">folder_open</span>
+<span>Investigations</span>
+</a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-medium text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">hub</span>
+<span>Agent Pipeline</span>
+</a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-medium text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">verified_user</span>
+<span>Evidence Explorer</span>
+</a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-medium text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">bar_chart</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center justify-between px-3.5 py-2.5 rounded-lg font-medium text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px] text-amber-500">offline_bolt</span>
+<span>Live Demo</span>
+</div>
+<span class="px-1.5 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-600 border border-emerald-200">LIVE</span>
+</a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-medium text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">tune</span>
+<span>Settings</span>
+</a>
+</nav>
+</div>
+<!-- User Profile & System Status in Sidebar Bottom -->
+<div class="p-4 border-t border-slate-200 bg-white">
+<div class="mb-3 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200/70 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span class="text-xs font-semibold text-slate-700">7 Agents Online</span>
+</div>
+<span class="text-[11px] text-slate-500 font-medium">99.9% Uptime</span>
+</div>
+<div class="flex items-center gap-3 px-2 pt-1">
+<img alt="Profile" class="w-9 h-9 rounded-full object-cover ring-2 ring-blue-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZ99rV9Xq_ON7nv3fArBHUiEldxtW07MPQuXWflquzivB8_oIV1gf7_rpkCeCeSLZu1HpNwhWwuRXkKTM4GGQnssv5rn4PLElQn9UwMpyTWP0ln_WzCB-STx48CkKb4jOWrYgBCy0MSzLdf0PRt6t7rB_ohnO-dRJQbaj-bDYuJ3vK6eFApcIGvwAegr2Q3IWDxq854O6kE-81phyAp6Kc_0lvRkHX77F3JsNO36teIj4rphPDb5s7eQ"/>
+<div class="flex flex-col min-w-0">
+<span class="text-sm font-semibold text-slate-900 truncate">Dr. K. Vance</span>
+<span class="text-xs text-slate-500 truncate">Lead Grid Analyst</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main View Wrap -->
+<div class="pl-64 flex flex-col min-h-screen">
+<!-- Top Header Bar -->
+<header class="h-16 bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 px-8 flex items-center justify-between">
+<!-- Search Input -->
+<div class="relative w-80">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input class="w-full pl-9 pr-12 py-1.5 text-sm bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" placeholder="Search investigations, grids..." type="text"/>
+<kbd class="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-semibold text-slate-400 bg-white border border-slate-200 rounded shadow-2xs">⌘K</kbd>
+</div>
+<!-- Action items -->
+<div class="flex items-center gap-3">
+<!-- New Investigation Button -->
+<button class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg shadow-sm hover:shadow transition-all" type="button">
+<span class="material-symbols-outlined text-lg">add</span>
+<span>New Investigation</span>
+</button>
+<!-- Notifications -->
+<button class="relative p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors" type="button">
+<span class="material-symbols-outlined text-[22px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-blue-600 ring-2 ring-white"></span>
+</button>
+</div>
+</header>
+<!-- Page Content Container -->
+<main class="p-8 max-w-7xl mx-auto w-full space-y-8">
+<!-- Greeting & Top Controls -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<h1 class="text-2xl font-bold text-slate-900 tracking-tight">Good morning, Dr. Vance</h1>
+<p class="text-sm text-slate-500 mt-1">Electricity incident monitoring and investigation overview</p>
+</div>
+<!-- Filter controls -->
+<div class="flex items-center gap-2 flex-wrap">
+<!-- Area Selector -->
+<div class="flex items-center bg-white border border-slate-200 rounded-lg p-1 shadow-xs">
+<span class="material-symbols-outlined text-slate-400 text-base ml-1 mr-1.5">location_on</span>
+<div class="flex gap-1" id="area-toggles">
+<button class="px-2.5 py-1 text-xs font-medium rounded-md bg-blue-50 text-blue-600 transition-colors" type="button">Demo Area A</button>
+<button class="px-2.5 py-1 text-xs font-medium rounded-md text-slate-600 hover:text-slate-900 transition-colors" type="button">Area B</button>
+<button class="px-2.5 py-1 text-xs font-medium rounded-md text-slate-600 hover:text-slate-900 transition-colors" type="button">Area C</button>
+</div>
+</div>
+<!-- Timeframe Selector -->
+<div class="flex items-center bg-white border border-slate-200 rounded-lg p-1 shadow-xs">
+<button class="px-3 py-1 text-xs font-semibold rounded-md bg-slate-100 text-slate-900" type="button">Last 24h</button>
+<button class="px-2.5 py-1 text-xs font-medium rounded-md text-slate-500 hover:text-slate-800 transition-colors" type="button">7d</button>
+<button class="px-2.5 py-1 text-xs font-medium rounded-md text-slate-500 hover:text-slate-800 transition-colors" type="button">30d</button>
+</div>
+<!-- Refresh Button -->
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200 rounded-lg shadow-xs transition-colors" id="sim-refresh-btn" type="button">
+<span class="material-symbols-outlined text-base text-slate-500" id="refresh-icon">autorenew</span>
+<span>Refresh</span>
+</button>
+</div>
+</div>
+<!-- KPI Cards (4 Cards) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Card 1: Active Investigations -->
+<div class="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all">
+<div class="flex items-center justify-between">
+<span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Active Investigations</span>
+<div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">folder_managed</span>
+</div>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="text-3xl font-bold text-slate-900 tracking-tight" id="metric-active-count">12</span>
+<span class="text-xs font-medium text-emerald-600 flex items-center gap-0.5">
+<span class="material-symbols-outlined text-sm">arrow_upward</span> +3 this week
+            </span>
+</div>
+<div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+<span>4 in critical review</span>
+<span class="font-medium text-blue-600 hover:underline cursor-pointer">View all</span>
+</div>
+</div>
+<!-- Card 2: Detected Anomalies -->
+<div class="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all">
+<div class="flex items-center justify-between">
+<span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Detected Anomalies</span>
+<div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">warning_amber</span>
+</div>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="text-3xl font-bold text-slate-900 tracking-tight">28</span>
+<span class="text-xs font-medium text-amber-600 flex items-center gap-0.5">
+<span class="material-symbols-outlined text-sm">trending_up</span> +12% vs avg
+            </span>
+</div>
+<div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+<span>9 Billing • 14 Outages • 5 Voltage</span>
+</div>
+</div>
+<!-- Card 3: Evidence Verified -->
+<div class="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all">
+<div class="flex items-center justify-between">
+<span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Evidence Verified</span>
+<div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-lg">check_circle</span>
+</div>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="text-3xl font-bold text-slate-900 tracking-tight">94%</span>
+<span class="text-xs font-medium text-emerald-600">High confidence</span>
+</div>
+<div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+<span>142 verified data items</span>
+<span class="text-emerald-700 font-medium bg-emerald-50 px-1.5 py-0.5 rounded text-[11px]">Validated</span>
+</div>
+</div>
+<!-- Card 4: System Status -->
+<div class="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all">
+<div class="flex items-center justify-between">
+<span class="text-xs font-semibold uppercase tracking-wider text-slate-500">System Status</span>
+<span class="flex h-2.5 w-2.5 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+</span>
+</div>
+<div class="mt-3 flex items-baseline gap-2">
+<span class="text-2xl font-bold text-slate-900 tracking-tight">Operational</span>
+</div>
+<div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+<span>All AI pipelines active</span>
+<span class="text-slate-700 font-medium">99.98%</span>
+</div>
+</div>
+</section>
+<!-- Main Layout: 2 Columns (7 cols Investigations / 5 cols Timeline) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Left: Active Investigations (7 cols) -->
+<section class="lg:col-span-7 space-y-4">
+<!-- Section Header & Filter Tabs -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs">
+<div class="flex items-center gap-2">
+<h2 class="font-bold text-slate-900 text-lg">Active Investigations</h2>
+<span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">12</span>
+</div>
+<!-- Category Tabs -->
+<div class="flex items-center gap-1 bg-slate-100 p-1 rounded-lg" id="case-filters">
+<button class="filter-tab px-3 py-1 rounded-md bg-white text-slate-900 font-medium text-xs shadow-2xs transition-colors" data-filter="all" type="button">All (12)</button>
+<button class="filter-tab px-3 py-1 rounded-md text-slate-600 hover:text-slate-900 font-medium text-xs transition-colors" data-filter="billing" type="button">Billing (5)</button>
+<button class="filter-tab px-3 py-1 rounded-md text-slate-600 hover:text-slate-900 font-medium text-xs transition-colors" data-filter="outage" type="button">Outages (4)</button>
+<button class="filter-tab px-3 py-1 rounded-md text-slate-600 hover:text-slate-900 font-medium text-xs transition-colors" data-filter="mixed" type="button">Mixed (3)</button>
+</div>
+</div>
+<!-- Cards List -->
+<div class="space-y-3" id="investigation-list">
+<!-- Card 1 -->
+<div class="investigation-item bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:border-blue-200 hover:shadow-md transition-all" data-type="billing">
+<div class="flex items-start justify-between gap-3">
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<h3 class="font-semibold text-slate-900 text-base hover:text-blue-600 cursor-pointer transition-colors">High Bill Investigation</h3>
+<span class="text-xs font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded">#INV-9821</span>
+</div>
+<div class="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+<span>Demo Area A • Residential Cluster 4</span>
+</div>
+</div>
+<!-- Status Badge -->
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200/80">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                  In Review
+                </span>
+</div>
+<!-- Context Details -->
+<p class="text-xs text-slate-600 mt-3 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                18 tariff line items extracted • <strong class="text-rose-600 font-medium">2 anomalies flagged</strong> in peak hour surcharge calculations.
+              </p>
+<!-- Footer with Assigned Agents & Action -->
+<div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2">
+<div class="flex items-center gap-1.5">
+<span class="text-[11px] font-medium text-slate-400 mr-1">Agents:</span>
+<span class="px-2 py-0.5 text-[11px] font-medium bg-blue-50 text-blue-700 rounded-md">Bill Auditor</span>
+<span class="px-2 py-0.5 text-[11px] font-medium bg-blue-50 text-blue-700 rounded-md">Outage Investigator</span>
+<span class="px-2 py-0.5 text-[11px] font-medium bg-emerald-50 text-emerald-700 rounded-md">Evidence Critic</span>
+</div>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors" type="button">
+<span>View Investigation</span>
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="investigation-item bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:border-blue-200 hover:shadow-md transition-all" data-type="outage">
+<div class="flex items-start justify-between gap-3">
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<h3 class="font-semibold text-slate-900 text-base hover:text-blue-600 cursor-pointer transition-colors">Repeated Outage Investigation</h3>
+<span class="text-xs font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded">#INV-9818</span>
+</div>
+<div class="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+<span>Demo Area B • Industrial Feeder 12</span>
+</div>
+</div>
+<!-- Status Badge -->
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200/80">
+<span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+                  Investigating
+                </span>
+</div>
+<!-- Context Details -->
+<p class="text-xs text-slate-600 mt-3 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                Found 7 matching incident events on Feeder 12 • Wind factors ruled out.
+              </p>
+<!-- Footer with Assigned Agents & Action -->
+<div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2">
+<div class="flex items-center gap-1.5">
+<span class="text-[11px] font-medium text-slate-400 mr-1">Agents:</span>
+<span class="px-2 py-0.5 text-[11px] font-medium bg-blue-50 text-blue-700 rounded-md">Incident Analyst</span>
+<span class="px-2 py-0.5 text-[11px] font-medium bg-indigo-50 text-indigo-700 rounded-md">Environment Analyst</span>
+</div>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors" type="button">
+<span>View Investigation</span>
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="investigation-item bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:border-blue-200 hover:shadow-md transition-all" data-type="billing">
+<div class="flex items-start justify-between gap-3">
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<h3 class="font-semibold text-slate-900 text-base hover:text-blue-600 cursor-pointer transition-colors">Suspected Tariff Shift Discrepancy</h3>
+<span class="text-xs font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded">#INV-9804</span>
+</div>
+<div class="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+<span>Demo Area C • Commercial Complex</span>
+</div>
+</div>
+<!-- Status Badge -->
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200/80">
+<span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                  Needs Review
+                </span>
+</div>
+<!-- Context Details -->
+<p class="text-xs text-slate-600 mt-3 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                Tier rate calculation shift delta: <strong class="text-slate-900 font-semibold">+$420.50</strong> discrepancy detected against tariff baseline.
+              </p>
+<!-- Footer with Assigned Agents & Action -->
+<div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2">
+<div class="flex items-center gap-1.5">
+<span class="text-[11px] font-medium text-slate-400 mr-1">Agents:</span>
+<span class="px-2 py-0.5 text-[11px] font-medium bg-blue-50 text-blue-700 rounded-md">Regulation Researcher</span>
+<span class="px-2 py-0.5 text-[11px] font-medium bg-blue-50 text-blue-700 rounded-md">Bill Auditor</span>
+</div>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors" type="button">
+<span>View Investigation</span>
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="investigation-item bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:border-blue-200 hover:shadow-md transition-all" data-type="mixed">
+<div class="flex items-start justify-between gap-3">
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<h3 class="font-semibold text-slate-900 text-base hover:text-blue-600 cursor-pointer transition-colors">Post-Storm Grid Stabilization Check</h3>
+<span class="text-xs font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded">#INV-9789</span>
+</div>
+<div class="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
+<span class="material-symbols-outlined text-[14px]">location_on</span>
+<span>Demo Area A • Substation 9</span>
+</div>
+</div>
+<!-- Status Badge -->
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  Resolved
+                </span>
+</div>
+<!-- Context Details -->
+<p class="text-xs text-slate-600 mt-3 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                Stabilization certified across all bus nodes • zero residual faults reported.
+              </p>
+<!-- Footer with Assigned Agents & Action -->
+<div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2">
+<div class="flex items-center gap-1.5">
+<span class="text-[11px] font-medium text-slate-400 mr-1">Agents:</span>
+<span class="px-2 py-0.5 text-[11px] font-medium bg-emerald-50 text-emerald-700 rounded-md">Report Generator</span>
+<span class="px-2 py-0.5 text-[11px] font-medium bg-slate-100 text-slate-600 rounded-md">All Agents Consensus</span>
+</div>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors" type="button">
+<span class="material-symbols-outlined text-sm">description</span>
+<span>View Report</span>
+</button>
+</div>
+</div>
+<!-- Empty State Container -->
+<div class="hidden flex-col items-center justify-center p-12 bg-white rounded-xl border border-slate-200 text-center" id="investigation-empty">
+<span class="material-symbols-outlined text-4xl text-slate-300 mb-2">content_paste_off</span>
+<h4 class="font-semibold text-slate-800 text-base">No active cases found</h4>
+<p class="text-xs text-slate-500 max-w-sm mt-1">There are no investigations matching this category. Select another tab or start a new inquiry.</p>
+<button class="mt-4 px-4 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 transition-colors" onclick="document.querySelector('[data-filter=all]').click()" type="button">Reset filters</button>
+</div>
+</div>
+</section>
+<!-- Right: Recent AI Activity Feed (5 cols) -->
+<section class="lg:col-span-5 space-y-4">
+<div class="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs">
+<!-- Feed Header -->
+<div class="flex items-center justify-between pb-4 border-b border-slate-100">
+<div class="flex items-center gap-2.5">
+<div class="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-50"></div>
+<div>
+<h3 class="font-bold text-slate-900 text-base">Recent AI Activity</h3>
+<p class="text-xs text-slate-500">Live agent analysis updates</p>
+</div>
+</div>
+<span class="text-xs font-medium text-slate-400 bg-slate-50 px-2 py-1 rounded border border-slate-100">Live feed</span>
+</div>
+<!-- Timeline Entries -->
+<div class="divide-y divide-slate-100">
+<!-- Timeline Item 1 -->
+<div class="py-3.5 flex items-start gap-3 hover:bg-slate-50/50 rounded-lg px-1 transition-colors">
+<div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-base">article</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-1">
+<span class="text-xs font-semibold text-slate-800">Report Generator</span>
+<span class="text-[11px] text-slate-400">2 min ago</span>
+</div>
+<p class="text-xs text-slate-600 mt-1">Generated final findings summary report for case <strong class="text-slate-800 font-medium">#GG-2026-0142</strong>.</p>
+</div>
+</div>
+<!-- Timeline Item 2 -->
+<div class="py-3.5 flex items-start gap-3 hover:bg-slate-50/50 rounded-lg px-1 transition-colors">
+<div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-base">flag</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-1">
+<span class="text-xs font-semibold text-slate-800">Evidence Critic</span>
+<span class="text-[11px] text-slate-400">5 min ago</span>
+</div>
+<p class="text-xs text-slate-600 mt-1">Identified potential discrepancy in the tariff surcharge calculation formula.</p>
+</div>
+</div>
+<!-- Timeline Item 3 -->
+<div class="py-3.5 flex items-start gap-3 hover:bg-slate-50/50 rounded-lg px-1 transition-colors">
+<div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-base">thermostat</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-1">
+<span class="text-xs font-semibold text-slate-800">Environment Analyst</span>
+<span class="text-[11px] text-slate-400">12 min ago</span>
+</div>
+<p class="text-xs text-slate-600 mt-1">Checked meteorological records: weather factors ruled out (wind &lt;12mph, 68°F).</p>
+</div>
+</div>
+<!-- Timeline Item 4 -->
+<div class="py-3.5 flex items-start gap-3 hover:bg-slate-50/50 rounded-lg px-1 transition-colors">
+<div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-base">electric_bolt</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-1">
+<span class="text-xs font-semibold text-slate-800">Outage Investigator</span>
+<span class="text-[11px] text-slate-400">18 min ago</span>
+</div>
+<p class="text-xs text-slate-600 mt-1">Correlated 7 recent tripping events in Feeder 4 dataset to verify repeat pattern.</p>
+</div>
+</div>
+<!-- Timeline Item 5 -->
+<div class="py-3.5 flex items-start gap-3 hover:bg-slate-50/50 rounded-lg px-1 transition-colors">
+<div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-base">receipt_long</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-1">
+<span class="text-xs font-semibold text-slate-800">Bill Auditor</span>
+<span class="text-[11px] text-slate-400">24 min ago</span>
+</div>
+<p class="text-xs text-slate-600 mt-1">Extracted 18 billing items and consumption hours from uploaded utility statement.</p>
+</div>
+</div>
+</div>
+<!-- Card Bottom helper -->
+<div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+<span class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                Consensus pipeline synchronized
+              </span>
+<button class="font-medium text-blue-600 hover:text-blue-700 transition-colors" type="button">View pipeline</button>
+</div>
+</div>
+<!-- Quick Actions / Quick Tip card -->
+<div class="bg-blue-50/60 border border-blue-100 rounded-xl p-4 flex items-start gap-3">
+<span class="material-symbols-outlined text-blue-600 text-xl mt-0.5">lightbulb</span>
+<div class="text-xs text-slate-600">
+<span class="font-semibold text-slate-900 block mb-0.5">Automated Cross-Verification</span>
+              GridGuide AI autonomously triggers the Evidence Critic agent whenever billing rates exceed 15% above the regional average baseline.
+            </div>
+</div>
+</section>
+</div>
+</main>
+</div>
+<script>
+    // Tab filtering interaction
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    const items = document.querySelectorAll('.investigation-item');
+    const emptyState = document.getElementById('investigation-empty');
+
+    filterTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        filterTabs.forEach(t => {
+          t.classList.remove('bg-white', 'text-slate-900', 'shadow-2xs');
+          t.classList.add('text-slate-600');
+        });
+        tab.classList.add('bg-white', 'text-slate-900', 'shadow-2xs');
+        tab.classList.remove('text-slate-600');
+
+        const filter = tab.getAttribute('data-filter');
+        let visibleCount = 0;
+
+        items.forEach(item => {
+          const itemType = item.getAttribute('data-type');
+          if (filter === 'all' || itemType === filter) {
+            item.classList.remove('hidden');
+            visibleCount++;
+          } else {
+            item.classList.add('hidden');
+          }
+        });
+
+        if (visibleCount === 0) {
+          emptyState.classList.remove('hidden');
+          emptyState.classList.add('flex');
+        } else {
+          emptyState.classList.add('hidden');
+          emptyState.classList.remove('flex');
+        }
+      });
+    });
+
+    // Refresh Micro-Interaction
+    const refreshBtn = document.getElementById('sim-refresh-btn');
+    const refreshIcon = document.getElementById('refresh-icon');
+
+    refreshBtn?.addEventListener('click', () => {
+      refreshIcon.classList.add('animate-spin');
+      setTimeout(() => {
+        refreshIcon.classList.remove('animate-spin');
+      }, 700);
+    });
+  </script>
+</body></html>

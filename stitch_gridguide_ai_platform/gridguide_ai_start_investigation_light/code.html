@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        background: "#F8FAFC",
+        surface: "#FFFFFF",
+        "surface-subtle": "#F1F5F9",
+        "surface-card": "#FFFFFF",
+        border: "#E2E8F0",
+        "border-strong": "#CBD5E1",
+        primary: {
+          DEFAULT: "#2563EB",
+          hover: "#1D4ED8",
+          subtle: "#EFF6FF",
+          light: "#DBEAFE"
+        },
+        slate: {
+          900: "#0F172A",
+          700: "#334155",
+          600: "#475569",
+          500: "#64748B",
+          400: "#94A3B8",
+          300: "#CBD5E1",
+          200: "#E2E8F0",
+          100: "#F1F5F9",
+          50: "#F8FAFC"
+        },
+        emerald: {
+          50: "#ECFDF5",
+          600: "#059669",
+          700: "#047857"
+        }
+      },
+      fontFamily: {
+        sans: ["Inter", "sans-serif"]
+      }
+    }
+  }
+};</script></head><body class="bg-background text-slate-700 font-sans antialiased selection:bg-primary-light selection:text-primary"><aside class="fixed left-0 top-0 h-screen w-64 bg-surface border-r border-border flex flex-col z-50"><div class="h-16 px-6 flex items-center gap-3 border-b border-border/80"><div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white shadow-sm shadow-primary/30"><span class="material-symbols-outlined text-xl">bolt</span></div><div class="flex flex-col"><span class="font-semibold text-slate-900 text-sm tracking-tight leading-tight">GridGuide AI</span><span class="text-xs text-slate-500 font-medium">Grid Resolution Suite</span></div></div><nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto"><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-sm font-medium transition-colors" data-path="overview" href="#"><span class="material-symbols-outlined text-[20px] text-slate-400">dashboard</span><span class="truncate">Overview</span></a><a aria-current="page" class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary text-white text-sm font-medium shadow-sm shadow-primary/25" data-path="investigate" href="#"><span class="material-symbols-outlined text-[20px] text-white">add_circle</span><span class="truncate">New Investigation</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-sm font-medium transition-colors" data-path="investigations" href="#"><span class="material-symbols-outlined text-[20px] text-slate-400">folder_open</span><span class="truncate">All Investigations</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-sm font-medium transition-colors" data-path="live-multi-agent-pipeline" href="#"><span class="material-symbols-outlined text-[20px] text-slate-400">hub</span><span class="truncate">Agent Pipeline</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-sm font-medium transition-colors" data-path="evidence-explorer" href="#"><span class="material-symbols-outlined text-[20px] text-slate-400">verified</span><span class="truncate">Evidence Explorer</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-sm font-medium transition-colors" data-path="analytics" href="#"><span class="material-symbols-outlined text-[20px] text-slate-400">bar_chart</span><span class="truncate">Analytics</span></a><a class="flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-sm font-medium transition-colors" data-path="interactive-hackathon-demo" href="#"><div class="flex items-center gap-3 truncate"><span class="material-symbols-outlined text-[20px] text-slate-400">play_circle</span><span class="truncate">Interactive Demo</span></div><span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">LIVE</span></a><a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 text-sm font-medium transition-colors" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px] text-slate-400">settings</span><span class="truncate">Settings</span></a></nav><div class="p-3 m-3 rounded-xl bg-slate-50 border border-border flex flex-col gap-2"><div class="flex items-center gap-2"><span class="relative flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-600 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span></span><span class="text-xs font-semibold text-slate-800">System Ready</span></div><p class="text-[11px] text-slate-500 leading-relaxed">Grid verification agents standby for automated dispatch.</p></div></aside><div class="pl-64 flex flex-col min-h-screen"><header class="fixed top-0 left-64 right-0 h-16 bg-surface/95 backdrop-blur border-b border-border z-40 flex items-center justify-between px-8"><div class="flex items-center gap-2 text-xs font-medium text-slate-500"><span class="text-slate-900 font-semibold">Investigations</span><span class="text-slate-300">/</span><span>Intake Assistant</span></div><div class="flex items-center gap-3"><div class="hidden md:flex items-center gap-2 bg-slate-50 border border-border px-3 py-1.5 rounded-lg text-slate-400 text-xs w-64"><span class="material-symbols-outlined text-base">search</span><span>Search records, tickets...</span></div><button class="relative p-2 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-primary ring-2 ring-white"></span></button><div class="h-5 w-px bg-border"></div><div class="flex items-center gap-2.5 pl-1"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-1 ring-border" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZ99rV9Xq_ON7nv3fArBHUiEldxtW07MPQuXWflquzivB8_oIV1gf7_rpkCeCeSLZu1HpNwhWwuRXkKTM4GGQnssv5rn4PLElQn9UwMpyTWP0ln_WzCB-STx48CkKb4jOWrYgBCy0MSzLdf0PRt6t7rB_ohnO-dRJQbaj-bDYuJ3vK6eFApcIGvwAegr2Q3IWDxq854O6kE-81phyAp6Kc_0lvRkHX77F3JsNO36teIj4rphPDb5s7eQ"/><div class="hidden sm:flex flex-col text-left"><span class="text-xs font-semibold text-slate-900 leading-tight">Dr. K. Vance</span><span class="text-[11px] text-slate-500 leading-none">Senior Grid Analyst</span></div></div></div></header><main class="w-full pt-16 bg-background min-h-[calc(100vh-4rem)] px-8 py-8"><div class="max-w-6xl mx-auto flex flex-col"><div class="mb-8"><div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-subtle text-primary border border-primary-light text-xs font-semibold mb-3"><span class="material-symbols-outlined text-sm">sparkles</span><span>Guided Problem Resolver</span></div><h1 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mb-2">Start a New Investigation</h1><p class="text-sm sm:text-base text-slate-600 max-w-2xl leading-relaxed">
+        Tell us what happened with your electricity service or recent bill. Our AI agents will inspect your documents and corroborate grid history to help resolve the issue.
+      </p></div><div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"><div class="lg:col-span-8 flex flex-col gap-6"><!-- Step 1: Incident Description --><section class="bg-surface rounded-xl border border-border p-6 shadow-sm"><div class="flex items-center justify-between mb-4"><div class="flex items-center gap-3"><span class="flex items-center justify-center w-7 h-7 rounded-lg bg-primary-subtle text-primary font-bold text-xs">1</span><h2 class="text-base font-semibold text-slate-900">What happened?</h2></div><span class="text-xs font-medium text-slate-400">Required</span></div><div class="relative mb-3"><textarea class="w-full bg-slate-50 border border-border text-slate-900 placeholder:text-slate-400 p-3.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white transition-all resize-none leading-relaxed" id="incident-description" placeholder="Describe the electricity issue, what seemed off, and when it occurred..." rows="4">My electricity bill increased significantly this month and we've experienced several outages this week in the neighborhood.</textarea><div class="absolute bottom-2.5 right-3 text-[11px] text-slate-400"><span id="char-counter">105</span> characters</div></div><div><p class="text-xs font-medium text-slate-500 mb-2">Common scenarios (click to auto-fill):</p><div class="flex flex-wrap gap-2" id="quick-prompts"><button class="prompt-chip group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-primary-subtle hover:text-primary text-slate-700 text-xs font-medium transition-colors border border-transparent hover:border-primary-light" data-prompt="High bill spike this month despite normal electricity usage and no major appliance changes." type="button"><span class="text-amber-500 group-hover:scale-110 transition-transform">⚡</span><span>High bill spike this month</span></button><button class="prompt-chip group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-primary-subtle hover:text-primary text-slate-700 text-xs font-medium transition-colors border border-transparent hover:border-primary-light" data-prompt="Frequent power outages &amp; flickering lights throughout this week causing appliance resets." type="button"><span class="text-amber-500 group-hover:scale-110 transition-transform">🔌</span><span>Frequent power outages &amp; flickering</span></button><button class="prompt-chip group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 hover:bg-primary-subtle hover:text-primary text-slate-700 text-xs font-medium transition-colors border border-transparent hover:border-primary-light" data-prompt="Sudden rate hike after recent storm event without clear billing explanation or prior notification." type="button"><span class="text-blue-500 group-hover:scale-110 transition-transform">⛈️</span><span>Sudden rate hike after storm</span></button></div></div></section><!-- Step 2: Location & Utility Grid in Pakistan -->
+<section class="bg-surface rounded-xl border border-border p-6 shadow-sm">
+  <div class="flex items-center justify-between mb-4">
+    <div class="flex items-center gap-3">
+      <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-primary-subtle text-primary font-bold text-xs">2</span>
+      <div>
+        <h2 class="text-base font-semibold text-slate-900">Your City &amp; Neighborhood (Pakistan)</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Select city to identify your regional DISCO &amp; local feeder</p>
+      </div>
+    </div>
+    <span class="text-xs text-emerald-700 font-medium bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-2xs">
+      <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+      <span id="disco-badge">IESCO Connected</span>
+    </span>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 mb-3">
+    <!-- City Dropdown -->
+    <div class="sm:col-span-4">
+      <label class="block text-xs font-semibold text-slate-700 mb-1.5">Select City</label>
+      <div class="relative">
+        <select id="city-selector" class="w-full bg-slate-50 border border-border text-slate-900 px-3 py-2.5 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white transition-all appearance-none cursor-pointer">
+          <option value="Islamabad" data-feeder="Islamabad (Sector F-7 / Blue Area Feeder - IESCO)" data-disco="IESCO Connected" selected>Islamabad (IESCO)</option>
+          <option value="Lahore" data-feeder="Lahore (DHA Phase 5 / Gulberg Feeder - LESCO)" data-disco="LESCO Connected">Lahore (LESCO)</option>
+          <option value="Karachi" data-feeder="Karachi (Clifton / Korangi Industrial Feeder - K-Electric)" data-disco="K-Electric Connected">Karachi (K-Electric)</option>
+          <option value="Rawalpindi" data-feeder="Rawalpindi (Saddar / Westridge Feeder - IESCO)" data-disco="IESCO Connected">Rawalpindi (IESCO)</option>
+          <option value="Faisalabad" data-feeder="Faisalabad (Madina Town / D-Ground Feeder - FESCO)" data-disco="FESCO Connected">Faisalabad (FESCO)</option>
+          <option value="Peshawar" data-feeder="Peshawar (Hayatabad Phase 3 / University Rd - PESCO)" data-disco="PESCO Connected">Peshawar (PESCO)</option>
+          <option value="Multan" data-feeder="Multan (Cantt / Bosan Road Feeder - MEPCO)" data-disco="MEPCO Connected">Multan (MEPCO)</option>
+          <option value="Quetta" data-feeder="Quetta (Zarghoon Road / Jinnah Town - QESCO)" data-disco="QESCO Connected">Quetta (QESCO)</option>
+          <option value="Custom" data-feeder="" data-disco="Custom Grid">Other City / Custom Area...</option>
+        </select>
+        <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-lg">arrow_drop_down</span>
+      </div>
+    </div>
+
+    <!-- Feeder / Area Details Input -->
+    <div class="sm:col-span-8">
+      <label class="block text-xs font-semibold text-slate-700 mb-1.5">Neighborhood / Substation Feeder</label>
+      <div class="relative">
+        <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-lg pointer-events-none">location_on</span>
+        <input class="w-full bg-slate-50 border border-border text-slate-900 pl-10 pr-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-white transition-all font-medium" id="feeder-input" type="text" value="Islamabad (Sector F-7 / Blue Area Feeder - IESCO)"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-col sm:flex-row sm:items-center gap-2 pt-2 border-t border-slate-100">
+    <span class="text-xs text-slate-500 font-medium shrink-0">Quick switch city:</span>
+    <div class="flex flex-wrap items-center gap-1.5" id="feeder-selector">
+      <button class="feeder-btn px-3 py-1 rounded-md text-xs font-medium transition-all bg-primary text-white shadow-sm" data-city="Islamabad" data-loc="Islamabad (Sector F-7 / Blue Area Feeder - IESCO)" data-disco="IESCO Connected" type="button">Islamabad</button>
+      <button class="feeder-btn px-3 py-1 rounded-md text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-city="Lahore" data-loc="Lahore (DHA Phase 5 / Gulberg Feeder - LESCO)" data-disco="LESCO Connected" type="button">Lahore</button>
+      <button class="feeder-btn px-3 py-1 rounded-md text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-city="Karachi" data-loc="Karachi (Clifton / Korangi Industrial Feeder - K-Electric)" data-disco="K-Electric Connected" type="button">Karachi</button>
+      <button class="feeder-btn px-3 py-1 rounded-md text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-city="Rawalpindi" data-loc="Rawalpindi (Saddar / Westridge Feeder - IESCO)" data-disco="IESCO Connected" type="button">Rawalpindi</button>
+      <button class="feeder-btn px-3 py-1 rounded-md text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200" data-city="Peshawar" data-loc="Peshawar (Hayatabad Phase 3 / University Rd - PESCO)" data-disco="PESCO Connected" type="button">Peshawar</button>
+    </div>
+  </div>
+</section><!-- Step 3: Bill Upload --><section class="bg-surface rounded-xl border border-border p-6 shadow-sm"><div class="flex items-center justify-between mb-4"><div class="flex items-center gap-3"><span class="flex items-center justify-center w-7 h-7 rounded-lg bg-primary-subtle text-primary font-bold text-xs">3</span><h2 class="text-base font-semibold text-slate-900">Upload Your Electricity Bill</h2></div><span class="text-xs font-medium text-slate-400">PDF, JPG, or PNG</span></div><input type="file" id="bill-file-input" accept=".pdf,.png,.jpg,.jpeg,.txt,.csv" style="display: none;" /><div class="border-2 border-dashed border-slate-200 hover:border-primary/50 bg-slate-50/70 hover:bg-primary-subtle/30 rounded-xl p-6 text-center cursor-pointer transition-all group mb-4 select-none" id="dropzone" title="Click or drag and drop to upload utility bill"><div class="w-12 h-12 rounded-full bg-white border border-border shadow-xs flex items-center justify-center mx-auto mb-3 text-primary group-hover:scale-105 transition-transform pointer-events-none"><span class="material-symbols-outlined text-2xl" id="upload-icon">cloud_upload</span></div><p class="text-sm font-semibold text-slate-900 mb-1 pointer-events-none" id="upload-prompt-text">Drag and drop your electricity bill here</p><p class="text-xs text-slate-500 mb-3 pointer-events-none">or <span class="text-primary font-medium underline">browse files</span> from your computer</p><div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-border text-[11px] text-slate-500 shadow-2xs pointer-events-none"><span class="material-symbols-outlined text-xs text-emerald-600">verified</span><span>Automatic text extraction &amp; rate breakdown</span></div></div><!-- Attached File Item --><div class="flex items-center justify-between p-3.5 bg-slate-50 border border-border rounded-lg transition-all" id="file-card"><div class="flex items-center gap-3 min-w-0"><div class="w-9 h-9 rounded-lg bg-primary-subtle text-primary flex items-center justify-center shrink-0 border border-primary-light" id="file-icon-box"><span class="material-symbols-outlined text-lg" id="file-icon">description</span></div><div class="flex flex-col min-w-0"><span class="text-xs font-semibold text-slate-900 truncate" id="file-name-display">utility_bill_september_2026.pdf</span><span class="text-[11px] text-slate-500 flex items-center gap-1.5" id="file-meta-display"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span><span id="file-meta-text">1.4 MB • Ready for automated check</span></span></div></div><div class="flex items-center gap-2 shrink-0"><button class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 hover:bg-white hover:text-slate-900 border border-transparent hover:border-border transition-colors cursor-pointer" id="replace-bill-btn" type="button">Replace</button><button class="p-1 rounded-md text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer" id="delete-bill-btn" title="Remove" type="button"><span class="material-symbols-outlined text-base">delete</span></button></div></div><div class="hidden p-3.5 rounded-lg border border-dashed border-slate-200 bg-slate-50/50 text-center text-xs text-slate-500" id="file-empty-card">No bill attached yet. Click above or drag &amp; drop to attach a utility bill (optional).</div></section><!-- Step 4: Weather Conditions (User Editable) -->
+<section class="bg-surface rounded-xl border border-border p-6 shadow-sm">
+  <div class="flex items-center justify-between cursor-pointer select-none" id="accordion-toggle">
+    <div class="flex items-center gap-3">
+      <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-slate-100 text-slate-600 font-bold text-xs">4</span>
+      <div>
+        <h2 class="text-base font-semibold text-slate-900">Weather &amp; Environmental Conditions</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Add or modify environmental conditions to correlate outage spikes &amp; transformer trips</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <span class="text-xs font-medium text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">User Configurable</span>
+      <span class="material-symbols-outlined text-slate-400 transition-transform duration-200" id="accordion-icon">expand_more</span>
+    </div>
+  </div>
+  
+  <div class="mt-4 pt-4 border-t border-border grid grid-cols-1 sm:grid-cols-3 gap-3.5" id="accordion-content">
+    <!-- 1. Temperature Card (Editable) -->
+    <div class="bg-slate-50 border border-border hover:border-primary/40 focus-within:border-primary p-3.5 rounded-xl transition-all">
+      <div class="flex items-center justify-between text-slate-500 mb-1.5">
+        <label for="weather-temp-input" class="text-xs font-semibold text-slate-700">Temperature</label>
+        <span class="material-symbols-outlined text-sm text-amber-500" id="weather-temp-icon">thermostat</span>
+      </div>
+      <input type="text" id="weather-temp-input" value="34°C (93°F - Warm)" class="w-full bg-white border border-slate-200 text-slate-900 px-2.5 py-1.5 rounded-md text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary mb-2 shadow-2xs" />
+      <div class="flex flex-wrap gap-1 text-[10px]">
+        <button type="button" class="temp-preset-btn px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 transition-colors cursor-pointer" data-temp="42°C (108°F - Heatwave)">42°C Heatwave</button>
+        <button type="button" class="temp-preset-btn px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 transition-colors cursor-pointer" data-temp="34°C (93°F - Warm)">34°C Warm</button>
+        <button type="button" class="temp-preset-btn px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 transition-colors cursor-pointer" data-temp="22°C (72°F - Mild)">22°C Mild</button>
+      </div>
+    </div>
+
+    <!-- 2. Conditions Card (Editable) -->
+    <div class="bg-slate-50 border border-border hover:border-primary/40 focus-within:border-primary p-3.5 rounded-xl transition-all">
+      <div class="flex items-center justify-between text-slate-500 mb-1.5">
+        <label for="weather-cond-select" class="text-xs font-semibold text-slate-700">Conditions</label>
+        <span class="material-symbols-outlined text-sm text-sky-500" id="weather-cond-icon">wb_sunny</span>
+      </div>
+      <select id="weather-cond-select" class="w-full bg-white border border-slate-200 text-slate-900 px-2.5 py-1.5 rounded-md text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary mb-2 shadow-2xs cursor-pointer">
+        <option value="Clear & Sunny" data-icon="wb_sunny" selected>Clear &amp; Sunny</option>
+        <option value="Monsoon Rain & Lightning" data-icon="thunderstorm">Monsoon Rain &amp; Lightning</option>
+        <option value="Severe Heatwave / Peak Load" data-icon="solar_power">Severe Heatwave / Peak Load</option>
+        <option value="Heavy Dust Storm & Wind" data-icon="air">Heavy Dust Storm &amp; Wind</option>
+        <option value="Overcast & Humid" data-icon="cloud">Overcast &amp; Humid</option>
+      </select>
+      <input type="text" id="weather-cond-custom" placeholder="Or enter custom condition..." class="w-full bg-white border border-slate-200 text-slate-800 px-2 py-1 rounded text-[11px] placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs" />
+    </div>
+
+    <!-- 3. Severe Storms & Warnings Card (Editable) -->
+    <div class="bg-slate-50 border border-border hover:border-primary/40 focus-within:border-primary p-3.5 rounded-xl transition-all">
+      <div class="flex items-center justify-between text-slate-500 mb-1.5">
+        <label for="weather-storm-select" class="text-xs font-semibold text-slate-700">Grid &amp; Storm Advisory</label>
+        <span class="material-symbols-outlined text-sm text-emerald-600" id="weather-storm-icon">check_circle</span>
+      </div>
+      <select id="weather-storm-select" class="w-full bg-white border border-slate-200 text-slate-900 px-2.5 py-1.5 rounded-md text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary mb-2 shadow-2xs cursor-pointer">
+        <option value="No warnings (Normal Grid Ops)" data-icon="check_circle" data-color="text-emerald-600" selected>No warnings (Normal Grid Ops)</option>
+        <option value="Monsoon Rain Alert (Tripping Risk)" data-icon="warning" data-color="text-amber-500">Monsoon Rain Alert (Tripping Risk)</option>
+        <option value="Heatwave Peak Load Advisory" data-icon="local_fire_department" data-color="text-red-500">Heatwave Peak Load Advisory</option>
+        <option value="High Wind / Feeder Tripping Warning" data-icon="report_problem" data-color="text-amber-600">High Wind / Feeder Tripping</option>
+        <option value="Lightning & Transformer Fault Advisory" data-icon="bolt" data-color="text-amber-500">Lightning &amp; Transformer Fault</option>
+      </select>
+      <input type="text" id="weather-storm-custom" placeholder="Or enter custom warning..." class="w-full bg-white border border-slate-200 text-slate-800 px-2 py-1 rounded text-[11px] placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs" />
+    </div>
+  </div>
+</section><!-- Step 5: Investigation Speed --><section class="bg-surface rounded-xl border border-border p-6 shadow-sm"><div class="flex items-center justify-between mb-4"><div class="flex items-center gap-3"><span class="flex items-center justify-center w-7 h-7 rounded-lg bg-primary-subtle text-primary font-bold text-xs">5</span><h2 class="text-base font-semibold text-slate-900">Investigation Speed</h2></div><span class="text-xs font-medium text-slate-400">Select pipeline depth</span></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="mode-selection"><div class="mode-card cursor-pointer p-4 rounded-xl border border-border bg-slate-50/50 hover:border-slate-300 transition-all flex flex-col justify-between" data-mode="quick"><div><div class="flex items-center justify-between mb-1.5"><span class="text-sm font-semibold text-slate-900">Standard AI Check</span><span class="text-xs font-medium text-slate-500">~15 sec</span></div><p class="text-xs text-slate-600 leading-relaxed">
+                  Fast inspection focusing on instant bill verification and baseline outage history.
+                </p></div><div class="text-[11px] font-medium text-slate-500 pt-3 mt-3 border-t border-border flex items-center gap-1.5"><span class="material-symbols-outlined text-sm text-slate-400">speed</span><span>Bill OCR + Core Records</span></div></div><div class="mode-card cursor-pointer p-4 rounded-xl border-2 border-primary bg-primary-subtle/30 shadow-xs transition-all relative flex flex-col justify-between" data-mode="full"><div class="absolute -top-2.5 right-3 px-2 py-0.5 rounded-full bg-primary text-white text-[10px] font-bold tracking-wide shadow-2xs">
+                RECOMMENDED
+              </div><div><div class="flex items-center justify-between mb-1.5"><div class="flex items-center gap-1.5"><span class="text-sm font-bold text-slate-900">Full Deep Analysis</span><span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span></div><span class="text-xs font-bold text-primary">~30 sec</span></div><p class="text-xs text-slate-600 leading-relaxed">
+                  Full 7-agent consensus including tariff compliance, neighbor outage overlap, and evidence summary.
+                </p></div><div class="text-[11px] font-semibold text-primary pt-3 mt-3 border-t border-primary/20 flex items-center gap-1.5"><span class="material-symbols-outlined text-sm">verified_user</span><span>All 7 Specialized Agents</span></div></div></div></section><!-- Submit Section --><div class="bg-surface rounded-xl border border-border p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4"><div class="flex flex-col"><span class="text-sm font-semibold text-slate-900">Ready to begin your case</span><span class="text-xs text-slate-500">No fees or obligations. Your bill data is encrypted and private.</span></div><button class="w-full sm:w-auto px-6 py-3 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-semibold shadow-md shadow-primary/25 hover:shadow-lg hover:shadow-primary/30 transition-all flex items-center justify-center gap-2 shrink-0 cursor-pointer" id="start-investigation-btn" type="button"><span>Start AI Investigation</span><span class="material-symbols-outlined text-base">arrow_forward</span></button></div></div><!-- Right Column / Helper Assistant --><div class="lg:col-span-4 flex flex-col gap-6"><!-- How AI Works Card --><div class="bg-surface rounded-xl border border-border p-5 shadow-sm"><div class="flex items-center gap-2 mb-4 pb-3 border-b border-border"><div class="w-7 h-7 rounded-lg bg-primary-subtle text-primary flex items-center justify-center"><span class="material-symbols-outlined text-base">auto_awesome</span></div><h3 class="text-sm font-semibold text-slate-900">How AI Investigates</h3></div><div class="space-y-4"><div class="flex items-start gap-3"><div class="w-6 h-6 rounded-full bg-blue-50 text-primary border border-blue-100 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</div><div><div class="text-xs font-semibold text-slate-900">Inspect Your Bill</div><p class="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                  Extracts tariff tiers, hidden rate spikes, and billing period meter dates automatically.
+                </p></div></div><div class="flex items-start gap-3"><div class="w-6 h-6 rounded-full bg-blue-50 text-primary border border-blue-100 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">2</div><div><div class="text-xs font-semibold text-slate-900">Check Outage Records</div><p class="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                  Matches your reported timeline with public substation drops and neighborhood flicker alerts.
+                </p></div></div><div class="flex items-start gap-3"><div class="w-6 h-6 rounded-full bg-blue-50 text-primary border border-blue-100 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">3</div><div><div class="text-xs font-semibold text-slate-900">Compare Regulations</div><p class="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                  Checks whether utility rate changes violated consumer caps or weather surcharge guidelines.
+                </p></div></div></div></div><!-- Active System Agents Card --><div class="bg-surface rounded-xl border border-border p-5 shadow-sm"><div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-slate-400 text-lg">smart_toy</span><h3 class="text-sm font-semibold text-slate-900">Investigative Agents</h3></div><span class="text-xs font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">7 Ready</span></div><p class="text-xs text-slate-500 mb-3">Our specialized agents collaborate simultaneously on your evidence:</p><div class="space-y-2 text-xs"><div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-border/60"><span class="text-slate-700 font-medium">Bill Auditor</span><span class="text-emerald-700 font-semibold text-[11px]">Online</span></div><div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-border/60"><span class="text-slate-700 font-medium">Outage Correlator</span><span class="text-emerald-700 font-semibold text-[11px]">Online</span></div><div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-border/60"><span class="text-slate-700 font-medium">Tariff &amp; Regulation Reviewer</span><span class="text-emerald-700 font-semibold text-[11px]">Online</span></div><div class="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-border/60"><span class="text-slate-700 font-medium">Report Generator</span><span class="text-emerald-700 font-semibold text-[11px]">Online</span></div></div></div><!-- Need Help Callout --><div class="bg-primary-subtle/50 border border-primary-light rounded-xl p-4 flex items-start gap-3"><span class="material-symbols-outlined text-primary text-xl shrink-0 mt-0.5">help_outline</span><div><div class="text-xs font-semibold text-slate-900">Have questions about your bill?</div><p class="text-xs text-slate-600 mt-0.5 leading-relaxed">You can still submit your investigation even if you don't have a bill handy right now.</p></div></div></div></div><script>
+    (function initIntakeWorkflow() {
+      // Prompt pills click behavior
+      const promptButtons = document.querySelectorAll('#quick-prompts button');
+      const textarea = document.getElementById('incident-description');
+      const charCounter = document.getElementById('char-counter');
+
+      if (textarea && charCounter) {
+        textarea.addEventListener('input', () => {
+          charCounter.textContent = textarea.value.length;
+        });
+      }
+
+      promptButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const text = btn.getAttribute('data-prompt');
+          if (textarea && text) {
+            textarea.value = text;
+            if (charCounter) charCounter.textContent = text.length;
+            textarea.focus();
+          }
+        });
+      });
+
+      // City Selector & Feeder buttons (Pakistan)
+      const citySelector = document.getElementById("city-selector");
+      const feederInput = document.getElementById("feeder-input");
+      const discoBadge = document.getElementById("disco-badge");
+      const feederBtns = document.querySelectorAll("#feeder-selector .feeder-btn");
+
+      if (citySelector) {
+        citySelector.addEventListener("change", () => {
+          const selectedOpt = citySelector.options[citySelector.selectedIndex];
+          const feederVal = selectedOpt.getAttribute("data-feeder");
+          const discoVal = selectedOpt.getAttribute("data-disco");
+          if (feederVal && feederInput) feederInput.value = feederVal;
+          if (discoVal && discoBadge) discoBadge.textContent = discoVal;
+          
+          feederBtns.forEach(b => {
+            if (b.getAttribute("data-city") === selectedOpt.value) {
+              b.className = "feeder-btn px-3 py-1 rounded-md text-xs font-medium transition-all bg-primary text-white shadow-sm";
+            } else {
+              b.className = "feeder-btn px-3 py-1 rounded-md text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200";
+            }
+          });
+        });
+      }
+
+      feederBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          feederBtns.forEach(b => {
+            b.className = "feeder-btn px-3 py-1 rounded-md text-xs font-medium transition-all bg-slate-100 text-slate-600 hover:bg-slate-200";
+          });
+          btn.className = "feeder-btn px-3 py-1 rounded-md text-xs font-medium transition-all bg-primary text-white shadow-sm";
+          const loc = btn.getAttribute("data-loc");
+          const disco = btn.getAttribute("data-disco");
+          const city = btn.getAttribute("data-city");
+          if (feederInput && loc) feederInput.value = loc;
+          if (discoBadge && disco) discoBadge.textContent = disco;
+          if (citySelector && city) citySelector.value = city;
+        });
+      });
+
+      // User-Editable Weather Settings Handlers
+      const tempInput = document.getElementById("weather-temp-input");
+      const tempPresetBtns = document.querySelectorAll(".temp-preset-btn");
+      tempPresetBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          const val = btn.getAttribute("data-temp");
+          if (tempInput && val) tempInput.value = val;
+        });
+      });
+
+      const condSelect = document.getElementById("weather-cond-select");
+      const condIcon = document.getElementById("weather-cond-icon");
+      if (condSelect && condIcon) {
+        condSelect.addEventListener("change", () => {
+          const opt = condSelect.options[condSelect.selectedIndex];
+          const iconName = opt.getAttribute("data-icon") || "wb_sunny";
+          condIcon.textContent = iconName;
+        });
+      }
+
+      const stormSelect = document.getElementById("weather-storm-select");
+      const stormIcon = document.getElementById("weather-storm-icon");
+      if (stormSelect && stormIcon) {
+        stormSelect.addEventListener("change", () => {
+          const opt = stormSelect.options[stormSelect.selectedIndex];
+          const iconName = opt.getAttribute("data-icon") || "check_circle";
+          const colorClass = opt.getAttribute("data-color") || "text-emerald-600";
+          stormIcon.textContent = iconName;
+          stormIcon.className = `material-symbols-outlined text-sm ${colorClass}`;
+        });
+      }
+
+      // Accordion toggle
+      const accordionToggle = document.getElementById('accordion-toggle');
+      const accordionContent = document.getElementById('accordion-content');
+      const accordionIcon = document.getElementById('accordion-icon');
+      if (accordionToggle && accordionContent && accordionIcon) {
+        accordionToggle.addEventListener('click', () => {
+          const isHidden = accordionContent.classList.contains('hidden');
+          if (isHidden) {
+            accordionContent.classList.remove('hidden');
+            accordionIcon.style.transform = 'rotate(0deg)';
+          } else {
+            accordionContent.classList.add('hidden');
+            accordionIcon.style.transform = 'rotate(-90deg)';
+          }
+        });
+      }
+
+      // Mode Card Toggle
+      const modeCards = document.querySelectorAll('.mode-card');
+      modeCards.forEach(card => {
+        card.addEventListener('click', () => {
+          modeCards.forEach(c => {
+            c.className = 'mode-card cursor-pointer p-4 rounded-xl border border-border bg-slate-50/50 hover:border-slate-300 transition-all flex flex-col justify-between';
+          });
+          card.className = 'mode-card cursor-pointer p-4 rounded-xl border-2 border-primary bg-primary-subtle/30 shadow-xs transition-all relative flex flex-col justify-between';
+        });
+      });
+
+      // Bill Upload & File Input handlers
+      const dropzone = document.getElementById('dropzone');
+      const fileInput = document.getElementById('bill-file-input');
+      const fileCard = document.getElementById('file-card');
+      const fileEmptyCard = document.getElementById('file-empty-card');
+      const replaceBtn = document.getElementById('replace-bill-btn');
+      const deleteBtn = document.getElementById('delete-bill-btn');
+      const fileNameDisplay = document.getElementById('file-name-display');
+      const fileMetaText = document.getElementById('file-meta-text');
+      const fileIcon = document.getElementById('file-icon');
+
+      function handleFileSelected(file) {
+        if (!file) return;
+        window.SELECTED_BILL_FILE = file;
+        window.SELECTED_BILL_NAME = file.name;
+        
+        const sizeStr = file.size > 1048576 
+          ? (file.size / 1048576).toFixed(1) + ' MB'
+          : (file.size / 1024).toFixed(0) + ' KB';
+          
+        if (fileNameDisplay) fileNameDisplay.textContent = file.name;
+        if (fileMetaText) fileMetaText.textContent = `${sizeStr} • Attached & ready for automated check`;
+        
+        // Read file bytes as Data URI for OCR extraction
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          window.SELECTED_BILL_DATA_URI = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+        
+        if (fileIcon) {
+          if (file.name.toLowerCase().endsWith('.pdf')) {
+            fileIcon.textContent = 'picture_as_pdf';
+          } else if (file.name.match(/\.(png|jpg|jpeg|webp)$/i)) {
+            fileIcon.textContent = 'image';
+          } else {
+            fileIcon.textContent = 'description';
+          }
+        }
+        
+        if (fileCard) fileCard.classList.remove('hidden');
+        if (fileEmptyCard) fileEmptyCard.classList.add('hidden');
+        
+        if (window.showToast) {
+          window.showToast(`📄 Attached: ${file.name} (${sizeStr})`);
+        }
+      }
+
+      if (dropzone && fileInput) {
+        dropzone.addEventListener('click', () => {
+          fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+          if (e.target.files && e.target.files.length > 0) {
+            handleFileSelected(e.target.files[0]);
+          }
+        });
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+          dropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.add('border-primary', 'bg-primary-subtle/50', 'ring-2', 'ring-primary/20');
+          }, false);
+        });
+
+        ['dragleave', 'dragend'].forEach(eventName => {
+          dropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropzone.classList.remove('border-primary', 'bg-primary-subtle/50', 'ring-2', 'ring-primary/20');
+          }, false);
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropzone.classList.remove('border-primary', 'bg-primary-subtle/50', 'ring-2', 'ring-primary/20');
+          if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            handleFileSelected(e.dataTransfer.files[0]);
+          }
+        }, false);
+      }
+
+      if (replaceBtn && fileInput) {
+        replaceBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          fileInput.click();
+        });
+      }
+
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (fileInput) fileInput.value = '';
+          window.SELECTED_BILL_FILE = null;
+          window.SELECTED_BILL_NAME = null;
+          window.SELECTED_BILL_DATA_URI = null;
+          if (fileCard) fileCard.classList.add('hidden');
+          if (fileEmptyCard) fileEmptyCard.classList.remove('hidden');
+          if (window.showToast) {
+            window.showToast('🗑️ Bill removed. You can attach another or proceed.');
+          }
+        });
+      }
+
+      // Submit Micro-interaction
+      const startBtn = document.getElementById('start-investigation-btn');
+      if (startBtn) {
+        startBtn.addEventListener('click', () => {
+          startBtn.classList.add('opacity-80', 'pointer-events-none');
+          startBtn.innerHTML = `
+            <span class="animate-spin flex items-center"><span class="material-symbols-outlined text-base">sync</span></span>
+            <span>Starting Investigation...</span>
+          `;
+          setTimeout(() => {
+            startBtn.classList.remove('opacity-80', 'pointer-events-none');
+            startBtn.innerHTML = `
+              <span class="material-symbols-outlined text-emerald-200">check_circle</span>
+              <span>Investigation Started!</span>
+            `;
+          }, 1500);
+        });
+      }
+    })();
+  </script></div></main></div></body></html>

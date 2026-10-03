@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="margin:0;padding:0;overflow:hidden;background:transparent;">
+<script>
+  window.parent.postMessage({
+    isStreamlitMessage: true,
+    type: "streamlit:componentReady",
+    apiVersion: 1
+  }, "*");
+
+  // Collapse height immediately
+  window.parent.postMessage({
+    isStreamlitMessage: true,
+    type: "streamlit:setFrameHeight",
+    height: 0
+  }, "*");
+
+  window.addEventListener("message", (event) => {
+    if (event.data && event.data.type === "streamlit:render") {
+      const args = event.data.args || {};
+      
+      // Save credentials to browser localStorage if provided
+      if (args.save_groq_key && args.save_groq_key.trim()) {
+        try { localStorage.setItem("gridguide_groq_api_key", args.save_groq_key.trim()); } catch(e){}
+      }
+      if (args.save_gemini_key && args.save_gemini_key.trim()) {
+        try { localStorage.setItem("gridguide_gemini_api_key", args.save_gemini_key.trim()); } catch(e){}
+      }
+      if (args.save_provider && args.save_provider.trim()) {
+        try { localStorage.setItem("gridguide_provider", args.save_provider.trim()); } catch(e){}
+      }
+      if (args.save_groq_model && args.save_groq_model.trim()) {
+        try { localStorage.setItem("gridguide_groq_model", args.save_groq_model.trim()); } catch(e){}
+      }
+      if (args.save_gemini_model && args.save_gemini_model.trim()) {
+        try { localStorage.setItem("gridguide_gemini_model", args.save_gemini_model.trim()); } catch(e){}
+      }
+      
+      if (args.action === "clear") {
+        try {
+          localStorage.removeItem("gridguide_groq_api_key");
+          localStorage.removeItem("gridguide_gemini_api_key");
+          localStorage.removeItem("gridguide_provider");
+          localStorage.removeItem("gridguide_groq_model");
+          localStorage.removeItem("gridguide_gemini_model");
+        } catch(e){}
+      }
+      
+      // Read current storage values
+      let groqKey = "";
+      let geminiKey = "";
+      let provider = "";
+      let groqModel = "";
+      let geminiModel = "";
+      try {
+        groqKey = localStorage.getItem("gridguide_groq_api_key") || "";
+        geminiKey = localStorage.getItem("gridguide_gemini_api_key") || "";
+        provider = localStorage.getItem("gridguide_provider") || "";
+        groqModel = localStorage.getItem("gridguide_groq_model") || "";
+        geminiModel = localStorage.getItem("gridguide_gemini_model") || "";
+      } catch(e){}
+      
+      // Send to Streamlit
+      window.parent.postMessage({
+        isStreamlitMessage: true,
+        type: "streamlit:setComponentValue",
+        dataType: "json",
+        value: {
+          groq_api_key: groqKey,
+          gemini_api_key: geminiKey,
+          provider: provider,
+          groq_model: groqModel,
+          gemini_model: geminiModel,
+          ts: Date.now()
+        }
+      }, "*");
+    }
+  });
+</script>
+</body>
+</html>

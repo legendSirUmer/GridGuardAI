@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "slate-bg": "#F8FAFC", "card-bg": "#FFFFFF", "border-subtle": "#E2E8F0", "text-main": "#0F172A", "text-muted": "#64748B", "text-body": "#334155", "primary-blue": "#2563EB", "success-green": "#10B981" }, "fontFamily": { "sans": ["Inter", "sans-serif"] } } } }</script></head><body class="bg-[#F8FAFC] text-[#0F172A] font-sans antialiased selection:bg-blue-100 selection:text-blue-900"><aside class="fixed left-0 top-0 h-screen w-72 bg-white border-r border-[#E2E8F0] flex flex-col z-50 shadow-sm"><div class="h-16 px-6 flex items-center gap-3 border-b border-[#E2E8F0]"><img alt="GridGuide AI Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1WHuiX2ElCIF-F0h0XaHWXvZauANanA1exXea0H0G13b8-53HqWnx0hKiQe-xu0b80R7hAT1yWIscdjBbgV3e1oN6PmeGLWqj1KnOv8l9JI028XGMdLBxkIrJsjRwIzTboVqy5UMvQyXhpEX_A26aHHlVMTNbT5htJNLme7JUtTQNm4_Khw_Qiq28t4eHHUaDTxNPWWAIdNniUfLupn2QwLxfHaFP_I5DfzxlwCdCnBtGiPyUbC2mbx87g"/><div class="flex flex-col justify-center overflow-hidden"><span class="font-bold text-base text-[#0F172A] tracking-tight truncate">GridGuide AI</span><span class="text-xs font-semibold text-[#2563EB] tracking-wider uppercase">Smart Grid Assistant</span></div></div><nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto"><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] font-medium text-sm transition-colors" data-path="overview" href="#"><span class="material-symbols-outlined text-[20px]">dashboard</span><span class="truncate">Overview</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] font-medium text-sm transition-colors" data-path="investigate" href="#"><span class="material-symbols-outlined text-[20px]">add_circle</span><span class="truncate">Start Investigation</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] font-medium text-sm transition-colors" data-path="investigations" href="#"><span class="material-symbols-outlined text-[20px]">folder_open</span><span class="truncate">All Cases</span></a><a aria-current="page" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-blue-50 text-[#2563EB] font-semibold text-sm shadow-xs border border-blue-100" data-path="live-multi-agent-pipeline" href="#"><span class="material-symbols-outlined text-[20px]">hub</span><span class="truncate">Live Pipeline</span><span class="ml-auto w-2 h-2 rounded-full bg-[#2563EB] animate-pulse"></span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] font-medium text-sm transition-colors" data-path="evidence-explorer" href="#"><span class="material-symbols-outlined text-[20px]">verified_user</span><span class="truncate">Evidence &amp; Proof</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] font-medium text-sm transition-colors" data-path="analytics" href="#"><span class="material-symbols-outlined text-[20px]">bar_chart</span><span class="truncate">Usage Analytics</span></a><a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] font-medium text-sm transition-colors" data-path="interactive-hackathon-demo" href="#"><div class="flex items-center gap-3 truncate"><span class="material-symbols-outlined text-[20px] text-amber-500">bolt</span><span class="truncate">Interactive Demo</span></div><span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-wider border border-emerald-200">READY</span></a><a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] font-medium text-sm transition-colors" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">tune</span><span class="truncate">Preferences</span></a></nav><div class="p-4 m-3 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col gap-1.5"><div class="flex items-center gap-2"><span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span></span><span class="text-xs font-semibold text-emerald-700">All Agents Running</span></div><div class="text-xs text-slate-500">Demo Area A • Live Telemetry</div></div></aside><div class="pl-72 flex flex-col min-h-screen bg-[#F8FAFC]"><header class="fixed top-0 left-72 right-0 h-16 bg-white/95 backdrop-blur-md z-40 border-b border-[#E2E8F0] flex items-center justify-between px-8"><div class="flex items-center gap-2 text-sm"><span class="font-medium text-slate-500">Cases</span><span class="text-slate-300">/</span><span class="font-semibold text-[#0F172A]">Incident #GG-2026-0142</span><span class="ml-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-50 text-[#2563EB] border border-blue-100">Live Analysis</span></div><div class="flex items-center gap-4"><div class="hidden md:flex items-center gap-2 bg-[#F1F5F9] px-3.5 py-1.5 rounded-lg text-slate-400 text-xs w-64 border border-slate-200/60"><span class="material-symbols-outlined text-base">search</span><span>Search evidence or claims...</span><kbd class="ml-auto px-1.5 py-0.5 bg-white border border-slate-200 rounded text-slate-500 font-mono text-[10px]">⌘K</kbd></div><button class="relative p-2 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors" type="button"><span class="material-symbols-outlined text-xl">notifications</span><span class="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-blue-600"></span></button><div class="h-6 w-px bg-slate-200"></div><div class="flex items-center gap-3"><img alt="Profile" class="w-8 h-8 rounded-full object-cover ring-2 ring-slate-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZ99rV9Xq_ON7nv3fArBHUiEldxtW07MPQuXWflquzivB8_oIV1gf7_rpkCeCeSLZu1HpNwhWwuRXkKTM4GGQnssv5rn4PLElQn9UwMpyTWP0ln_WzCB-STx48CkKb4jOWrYgBCy0MSzLdf0PRt6t7rB_ohnO-dRJQbaj-bDYuJ3vK6eFApcIGvwAegr2Q3IWDxq854O6kE-81phyAp6Kc_0lvRkHX77F3JsNO36teIj4rphPDb5s7eQ"/><div class="hidden lg:flex flex-col text-left"><span class="text-sm font-semibold text-[#0F172A]">Dr. K. Vance</span><span class="text-xs text-slate-500">Lead Analyst</span></div></div></div></header><main class="w-full pt-20 px-8 pb-12"><div class="max-w-7xl mx-auto space-y-6">
+<!-- Modern Friendly Banner & Header -->
+<div class="bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-xs">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+<div class="space-y-2">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="px-2.5 py-1 rounded-md bg-blue-50 text-[#2563EB] text-xs font-semibold uppercase tracking-wider border border-blue-100">
+            Case #GG-2026-0142
+          </span>
+<span class="flex items-center gap-1.5 text-xs text-slate-500">
+<span class="material-symbols-outlined text-sm text-slate-400">location_on</span>
+            Demo Area A (Sector A-4)
+          </span>
+<span class="text-slate-300">•</span>
+<span class="flex items-center gap-1.5 text-xs text-slate-500">
+<span class="material-symbols-outlined text-sm text-slate-400">schedule</span>
+            Started 2 mins ago
+          </span>
+</div>
+<h1 class="text-2xl font-bold text-[#0F172A] tracking-tight">
+          Investigation in Progress: High Electricity Bill &amp; Power Outages
+        </h1>
+<p class="text-sm text-[#334155]">
+          Autonomous AI agents are checking bill charges, verifying outage timestamps, and assessing utility tariff credits.
+        </p>
+</div>
+<div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0 flex-wrap">
+<div class="flex items-center gap-3 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200">
+<div class="relative flex items-center justify-center">
+<span class="material-symbols-outlined text-[#2563EB] animate-spin text-xl" id="pipeline-spinner-icon">progress_activity</span>
+</div>
+<div class="text-xs font-medium">
+<span class="block text-[#0F172A] font-semibold" id="pipeline-step-badge">Step 3 of 5 In Progress</span>
+<span class="text-slate-500" id="pipeline-est-time">Estimated ~12s remaining</span>
+</div>
+</div>
+<button id="pause-investigation-btn" class="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-slate-300 bg-white text-[#334155] font-semibold text-xs hover:bg-slate-50 hover:border-slate-400 transition-all shadow-xs cursor-pointer" type="button">
+<span class="material-symbols-outlined text-base text-slate-600" id="pause-btn-icon">pause_circle</span>
+<span id="pause-btn-text">Pause Investigation</span>
+</button>
+<button id="pipeline-share-btn" class="flex items-center justify-center gap-1 px-3 py-2 rounded-xl border border-[#E2E8F0] bg-white text-slate-700 hover:bg-slate-50 hover:text-[#0F172A] font-medium text-xs transition-all shadow-xs cursor-pointer" type="button">
+<span class="material-symbols-outlined text-base text-slate-500">share</span>
+<span>Share</span>
+</button>
+<button id="pipeline-export-btn" class="flex items-center justify-center gap-1 px-3 py-2 rounded-xl border border-[#E2E8F0] bg-white text-slate-700 hover:bg-slate-50 hover:text-[#0F172A] font-medium text-xs transition-all shadow-xs cursor-pointer" type="button">
+<span class="material-symbols-outlined text-base text-slate-500">code</span>
+<span>Export</span>
+</button>
+<button id="pipeline-pdf-btn" class="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#2563EB] text-white hover:bg-blue-700 font-medium text-xs transition-all shadow-xs shadow-[#2563EB]/25 cursor-pointer" type="button">
+<span class="material-symbols-outlined text-base">download</span>
+<span>Download PDF Report</span>
+</button>
+</div>
+</div>
+<!-- Progress Bar Strip -->
+<div class="mt-6 pt-5 border-t border-slate-100 flex flex-col gap-2">
+<div class="flex items-center justify-between text-xs">
+<span class="font-semibold text-[#0F172A] flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span id="pipeline-status-text">Cross-referencing meter spikes with substation blackout records</span>
+</span>
+<span class="font-semibold text-[#2563EB]" id="pipeline-pct-text">65% Completed</span>
+</div>
+<div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+<div class="bg-[#2563EB] h-full rounded-full transition-all duration-700 ease-out" id="pipeline-bar-fill" style="width: 65%"></div>
+</div>
+</div>
+</div>
+<!-- Intuitive 5-Step Pipeline Stepper -->
+<div class="bg-white rounded-2xl border border-[#E2E8F0] p-5 shadow-xs overflow-x-auto">
+  <div class="flex items-center justify-between min-w-[760px] gap-2">
+    <!-- Step 1 -->
+    <div class="flex items-center gap-3 flex-1" id="step-node-1">
+      <div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 font-semibold border border-emerald-200" id="step-icon-1">
+        <span class="material-symbols-outlined text-lg">check</span>
+      </div>
+      <div class="flex flex-col min-w-0">
+        <span class="text-sm font-semibold text-[#0F172A] truncate">1. Bill Ingestion</span>
+        <span class="text-xs text-emerald-600 font-medium" id="step-badge-1">Completed (0.8s)</span>
+      </div>
+    </div>
+    <div class="h-0.5 flex-1 max-w-[40px] bg-emerald-300" id="step-div-1"></div>
+    
+    <!-- Step 2 -->
+    <div class="flex items-center gap-3 flex-1" id="step-node-2">
+      <div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 font-semibold border border-emerald-200" id="step-icon-2">
+        <span class="material-symbols-outlined text-lg">check</span>
+      </div>
+      <div class="flex flex-col min-w-0">
+        <span class="text-sm font-semibold text-[#0F172A] truncate">2. Outage Check</span>
+        <span class="text-xs text-emerald-600 font-medium" id="step-badge-2">Completed (1.6s)</span>
+      </div>
+    </div>
+    <div class="h-0.5 flex-1 max-w-[40px] bg-blue-300" id="step-div-2"></div>
+    
+    <!-- Step 3 (Active) -->
+    <div class="flex items-center gap-3 flex-1 bg-blue-50/70 p-2 rounded-xl border border-blue-100 transition-all duration-300" id="step-node-3">
+      <div class="w-9 h-9 rounded-full bg-[#2563EB] text-white flex items-center justify-center shrink-0 font-bold shadow-xs" id="step-icon-3">
+        <span class="material-symbols-outlined text-lg animate-spin" id="step-icon-sym-3">autorenew</span>
+      </div>
+      <div class="flex flex-col min-w-0">
+        <span class="text-sm font-bold text-[#2563EB] truncate" id="step-title-3">3. Cross-Exam</span>
+        <span class="text-xs text-blue-700 font-medium" id="step-badge-3">In Progress (68%)</span>
+      </div>
+    </div>
+    <div class="h-0.5 flex-1 max-w-[40px] bg-slate-200 transition-all duration-500" id="step-div-3"></div>
+    
+    <!-- Step 4 -->
+    <div class="flex items-center gap-3 flex-1 opacity-70 transition-all duration-300" id="step-node-4">
+      <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center shrink-0 font-semibold border border-slate-200" id="step-icon-4">
+        4
+      </div>
+      <div class="flex flex-col min-w-0">
+        <span class="text-sm font-medium text-slate-700 truncate" id="step-title-4">4. Regulation Check</span>
+        <span class="text-xs text-slate-400 font-medium" id="step-badge-4">Queued</span>
+      </div>
+    </div>
+    <div class="h-0.5 flex-1 max-w-[40px] bg-slate-200 transition-all duration-500" id="step-div-4"></div>
+    
+    <!-- Step 5 -->
+    <div class="flex items-center gap-3 flex-1 opacity-70 transition-all duration-300" id="step-node-5">
+      <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center shrink-0 font-semibold border border-slate-200" id="step-icon-5">
+        5
+      </div>
+      <div class="flex flex-col min-w-0">
+        <span class="text-sm font-medium text-slate-700 truncate" id="step-title-5">5. Final Report</span>
+        <span class="text-xs text-slate-400 font-medium" id="step-badge-5">Queued</span>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Dual Section: AI Agent Swarm Status & Live Insights -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Left: AI Agent Swarm Cards (7 Cols) -->
+<div class="lg:col-span-7 space-y-4">
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-[#2563EB] text-xl">smart_toy</span>
+      <h2 class="text-base font-bold text-[#0F172A]">AI Agent Team Working on Your Case</h2>
+    </div>
+    <span class="text-xs font-semibold text-slate-500" id="agents-active-count">5 Specialized Agents Active</span>
+  </div>
+  <div class="space-y-3">
+    <!-- Agent 1: Bill Auditor (Done) -->
+    <div class="bg-white rounded-xl p-4 border border-[#E2E8F0] shadow-xs hover:border-emerald-200 transition-all flex items-start justify-between gap-4" id="agent-card-1">
+      <div class="flex items-start gap-3.5">
+        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100">
+          <span class="material-symbols-outlined text-xl">receipt_long</span>
+        </div>
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <h3 class="text-sm font-bold text-[#0F172A]">Bill Auditor</h3>
+            <span class="text-xs text-slate-400">• Tariff Specialist</span>
+          </div>
+          <p class="text-xs text-[#334155] leading-relaxed" id="agent-1-desc">
+            Analyzed uploaded bill: verified 410 kWh usage and rate brackets. Identified $142.80 total charge.
+          </p>
+        </div>
+      </div>
+      <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold shrink-0 border border-emerald-200" id="agent-1-badge">
+        <span class="material-symbols-outlined text-xs">check</span>
+        Done
+      </span>
+    </div>
+
+    <!-- Agent 2: Outage Investigator (Active) -->
+    <div class="bg-white rounded-xl p-4 border-2 border-blue-400 shadow-md ring-4 ring-blue-50 transition-all flex items-start justify-between gap-4 relative overflow-hidden" id="agent-card-2">
+      <div class="flex items-start gap-3.5">
+        <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center shrink-0 border border-blue-200" id="agent-2-icon-box">
+          <span class="material-symbols-outlined text-xl animate-pulse" id="agent-2-icon">power_off</span>
+        </div>
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <h3 class="text-sm font-bold text-[#2563EB]" id="agent-2-title">Outage Investigator</h3>
+            <span class="text-xs text-blue-600 font-semibold">• Grid Telemetry</span>
+          </div>
+          <p class="text-xs text-[#0F172A] leading-relaxed font-medium" id="agent-2-desc">
+            Cross-referencing neighborhood outage reports with local substation breaker logs.
+          </p>
+          <div class="pt-1.5 flex items-center gap-2" id="agent-2-bar-container">
+            <div class="w-32 bg-slate-100 h-1.5 rounded-full overflow-hidden">
+              <div class="bg-[#2563EB] h-full rounded-full transition-all duration-300" id="agent-2-bar" style="width: 68%"></div>
+            </div>
+            <span class="text-[11px] text-blue-700 font-semibold" id="agent-2-pct">Matching logs (68%)</span>
+          </div>
+        </div>
+      </div>
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-100 text-[#2563EB] text-xs font-bold shrink-0 transition-all" id="agent-2-badge">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#2563EB] animate-ping" id="agent-2-ping"></span>
+        Working
+      </span>
+    </div>
+
+    <!-- Agent 3: Environment Analyst (Done) -->
+    <div class="bg-white rounded-xl p-4 border border-[#E2E8F0] shadow-xs hover:border-emerald-200 transition-all flex items-start justify-between gap-4" id="agent-card-3">
+      <div class="flex items-start gap-3.5">
+        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-100">
+          <span class="material-symbols-outlined text-xl">wb_sunny</span>
+        </div>
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <h3 class="text-sm font-bold text-[#0F172A]">Environment Analyst</h3>
+            <span class="text-xs text-slate-400">• Weather Correlator</span>
+          </div>
+          <p class="text-xs text-[#334155] leading-relaxed" id="agent-3-desc">
+            Checking weather correlation: clear skies, mild temperature recorded during power drop hours.
+          </p>
+        </div>
+      </div>
+      <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold shrink-0 border border-emerald-200" id="agent-3-badge">
+        <span class="material-symbols-outlined text-xs">check</span>
+        Done
+      </span>
+    </div>
+
+    <!-- Agent 4: Evidence Critic (Queued -> Analyzing) -->
+    <div class="bg-white rounded-xl p-4 border border-[#E2E8F0] shadow-xs flex items-start justify-between gap-4 transition-all duration-300" id="agent-card-4">
+      <div class="flex items-start gap-3.5">
+        <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 border border-slate-200 transition-colors" id="agent-4-icon-box">
+          <span class="material-symbols-outlined text-xl" id="agent-4-icon">gavel</span>
+        </div>
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <h3 class="text-sm font-semibold text-[#0F172A]" id="agent-4-title">Evidence Critic</h3>
+            <span class="text-xs text-slate-400">• Discrepancy Examiner</span>
+          </div>
+          <p class="text-xs text-slate-500 leading-relaxed" id="agent-4-desc">
+            Reviewing bill timing vs outage timeline for discrepancies and meter inaccuracies.
+          </p>
+        </div>
+      </div>
+      <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-medium shrink-0 transition-all" id="agent-4-badge">
+        Queued
+      </span>
+    </div>
+
+    <!-- Agent 5: Report Generator (Queued -> Synthesizing) -->
+    <div class="bg-white rounded-xl p-4 border border-[#E2E8F0] shadow-xs flex items-start justify-between gap-4 transition-all duration-300" id="agent-card-5">
+      <div class="flex items-start gap-3.5">
+        <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 border border-slate-200 transition-colors" id="agent-5-icon-box">
+          <span class="material-symbols-outlined text-xl" id="agent-5-icon">description</span>
+        </div>
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <h3 class="text-sm font-semibold text-[#0F172A]" id="agent-5-title">Report Generator</h3>
+            <span class="text-xs text-slate-400">• Dispute Brief</span>
+          </div>
+          <p class="text-xs text-slate-500 leading-relaxed" id="agent-5-desc">
+            Synthesizing executive summary and next steps with regulatory rebate forms.
+          </p>
+        </div>
+      </div>
+      <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-medium shrink-0 transition-all" id="agent-5-badge">
+        Queued
+      </span>
+    </div>
+  </div>
+</div>
+<!-- Right: Live Findings Preview (5 Cols) -->
+<div class="lg:col-span-5 space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-amber-500 text-xl">lightbulb</span>
+<h2 class="text-base font-bold text-[#0F172A]">Key Live Findings as They Arrive</h2>
+</div>
+<span class="text-xs text-emerald-600 font-semibold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            Auto-updating
+          </span>
+</div>
+<div class="bg-white rounded-2xl border border-[#E2E8F0] p-5 shadow-xs space-y-4 flex flex-col justify-between min-h-[460px]">
+<div class="space-y-3.5">
+<!-- Finding 1 -->
+<div class="p-3.5 rounded-xl bg-blue-50/60 border border-blue-100 flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-blue-100 text-[#2563EB] flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-base">warning</span>
+</div>
+<div class="space-y-1">
+<h4 class="text-xs font-bold text-[#0F172A]">Confirmed Outage Conflict</h4>
+<p class="text-xs text-[#334155] leading-relaxed">
+                Feeder 4 recorded a 42-minute trip on August 28th during which your smart meter recorded <strong>+4.8 kWh</strong> of active usage.
+              </p>
+</div>
+</div>
+<!-- Finding 2 -->
+<div class="p-3.5 rounded-xl bg-emerald-50/60 border border-emerald-100 flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-base">savings</span>
+</div>
+<div class="space-y-1">
+<h4 class="text-xs font-bold text-emerald-900">Eligible Tariff Refund</h4>
+<p class="text-xs text-emerald-800 leading-relaxed">
+                State Rule 14 guarantees a service credit for unannounced outages longer than 30 minutes without severe weather causes.
+              </p>
+</div>
+</div>
+<!-- Finding 3 -->
+<div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-start gap-3">
+<div class="w-8 h-8 rounded-lg bg-slate-200 text-slate-700 flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-base">analytics</span>
+</div>
+<div class="space-y-1">
+<h4 class="text-xs font-bold text-[#0F172A]">Inductive Surge Anomaly</h4>
+<p class="text-xs text-[#334155] leading-relaxed">
+                Smart meter likely mistook transformer back-feed voltage spike as consumer load when power was restored.
+              </p>
+</div>
+</div>
+<!-- Substation Snapshot Pill Card -->
+<div class="p-3.5 rounded-xl border border-slate-200 bg-white flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-base">grid_view</span>
+</div>
+<div>
+<div class="text-xs font-bold text-[#0F172A]">Sand Hill Substation A-4</div>
+<div class="text-[11px] text-slate-500">Bus Voltage: 13.8 kV • Feeder: 84.2%</div>
+</div>
+</div>
+<span class="px-2 py-0.5 text-[11px] font-semibold rounded bg-amber-50 text-amber-700 border border-amber-200">
+                Outage Logged
+              </span>
+</div>
+</div>
+<!-- Bottom Action Prompt -->
+<div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+<span class="text-xs text-slate-500">Report draft will automatically generate once complete</span>
+<button id="pipeline-bottom-export-btn" class="text-xs font-semibold text-[#2563EB] hover:underline flex items-center gap-1 cursor-pointer" type="button">
+<span>Export Data</span>
+<span class="material-symbols-outlined text-xs">download</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div></main></div></body></html>
