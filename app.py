@@ -9,7 +9,14 @@ import base64
 from datetime import datetime
 from dotenv import load_dotenv
 import streamlit.components.v1 as components
-import markdown
+try:
+    import markdown
+except ImportError:
+    class _MockMarkdown:
+        @staticmethod
+        def markdown(text, **kwargs):
+            return html.escape(text).replace("\n", "<br>")
+    markdown = _MockMarkdown()
 import pdfplumber
 import pypdf
 from PIL import Image
