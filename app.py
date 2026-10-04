@@ -21,6 +21,23 @@ import pdfplumber
 import pypdf
 from PIL import Image
 
+# Pydantic v1 / ChromaDB compatibility patch for Python 3.14+
+try:
+    import pydantic.v1.fields as _pyd_fields
+    _orig_infer = _pyd_fields.ModelField.infer
+    def _patched_infer(*args, **kwargs):
+        if kwargs.get('annotation') is _pyd_fields.Undefined:
+            from typing import Any
+            kwargs['annotation'] = Any
+        elif len(args) > 2 and args[2] is _pyd_fields.Undefined:
+            from typing import Any
+            args = list(args)
+            args[2] = Any
+        return _orig_infer(*args, **kwargs)
+    _pyd_fields.ModelField.infer = _patched_infer
+except Exception:
+    pass
+
 try:
     from crewai import Agent, Task, Crew, Process, LLM
     HAS_CREWAI = True
