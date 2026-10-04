@@ -402,6 +402,34 @@ st.markdown("""
 <style>
     [data-testid="stHeader"], header[data-testid="stHeader"], .stApp > header { display: none !important; }
     [data-testid="stSidebar"], section[data-testid="stSidebar"], [data-testid="collapsedControl"] { display: none !important; width: 0 !important; }
+    
+    /* 1. Eliminate dull/gray screen: force 100% opacity across all states (running, stale, idle) */
+    .stApp,
+    [data-testid="stAppViewContainer"],
+    [data-testid="stMain"],
+    [data-testid="stMainBlockContainer"],
+    div[data-testid="stAppViewBlockContainer"],
+    div.stCustomComponentV1,
+    iframe,
+    [data-test-script-state="running"] [data-testid="stMainBlockContainer"],
+    [data-test-script-state="running"] [data-testid="stAppViewContainer"],
+    [data-test-script-state="running"] div.stCustomComponentV1,
+    [data-test-script-state="running"] iframe,
+    .stApp[data-test-script-state="running"] * {
+        opacity: 1 !important;
+        filter: none !important;
+        -webkit-filter: none !important;
+        transition: none !important;
+    }
+
+    /* 2. Hide Streamlit status widget spinner that dims the screen */
+    [data-testid="stStatusWidget"],
+    .stStatusWidget,
+    div[data-testid="stStatusWidget"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
     .stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"] { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; overflow-x: hidden !important; }
     [data-testid="stMainBlockContainer"], .block-container, div[data-testid="stAppViewBlockContainer"] {
         width: 100% !important;

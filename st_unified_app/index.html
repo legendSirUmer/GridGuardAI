@@ -2032,24 +2032,51 @@ Loading statutory dispute petition...
       } catch(e) {}
     }
 
+    // Keep-alive heartbeat: ping parent every 25 seconds so Streamlit never marks the session idle or dims the UI
+    setInterval(() => {
+      try {
+        window.parent.postMessage({
+          isStreamlitMessage: true,
+          type: "streamlit:setFrameHeight",
+          height: lastHeight || 950
+        }, "*");
+      } catch(e) {}
+    }, 25000);
+
     // Responsive Mobile Drawer Toggle
     window.toggleMobileSidebar = function(show) {
       const sidebar = document.getElementById('global-sidebar');
       const backdrop = document.getElementById('sidebar-backdrop');
+      
+      // On desktop (>= 768px), sidebar is fixed and backdrop must ALWAYS remain hidden
+      if (window.innerWidth >= 768) {
+        if (sidebar) {
+          sidebar.classList.remove('mobile-drawer-open');
+          sidebar.classList.remove('-translate-x-full');
+        }
+        if (backdrop) {
+          backdrop.classList.add('hidden');
+          backdrop.classList.add('opacity-0');
+        }
+        return;
+      }
+
       if (!sidebar) return;
-      const isCurrentlyOpen = !sidebar.classList.contains('-translate-x-full');
+      const isCurrentlyOpen = sidebar.classList.contains('mobile-drawer-open');
       const shouldOpen = show !== undefined ? show : !isCurrentlyOpen;
       if (shouldOpen) {
+        sidebar.classList.add('mobile-drawer-open');
         sidebar.classList.remove('-translate-x-full');
         if (backdrop) {
           backdrop.classList.remove('hidden');
           setTimeout(() => backdrop.classList.remove('opacity-0'), 10);
         }
       } else {
+        sidebar.classList.remove('mobile-drawer-open');
         sidebar.classList.add('-translate-x-full');
         if (backdrop) {
           backdrop.classList.add('opacity-0');
-          setTimeout(() => backdrop.classList.add('hidden'), 300);
+          setTimeout(() => backdrop.classList.add('hidden'), 250);
         }
       }
     };
