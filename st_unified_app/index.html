@@ -268,6 +268,8 @@
             </h1>
             <p class="text-sm text-slate-500 mt-1">Autonomous grid intelligence & utility tariff auditing engine</p>
           </div>
+          <!-- Filter & Action controls -->
+          <div class="flex items-center gap-2 flex-wrap">
             <div class="flex items-center bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 shadow-xs text-xs">
               <span class="material-symbols-outlined text-blue-600 text-base mr-1.5">location_on</span>
               <select id="overview-area-select" class="font-semibold text-slate-800 bg-transparent border-0 outline-none cursor-pointer pr-1 text-xs" onchange="window.selectActiveArea(this.value)" title="Switch monitored grid area">
@@ -383,18 +385,9 @@
                   <p class="text-[11px] text-slate-500" id="gis-substation-label">132kV Grid Substation • Real-Time Breaker Topology</p>
                 </div>
               </div>
-              <div class="flex items-center gap-1.5 text-[11px] flex-wrap">
+              <div class="flex items-center gap-1.5 text-[11px]">
                 <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-semibold" id="gis-disco-badge">IESCO</span>
                 <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-medium" id="gis-bus-voltage">11.2 kV Bus</span>
-                <div class="h-3.5 w-px bg-slate-200 mx-0.5 hidden sm:block"></div>
-                <!-- Interactive Quick Switcher Pills -->
-                <div class="flex items-center gap-1" id="gis-city-pills">
-                  <button type="button" data-city="islamabad" class="gis-city-pill px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-600 text-white shadow-2xs cursor-pointer" onclick="window.selectActiveArea('islamabad')">Islamabad</button>
-                  <button type="button" data-city="lahore" class="gis-city-pill px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors cursor-pointer" onclick="window.selectActiveArea('lahore')">Lahore</button>
-                  <button type="button" data-city="karachi" class="gis-city-pill px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors cursor-pointer" onclick="window.selectActiveArea('karachi')">Karachi</button>
-                  <button type="button" data-city="rawalpindi" class="gis-city-pill px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors cursor-pointer" onclick="window.selectActiveArea('rawalpindi')">Rawalpindi</button>
-                  <button type="button" data-city="peshawar" class="gis-city-pill px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors cursor-pointer" onclick="window.selectActiveArea('peshawar')">Peshawar</button>
-                </div>
               </div>
             </div>
             
@@ -1423,6 +1416,9 @@
 [SCADA LDC DISPATCH LOG] Initializing...
             </pre>
           </div>
+        </div>
+      </div>
+
       <!-- ==================================================== -->
       <!-- VIEW 6: EVIDENCE EXPLORER & CHAIN OF CUSTODY         -->
       <!-- ==================================================== -->
