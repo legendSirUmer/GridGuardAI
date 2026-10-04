@@ -23,6 +23,13 @@ from reportlab.platypus import (
 )
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
+from services import (
+    generate_nepra_petition,
+    get_feeder_gis_data,
+    analyze_12_month_history,
+    generate_dispatch_alerts
+)
+
 # Load environment variables
 load_dotenv()
 
@@ -729,7 +736,7 @@ def run_investigation(desc, location="", weather="", bill_ocr_context=""):
         return f"ERROR: Failed to run investigation -> {str(e)}"
 
 # PDF Report Dossier Generator
-def generate_pdf_report_bytes(case_id, case_area, incident_desc, active_label, raw_report_text, user_name="Engr. Umer Hussain"):
+def generate_pdf_report_bytes(case_id, case_area, incident_desc, active_label, raw_report_text, user_name="Engr. Umer Hussain", nepra_petition=None, dispatch_data=None):
     buffer = io.BytesIO()
     doc = SimpleDocTemplate(
         buffer,
@@ -891,6 +898,51 @@ def generate_pdf_report_bytes(case_id, case_area, incident_desc, active_label, r
                 
         story.append(Spacer(1, 4))
         
+    story.append(Spacer(1, 6))
+
+    # 4b. NEPRA Statutory Legal Dispute Annexure
+    if nepra_petition:
+        story.append(Spacer(1, 4))
+        story.append(Paragraph("<b>4. STATUTORY DISPUTE ANNEXURE: NEPRA ACT SECTION 38</b>", s_h1))
+        story.append(HRFlowable(width="100%", thickness=0.5, color=c_border, spaceAfter=4))
+        
+        nepra_tbl_data = [
+            [
+                Paragraph("<b>DISPUTED SURGE UNITS</b>", s_meta_label),
+                Paragraph("<b>AUDITED BASELINE</b>", s_meta_label),
+                Paragraph("<b>STATUTORY REFUND CLAIM</b>", s_meta_label),
+                Paragraph("<b>REGULATORY AUTHORITY</b>", s_meta_label)
+            ],
+            [
+                Paragraph(f"<b>{html.escape(str(nepra_petition.get('disputed_units', '73.8 kWh')))}</b>", s_meta_val),
+                Paragraph(f"<b>{html.escape(str(nepra_petition.get('adjusted_units', '336.2 kWh')))}</b>", s_meta_val),
+                Paragraph(f"<font color='#059669'><b>{html.escape(str(nepra_petition.get('refund_claim', 'Rs. 5,665.00')))}</b></font>", s_meta_val),
+                Paragraph("<b>NEPRA S.R.O. 124(I)/2021</b>", s_meta_val)
+            ]
+        ]
+        nepra_tbl = Table(nepra_tbl_data, colWidths=[135, 135, 135, 135])
+        nepra_tbl.setStyle(TableStyle([
+            ('BACKGROUND', (0,0), (-1,-1), colors.HexColor("#FEF2F2")),
+            ('BOX', (0,0), (-1,-1), 0.5, colors.HexColor("#FECACA")),
+            ('INNERGRID', (0,0), (-1,-1), 0.5, colors.HexColor("#FECACA")),
+            ('TOPPADDING', (0,0), (-1,-1), 4),
+            ('BOTTOMPADDING', (0,0), (-1,-1), 4),
+            ('LEFTPADDING', (0,0), (-1,-1), 6),
+            ('RIGHTPADDING', (0,0), (-1,-1), 6),
+        ]))
+        story.append(nepra_tbl)
+        story.append(Spacer(1, 4))
+        story.append(Paragraph("<i>Legal Basis: NEPRA Consumer Service Manual (CSM) Chapter 4 & Sec 38 Petition. Relief Claimed: Direct billing ledger adjustment and waiver of Late Payment Surcharges (LPS).</i>", ParagraphStyle('NepraNote', parent=styles['Normal'], fontName='Helvetica-Oblique', fontSize=7.5, leading=10, textColor=c_muted)))
+
+    # 4c. Lineman Field Dispatch Directive
+    if dispatch_data:
+        story.append(Spacer(1, 6))
+        story.append(Paragraph("<b>5. PRIORITY 1 LINEMAN WORK ORDER & DISPATCH DIRECTIVE</b>", s_h1))
+        story.append(HRFlowable(width="100%", thickness=0.5, color=c_border, spaceAfter=4))
+        wo_id = dispatch_data.get('work_order_id', 'WO-IESCO-P1')
+        wo_text = f"<b>Work Order #{html.escape(wo_id)}:</b> Priority P1 field dispatch assigned to target feeder: <b>{html.escape(case_area)}</b>. Directives: (1) Isolate 11kV spur via drop-out fuse (D-Fuse); (2) Recalibrate distribution transformer tap by -2.5% to normalize bus voltage; (3) Clear inductive surge latch on consumer AMI meter."
+        story.append(Paragraph(wo_text, ParagraphStyle('WOBrief', parent=styles['Normal'], fontName='Helvetica', fontSize=8, leading=11, textColor=c_dark)))
+    
     story.append(Spacer(1, 8))
     
     # 5. Regulatory Footer
@@ -1039,6 +1091,35 @@ if st.session_state.crew_result:
         active_model_label
     )
 
+# Compute Dynamic Enterprise Services Data (Features 1, 2, 5, 6)
+current_units_str = (st.session_state.bill_ocr_data.get("units") if isinstance(st.session_state.bill_ocr_data, dict) else "") or "410 kWh"
+current_amount_str = (st.session_state.bill_ocr_data.get("amount") if isinstance(st.session_state.bill_ocr_data, dict) else "") or "Rs. 25,750"
+current_ref_str = (st.session_state.bill_ocr_data.get("ref") if isinstance(st.session_state.bill_ocr_data, dict) else "") or "14-88412-0498112-U"
+current_disco_str = (st.session_state.bill_ocr_data.get("disco") if isinstance(st.session_state.bill_ocr_data, dict) else "") or st.session_state.case_area
+
+gis_data = get_feeder_gis_data(st.session_state.case_area, case_id=st.session_state.case_id)
+tariff_data = analyze_12_month_history(current_units_str, current_amount_str, current_disco_str)
+dispatch_data = generate_dispatch_alerts(
+    case_id=st.session_state.case_id,
+    location=st.session_state.case_area,
+    incident_desc=st.session_state.incident_desc,
+    billed_units=current_units_str,
+    billed_amount=current_amount_str,
+    disco_name=current_disco_str,
+    consumer_name=st.session_state.user_name,
+    reference_no=current_ref_str
+)
+nepra_petition = generate_nepra_petition(
+    case_id=st.session_state.case_id,
+    consumer_name=st.session_state.user_name,
+    reference_no=current_ref_str,
+    disco_name=current_disco_str,
+    location=st.session_state.case_area,
+    billed_units=current_units_str,
+    billed_amount=current_amount_str,
+    incident_summary=st.session_state.incident_desc
+)
+
 # Render Unified Component with Stable Key (Prevents unmounting or flashing)
 component_val = unified_app_comp(
     active_view=st.session_state.get("page", "overview"),
@@ -1055,6 +1136,10 @@ component_val = unified_app_comp(
     provider=st.session_state.get("llm_provider", "Groq (GroqCloud)"),
     groq_model=st.session_state.get("groq_model", "openai/gpt-oss-20b"),
     gemini_model=st.session_state.get("gemini_model", "gemini-3.8-flash"),
+    gis_data=gis_data,
+    tariff_data=tariff_data,
+    dispatch_data=dispatch_data,
+    nepra_petition=nepra_petition,
     key="gridguard_single_app"
 )
 
@@ -1117,7 +1202,9 @@ if component_val:
                 incident_desc=st.session_state.incident_desc,
                 active_label=active_model_label,
                 raw_report_text=res,
-                user_name=st.session_state.user_name
+                user_name=st.session_state.user_name,
+                nepra_petition=nepra_petition,
+                dispatch_data=dispatch_data
             )
             with open("report.pdf", "wb") as f:
                 f.write(pdf_bytes)
@@ -1157,7 +1244,9 @@ if component_val:
                 incident_desc=st.session_state.incident_desc,
                 active_label=active_model_label,
                 raw_report_text=st.session_state.crew_result,
-                user_name=st.session_state.user_name
+                user_name=st.session_state.user_name,
+                nepra_petition=nepra_petition,
+                dispatch_data=dispatch_data
             )
             st.session_state.current_pdf_bytes = pdf_bytes
             with open("report.pdf", "wb") as f:
