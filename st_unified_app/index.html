@@ -1802,10 +1802,11 @@
         <div class="space-y-1.5" id="groq-model-box">
           <label class="font-semibold text-slate-700 block">Groq Model:</label>
           <select id="setting-groq-model-select" class="w-full bg-slate-50 border border-slate-200 text-slate-900 px-3 py-2 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer">
-            <option value="llama-3.3-70b-versatile" selected>llama-3.3-70b-versatile (Recommended Groq)</option>
-            <option value="llama-3.1-8b-instant">llama-3.1-8b-instant (Fastest)</option>
-            <option value="deepseek-r1-distill-llama-70b">deepseek-r1-distill-llama-70b</option>
-            <option value="openai/gpt-oss-20b">openai/gpt-oss-20b</option>
+            <option value="openai/gpt-oss-20b" selected>openai/gpt-oss-20b (Recommended Groq)</option>
+            <option value="qwen/qwen3.8-27b">qwen/qwen3.8-27b (Fast & Direct)</option>
+            <option value="openai/gpt-oss-120b">openai/gpt-oss-120b (High Capacity)</option>
+            <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile</option>
+            <option value="llama-3.1-8b-instant">llama-3.1-8b-instant</option>
           </select>
         </div>
 
@@ -1937,7 +1938,7 @@ Loading statutory dispute petition...
       crewResult: '',
       pdfDataUri: '',
       provider: 'Groq (GroqCloud)',
-      groqModel: 'llama-3.3-70b-versatile',
+      groqModel: 'openai/gpt-oss-20b',
       geminiModel: 'gemini-1.5-flash',
       groqKey: '',
       geminiKey: '',
