@@ -1,0 +1,2031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GridGuard AI - Enterprise Grid Incident Intelligence Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: "#2563EB",
+              hover: "#1D4ED8",
+              subtle: "#EFF6FF",
+              light: "#DBEAFE"
+            },
+            surface: "#FFFFFF",
+            background: "#F8FAFC",
+            border: "#E2E8F0"
+          },
+          fontFamily: {
+            sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "sans-serif"]
+          },
+          boxShadow: {
+            '2xs': '0 1px 2px 0 rgba(0, 0, 0, 0.04)',
+            'xs': '0 1px 3px 0 rgba(0, 0, 0, 0.06)'
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #F8FAFC;
+      color: #0F172A;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill-icon {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.22s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .view-panel.hidden {
+      display: none !important;
+    }
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F1F5F9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+  </style>
+</head>
+<body class="bg-background text-[#0F172A] antialiased selection:bg-blue-100 selection:text-blue-900">
+
+  <!-- ========================================== -->
+  <!-- 1. PERSISTENT GLOBAL SIDEBAR               -->
+  <!-- ========================================== -->
+  <aside class="fixed left-0 top-0 h-screen w-64 bg-white border-r border-[#E2E8F0] flex flex-col z-50 justify-between select-none shadow-xs">
+    <div class="flex flex-col flex-1 min-h-0">
+      <!-- App Brand Header -->
+      <div class="h-16 px-6 flex items-center gap-3 border-b border-[#E2E8F0]">
+        <div class="h-9 w-9 rounded-lg bg-primary flex items-center justify-center text-white shadow-sm shadow-primary/30">
+          <span class="material-symbols-outlined text-xl">bolt</span>
+        </div>
+        <div class="flex flex-col justify-center">
+          <span class="font-bold text-slate-900 text-base leading-tight tracking-tight">GridGuard AI</span>
+          <span class="text-xs text-slate-500 font-medium">Grid Incident Intelligence</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links (100% Consistent across all views) -->
+      <nav class="p-3 space-y-1 overflow-y-auto flex-1" id="global-sidebar-nav">
+        <!-- 1. Overview -->
+        <a class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-medium text-sm bg-blue-50 text-blue-600 transition-colors shadow-2xs" data-path="overview" href="#">
+          <span class="material-symbols-outlined text-[20px] text-blue-600">dashboard</span>
+          <span class="truncate">Overview</span>
+        </a>
+        <!-- 2. Start Investigation -->
+        <a class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-medium text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" data-path="investigate" href="#">
+          <span class="material-symbols-outlined text-[20px] text-slate-400">add_circle</span>
+          <span class="truncate">Start Investigation</span>
+        </a>
+        <!-- 3. All Investigations -->
+        <a class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-medium text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" data-path="investigations" href="#">
+          <span class="material-symbols-outlined text-[20px] text-slate-400">folder_open</span>
+          <span class="truncate">All Investigations</span>
+        </a>
+        <!-- 4. Agent Pipeline -->
+        <a class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-medium text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" data-path="pipeline" href="#">
+          <span class="material-symbols-outlined text-[20px] text-slate-400">hub</span>
+          <span class="truncate">Agent Pipeline</span>
+          <span class="ml-auto w-2 h-2 rounded-full bg-slate-300" id="sidebar-pipeline-dot"></span>
+        </a>
+        <!-- 5. Evidence Explorer -->
+        <a class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-medium text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" data-path="evidence" href="#">
+          <span class="material-symbols-outlined text-[20px] text-slate-400">verified_user</span>
+          <span class="truncate">Evidence Explorer</span>
+        </a>
+        <!-- 6. Analytics -->
+        <a class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-medium text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" data-path="analytics" href="#">
+          <span class="material-symbols-outlined text-[20px] text-slate-400">bar_chart</span>
+          <span class="truncate">Analytics</span>
+        </a>
+        <!-- 7. Interactive Demo -->
+        <a class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-lg font-medium text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" data-path="demo" href="#">
+          <div class="flex items-center gap-3 truncate">
+            <span class="material-symbols-outlined text-[20px] text-amber-500">play_circle</span>
+            <span class="truncate">Interactive Demo</span>
+          </div>
+          <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">LIVE</span>
+        </a>
+        <!-- 8. Settings -->
+        <a class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-medium text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" data-path="settings" href="#">
+          <span class="material-symbols-outlined text-[20px] text-slate-400">tune</span>
+          <span class="truncate">Settings</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- User Profile & System Status in Sidebar Bottom -->
+    <div class="p-4 border-t border-slate-200 bg-white">
+      <!-- Status Chip -->
+      <div class="mb-3 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200/70 flex items-center justify-between" id="sidebar-status-box">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-slate-400" id="sidebar-status-dot"></span>
+          <span class="text-xs font-semibold text-slate-700" id="sidebar-status-text">Agents Idle</span>
+        </div>
+        <span class="text-[11px] text-slate-500 font-medium" id="sidebar-uptime-text">Ready</span>
+      </div>
+
+      <!-- Active AI Engine Model Badge -->
+      <div class="mb-3 px-3 py-1.5 rounded-lg bg-blue-50/70 border border-blue-100/80 flex items-center justify-between text-[11px] text-slate-600">
+        <span class="text-slate-500">Model:</span>
+        <strong class="text-primary font-semibold truncate ml-1" id="sidebar-model-badge">Groq (openai/gpt-oss-20b)</strong>
+      </div>
+
+      <!-- User Profile (Click to open Settings) -->
+      <div class="flex items-center gap-3 px-1 pt-1 cursor-pointer hover:bg-slate-50 p-1.5 rounded-lg transition-colors" onclick="openSettingsModal()" title="Click to edit profile & AI settings">
+        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-xs ring-2 ring-blue-100" id="user-avatar-initials">
+          UH
+        </div>
+        <div class="flex flex-col min-w-0">
+          <span class="text-sm font-semibold text-slate-900 truncate user-display-name" id="sidebar-user-name">Engr. Umer Hussain</span>
+          <span class="text-xs text-slate-500 truncate">Lead Grid Analyst</span>
+        </div>
+        <span class="material-symbols-outlined text-slate-400 text-base ml-auto">chevron_right</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ========================================== -->
+  <!-- 2. MAIN APP SHELL                          -->
+  <!-- ========================================== -->
+  <div class="pl-64 flex flex-col min-h-screen">
+    <!-- Top Header Bar -->
+    <header class="h-16 bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 px-8 flex items-center justify-between">
+      <!-- Breadcrumbs & Quick Search -->
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 text-xs font-medium text-slate-500">
+          <span class="text-slate-400">GridGuard AI</span>
+          <span class="text-slate-300">/</span>
+          <span class="text-slate-900 font-semibold" id="header-breadcrumb">Operations Center</span>
+        </div>
+        <div class="relative w-72 hidden md:block">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base">search</span>
+          <input class="w-full pl-8 pr-12 py-1 text-xs bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" placeholder="Search investigations, grids..." type="text" id="global-search-input"/>
+          <kbd class="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[9px] font-semibold text-slate-400 bg-white border border-slate-200 rounded shadow-2xs">⌘K</kbd>
+        </div>
+      </div>
+
+      <!-- Action items -->
+      <div class="flex items-center gap-3">
+        <!-- New Investigation Quick Action Button -->
+        <button class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-primary hover:bg-primary-hover text-white text-xs font-semibold rounded-lg shadow-sm transition-all cursor-pointer" type="button" onclick="switchView('investigate')">
+          <span class="material-symbols-outlined text-base">add_circle</span>
+          <span>Start Investigation</span>
+        </button>
+
+        <!-- Notifications -->
+        <button class="relative p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer" type="button" onclick="showToast('⚡ All grid SCADA telemetry streams nominal.')">
+          <span class="material-symbols-outlined text-[20px]">notifications</span>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary ring-2 ring-white"></span>
+        </button>
+
+        <div class="h-5 w-px bg-slate-200"></div>
+
+        <!-- Header User Chip -->
+        <div class="flex items-center gap-2 cursor-pointer hover:bg-slate-50 px-2 py-1 rounded-lg transition-colors" onclick="openSettingsModal()">
+          <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs shrink-0 ring-1 ring-blue-200">
+            <span class="material-symbols-outlined text-base">person</span>
+          </div>
+          <div class="hidden sm:flex flex-col text-left">
+            <span class="text-xs font-semibold text-slate-900 leading-tight user-display-name" id="header-user-name">Engr. Umer Hussain</span>
+            <span class="text-[10px] text-slate-400 leading-none">Settings</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ========================================== -->
+    <!-- 3. MIDDLE SCREEN VIEW CONTAINER            -->
+    <!-- ========================================== -->
+    <div id="view-container" class="flex-1 w-full">
+
+      <!-- ==================================================== -->
+      <!-- VIEW 1: OPERATIONS CENTER (OVERVIEW)                 -->
+      <!-- ==================================================== -->
+      <div id="view-overview" class="view-panel p-8 max-w-7xl mx-auto w-full space-y-8 animate-fade-in">
+        <!-- Greeting & Top Controls -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+              <span>Good day,</span>
+              <span class="user-display-name text-primary" id="overview-greeting-name">Engr. Umer Hussain</span>
+            </h1>
+            <p class="text-sm text-slate-500 mt-1">Autonomous grid intelligence & utility tariff auditing engine</p>
+          </div>
+          <!-- Filter & Action controls -->
+          <div class="flex items-center gap-2 flex-wrap">
+            <div class="flex items-center bg-white border border-slate-200 rounded-lg p-1 shadow-xs text-xs">
+              <span class="material-symbols-outlined text-slate-400 text-base ml-1 mr-1">location_on</span>
+              <span class="font-medium text-slate-700 mr-2" id="overview-active-area-text">Islamabad (IESCO)</span>
+              <button class="px-2 py-0.5 rounded bg-blue-50 text-blue-600 text-xs font-medium hover:bg-blue-100 transition-colors" onclick="switchView('investigate')">Switch Area</button>
+            </div>
+            <!-- Refresh Button -->
+            <button class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200 rounded-lg shadow-xs transition-colors cursor-pointer" id="sim-refresh-btn" type="button" onclick="refreshOverviewMetrics()">
+              <span class="material-symbols-outlined text-base text-slate-500" id="refresh-icon">autorenew</span>
+              <span>Refresh Telemetry</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- KPI CARDS (4 Cards: Starts with dash '-' until investigation starts) -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="kpi-cards-section">
+          <!-- Card 1: Active Investigations -->
+          <div class="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Active Investigations</span>
+              <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                <span class="material-symbols-outlined text-lg">folder_managed</span>
+              </div>
+            </div>
+            <div class="mt-3 flex items-baseline gap-2">
+              <span class="text-3xl font-bold text-slate-900 tracking-tight" id="metric-active-count">-</span>
+              <span class="text-xs font-medium text-slate-400 flex items-center gap-0.5" id="metric-active-trend">
+                <span>Awaiting case</span>
+              </span>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span id="metric-active-sub">0 in critical review</span>
+              <span class="font-medium text-blue-600 hover:underline cursor-pointer" onclick="switchView('investigate')">Start New</span>
+            </div>
+          </div>
+
+          <!-- Card 2: Detected Anomalies -->
+          <div class="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Detected Anomalies</span>
+              <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                <span class="material-symbols-outlined text-lg">warning_amber</span>
+              </div>
+            </div>
+            <div class="mt-3 flex items-baseline gap-2">
+              <span class="text-3xl font-bold text-slate-900 tracking-tight" id="metric-anomalies-count">-</span>
+              <span class="text-xs font-medium text-slate-400 flex items-center gap-0.5" id="metric-anomalies-trend">
+                <span>—</span>
+              </span>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span id="metric-anomalies-sub">Awaiting telemetry audit</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Evidence Verified -->
+          <div class="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Evidence Verified</span>
+              <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <span class="material-symbols-outlined text-lg">check_circle</span>
+              </div>
+            </div>
+            <div class="mt-3 flex items-baseline gap-2">
+              <span class="text-3xl font-bold text-slate-900 tracking-tight" id="metric-evidence-pct">-</span>
+              <span class="text-xs font-medium text-slate-400" id="metric-evidence-confidence">Awaiting scan</span>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span id="metric-evidence-sub">0 verified data items</span>
+              <span class="text-slate-500 font-medium bg-slate-100 px-1.5 py-0.5 rounded text-[11px]" id="metric-evidence-badge">Unscanned</span>
+            </div>
+          </div>
+
+          <!-- Card 4: System Status -->
+          <div class="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">System Status</span>
+              <span class="flex h-2.5 w-2.5 relative">
+                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500" id="metric-status-dot"></span>
+              </span>
+            </div>
+            <div class="mt-3 flex items-baseline gap-2">
+              <span class="text-2xl font-bold text-slate-900 tracking-tight" id="metric-status-val">Standby</span>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span id="metric-status-sub">AI pipelines standing by</span>
+              <span class="text-slate-700 font-medium" id="metric-status-rate">Ready</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Main Layout: 2 Columns (7 cols Investigations / 5 cols Timeline) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <!-- Left: Active Investigations (7 cols) -->
+          <section class="lg:col-span-7 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs">
+              <div class="flex items-center gap-2">
+                <h2 class="font-bold text-slate-900 text-lg">Active Investigations</h2>
+                <span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold" id="overview-case-count-badge">0</span>
+              </div>
+              <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-lg" id="case-filters">
+                <button class="filter-tab px-3 py-1 rounded-md bg-white text-slate-900 font-medium text-xs shadow-2xs transition-colors" data-filter="all" type="button">All (<span id="filter-all-cnt">0</span>)</button>
+                <button class="filter-tab px-3 py-1 rounded-md text-slate-600 hover:text-slate-900 font-medium text-xs transition-colors" data-filter="billing" type="button">Billing</button>
+                <button class="filter-tab px-3 py-1 rounded-md text-slate-600 hover:text-slate-900 font-medium text-xs transition-colors" data-filter="outage" type="button">Outages</button>
+              </div>
+            </div>
+
+            <!-- Empty State (Shown initially before investigation starts) -->
+            <div id="overview-empty-state" class="flex flex-col items-center justify-center p-10 bg-white rounded-xl border border-dashed border-slate-300 text-center space-y-4">
+              <div class="w-14 h-14 rounded-2xl bg-blue-50 text-primary flex items-center justify-center">
+                <span class="material-symbols-outlined text-3xl">smart_toy</span>
+              </div>
+              <div class="space-y-1 max-w-md">
+                <h3 class="font-bold text-slate-900 text-base">No active investigations in progress</h3>
+                <p class="text-xs text-slate-500 leading-relaxed">
+                  The multi-agent swarm is in standby mode. Start an investigation to correlate smart meter telemetry with local substation outages and published utility tariffs.
+                </p>
+              </div>
+              <button class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-primary-hover text-white text-xs font-semibold rounded-xl shadow-sm transition-all cursor-pointer" onclick="switchView('investigate')">
+                <span class="material-symbols-outlined text-base">bolt</span>
+                <span>Launch First Investigation</span>
+              </button>
+            </div>
+
+            <!-- Active Case Card (Shown dynamically once an investigation starts) -->
+            <div id="overview-active-case-card" class="hidden space-y-3">
+              <div class="investigation-item bg-white rounded-xl border border-blue-200 p-5 shadow-xs hover:shadow-md transition-all">
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <h3 class="font-bold text-slate-900 text-base hover:text-blue-600 cursor-pointer transition-colors" onclick="switchView('results')" id="active-card-title">
+                        Grid Incident & Tariff Audit
+                      </h3>
+                      <span class="text-xs font-medium text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded" id="active-card-case-id">#GG-2026-0142</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
+                      <span class="material-symbols-outlined text-[14px]">location_on</span>
+                      <span id="active-card-location">Islamabad (Sector F-7 / Blue Area Feeder - IESCO)</span>
+                    </div>
+                  </div>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200" id="active-card-status-badge">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Verified & Completed
+                  </span>
+                </div>
+                <p class="text-xs text-slate-600 mt-3 bg-slate-50 p-2.5 rounded-lg border border-slate-100" id="active-card-desc">
+                  Analyzed uploaded bill: verified 410 kWh usage and rate brackets. Identified $142.80 total charge and 4 anomaly flags.
+                </p>
+                <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2">
+                  <div class="flex items-center gap-1.5">
+                    <span class="text-[11px] font-medium text-slate-400 mr-1">Agents:</span>
+                    <span class="px-2 py-0.5 text-[11px] font-medium bg-blue-50 text-blue-700 rounded-md">Bill Auditor</span>
+                    <span class="px-2 py-0.5 text-[11px] font-medium bg-blue-50 text-blue-700 rounded-md">Outage Correlator</span>
+                    <span class="px-2 py-0.5 text-[11px] font-medium bg-emerald-50 text-emerald-700 rounded-md">Evidence Critic</span>
+                  </div>
+                  <button class="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer" type="button" onclick="switchView('results')">
+                    <span>View Intelligence Report</span>
+                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Right: Recent AI Activity Feed (5 cols) -->
+          <section class="lg:col-span-5 space-y-4">
+            <div class="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs">
+              <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div class="flex items-center gap-2.5">
+                  <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-50" id="activity-feed-dot"></div>
+                  <div>
+                    <h3 class="font-bold text-slate-900 text-base">Recent AI Activity</h3>
+                    <p class="text-xs text-slate-500">Live agent analysis updates</p>
+                  </div>
+                </div>
+                <span class="text-xs font-medium text-slate-400 bg-slate-50 px-2 py-1 rounded border border-slate-100" id="activity-feed-status">Live feed</span>
+              </div>
+              <div class="divide-y divide-slate-100" id="activity-feed-list">
+                <div class="py-3.5 flex items-start gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-blue-50 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                    <span class="material-symbols-outlined text-base">smart_toy</span>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between gap-1">
+                      <span class="text-xs font-semibold text-slate-800">System Dispatcher</span>
+                      <span class="text-[11px] text-slate-400">Just now</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mt-1">Autonomous grid agents standing by for intake data.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                <span class="flex items-center gap-1.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  Multi-agent mesh ready
+                </span>
+                <button class="font-medium text-blue-600 hover:text-blue-700 transition-colors cursor-pointer" type="button" onclick="switchView('pipeline')">View pipeline</button>
+              </div>
+            </div>
+
+            <!-- Quick Tip Card -->
+            <div class="bg-blue-50/70 border border-blue-100 rounded-xl p-4 flex items-start gap-3">
+              <span class="material-symbols-outlined text-blue-600 text-xl mt-0.5">lightbulb</span>
+              <div class="text-xs text-slate-600">
+                <span class="font-semibold text-slate-900 block mb-0.5">Autonomous Cross-Verification</span>
+                GridGuard AI autonomously correlates high-draw intervals with substation SCADA logs to detect phantom surge usage during feeder trips.
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- ==================================================== -->
+      <!-- VIEW 2: START INVESTIGATION (INTAKE ASSISTANT)       -->
+      <!-- ==================================================== -->
+      <div id="view-investigate" class="view-panel hidden p-8 max-w-6xl mx-auto w-full flex flex-col animate-fade-in">
+        <div class="mb-6">
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-subtle text-primary border border-primary-light text-xs font-semibold mb-3">
+            <span class="material-symbols-outlined text-sm">sparkles</span>
+            <span>Autonomous Grid Intake Assistant</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mb-2">Start a New Investigation</h1>
+          <p class="text-sm text-slate-600 max-w-2xl leading-relaxed">
+            Provide details about unexpected bill spikes, unannounced power outages, or attach your utility bill PDF. Our specialized AI agent swarm will audit tariff caps and correlate grid SCADA telemetry.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div class="lg:col-span-8 space-y-6">
+            <!-- Step 1: Incident Description -->
+            <section class="bg-white rounded-xl border border-slate-200 p-6 shadow-xs">
+              <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                  <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-50 text-primary font-bold text-xs">1</span>
+                  <h2 class="text-base font-semibold text-slate-900">What happened with your electricity service?</h2>
+                </div>
+                <span class="text-xs font-medium text-slate-400">Required</span>
+              </div>
+              <div class="relative mb-3">
+                <textarea id="incident-description" class="w-full bg-slate-50 border border-slate-200 focus:bg-white text-slate-900 rounded-xl p-4 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-y min-h-[110px]" placeholder="e.g., My electricity bill increased by 40% this month and we experienced 4 unannounced power cuts on Feeder A..."></textarea>
+                <div class="absolute right-3 bottom-3 text-xs text-slate-400 select-none">
+                  <span id="char-counter">0</span> / 1000
+                </div>
+              </div>
+              <!-- Quick Prompt Pills -->
+              <div class="flex flex-wrap items-center gap-2 text-xs">
+                <span class="text-slate-500 font-medium">Quick examples:</span>
+                <button type="button" class="quick-prompt-btn px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer" data-prompt="My electricity bill increased significantly this month and we experienced 4 outages this week in Islamabad Sector F-7.">High Bill & Outages (Islamabad)</button>
+                <button type="button" class="quick-prompt-btn px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer" data-prompt="Recurring voltage sags and 3 transformer breaker trips on Lahore DHA Phase 5 feeder with heavy fuel adjustment surcharge.">Voltage Sag & Surcharges (Lahore)</button>
+                <button type="button" class="quick-prompt-btn px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer" data-prompt="Repeated industrial feeder blackouts in Karachi Korangi cluster with meter running fast during load shedding restoration.">Inductive Surge Meter Error (Karachi)</button>
+              </div>
+            </section>
+
+            <!-- Step 2: City & Area Selector (Pakistan DISCOs) -->
+            <section class="bg-white rounded-xl border border-slate-200 p-6 shadow-xs">
+              <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                  <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-50 text-primary font-bold text-xs">2</span>
+                  <div>
+                    <h2 class="text-base font-semibold text-slate-900">Your City & Grid Feeder (Pakistan)</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Select your regional electricity supply company (DISCO) and neighborhood</p>
+                  </div>
+                </div>
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-primary border border-blue-100" id="disco-badge">IESCO (Islamabad)</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Select City / DISCO:</label>
+                  <select id="city-selector" class="w-full bg-slate-50 border border-slate-200 text-slate-900 px-3 py-2 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer">
+                    <option value="Islamabad" data-feeder="Islamabad (Sector F-7 / Blue Area Feeder - IESCO)" data-disco="IESCO" selected>Islamabad • IESCO (Capital Grid)</option>
+                    <option value="Lahore" data-feeder="Lahore (DHA Phase 5 / Gulberg Feeder - LESCO)" data-disco="LESCO">Lahore • LESCO (Punjab Grid)</option>
+                    <option value="Karachi" data-feeder="Karachi (Clifton / Korangi Industrial Feeder - K-Electric)" data-disco="K-Electric">Karachi • K-Electric (Sindh Grid)</option>
+                    <option value="Rawalpindi" data-feeder="Rawalpindi (Saddar / Westridge Feeder - IESCO)" data-disco="IESCO">Rawalpindi • IESCO (Chaklala Circle)</option>
+                    <option value="Peshawar" data-feeder="Peshawar (Hayatabad Phase 3 / University Rd - PESCO)" data-disco="PESCO">Peshawar • PESCO (KPK Grid)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-slate-600 mb-1">Exact Substation / Feeder Line:</label>
+                  <input type="text" id="feeder-input" value="Islamabad (Sector F-7 / Blue Area Feeder - IESCO)" class="w-full bg-slate-50 border border-slate-200 text-slate-900 px-3 py-2 rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                </div>
+              </div>
+              <div class="flex flex-wrap items-center gap-1.5" id="feeder-selector">
+                <span class="text-xs text-slate-500 mr-1 font-medium">Quick switch area:</span>
+                <button type="button" class="feeder-btn px-3 py-1 rounded-md text-xs font-medium bg-primary text-white shadow-xs" data-city="Islamabad" data-disco="IESCO" data-loc="Islamabad (Sector F-7 / Blue Area Feeder - IESCO)">Islamabad</button>
+                <button type="button" class="feeder-btn px-3 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200" data-city="Lahore" data-disco="LESCO" data-loc="Lahore (DHA Phase 5 / Gulberg Feeder - LESCO)">Lahore</button>
+                <button type="button" class="feeder-btn px-3 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200" data-city="Karachi" data-disco="K-Electric" data-loc="Karachi (Clifton / Korangi Industrial Feeder - K-Electric)">Karachi</button>
+                <button type="button" class="feeder-btn px-3 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200" data-city="Rawalpindi" data-disco="IESCO" data-loc="Rawalpindi (Saddar / Westridge Feeder - IESCO)">Rawalpindi</button>
+              </div>
+            </section>
+
+            <!-- Step 3: Bill Upload (OCR Extraction) -->
+            <section class="bg-white rounded-xl border border-slate-200 p-6 shadow-xs">
+              <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                  <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-50 text-primary font-bold text-xs">3</span>
+                  <h2 class="text-base font-semibold text-slate-900">Upload Your Electricity Bill</h2>
+                </div>
+                <span class="text-xs font-medium text-slate-400">PDF, JPG, or PNG</span>
+              </div>
+              <input type="file" id="bill-file-input" accept=".pdf,.png,.jpg,.jpeg,.txt,.csv" style="display: none;" />
+              <div class="border-2 border-dashed border-slate-200 hover:border-primary/50 bg-slate-50/70 hover:bg-blue-50/30 rounded-xl p-6 text-center cursor-pointer transition-all group mb-4 select-none" id="dropzone" title="Click or drag and drop to upload utility bill">
+                <div class="w-12 h-12 rounded-full bg-white border border-slate-200 shadow-xs flex items-center justify-center mx-auto mb-3 text-primary group-hover:scale-105 transition-transform pointer-events-none">
+                  <span class="material-symbols-outlined text-2xl" id="upload-icon">cloud_upload</span>
+                </div>
+                <p class="text-sm font-semibold text-slate-900 mb-1 pointer-events-none" id="upload-prompt-text">Drag and drop your electricity bill here</p>
+                <p class="text-xs text-slate-500 mb-3 pointer-events-none">or <span class="text-primary font-medium underline">browse files</span> from your computer</p>
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200 text-[11px] text-slate-500 shadow-2xs pointer-events-none">
+                  <span class="material-symbols-outlined text-xs text-emerald-600">verified</span>
+                  <span>Automatic text extraction &amp; rate breakdown</span>
+                </div>
+              </div>
+              <!-- Attached File Item -->
+              <div class="flex items-center justify-between p-3.5 bg-slate-50 border border-slate-200 rounded-lg transition-all" id="file-card">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="w-9 h-9 rounded-lg bg-blue-50 text-primary flex items-center justify-center shrink-0 border border-blue-200" id="file-icon-box">
+                    <span class="material-symbols-outlined text-lg" id="file-icon">picture_as_pdf</span>
+                  </div>
+                  <div class="flex flex-col min-w-0">
+                    <span class="text-xs font-semibold text-slate-900 truncate" id="file-name-display">utility_bill_september_2026.pdf</span>
+                    <span class="text-[11px] text-slate-500 flex items-center gap-1.5" id="file-meta-display">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                      <span id="file-meta-text">1.4 MB • Ready for automated check</span>
+                    </span>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                  <button class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 hover:bg-white hover:text-slate-900 border border-transparent hover:border-slate-200 transition-colors cursor-pointer" id="replace-bill-btn" type="button">Replace</button>
+                  <button class="p-1 rounded-md text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer" id="delete-bill-btn" title="Remove" type="button">
+                    <span class="material-symbols-outlined text-base">delete</span>
+                  </button>
+                </div>
+              </div>
+              <div class="hidden p-3.5 rounded-lg border border-dashed border-slate-200 bg-slate-50/50 text-center text-xs text-slate-500" id="file-empty-card">
+                No bill attached yet. Click above or drag &amp; drop to attach a utility bill (optional).
+              </div>
+            </section>
+
+            <!-- Step 4: Weather & Environmental Conditions -->
+            <section class="bg-white rounded-xl border border-slate-200 p-6 shadow-xs">
+              <div class="flex items-center justify-between cursor-pointer select-none" id="accordion-toggle">
+                <div class="flex items-center gap-3">
+                  <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-slate-100 text-slate-600 font-bold text-xs">4</span>
+                  <div>
+                    <h2 class="text-base font-semibold text-slate-900">Weather &amp; Environmental Conditions</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Correlate temperature &amp; storms with transformer trips</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-medium text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">User Configurable</span>
+                  <span class="material-symbols-outlined text-slate-400" id="accordion-icon">expand_more</span>
+                </div>
+              </div>
+              <div class="mt-4 pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-3 gap-3.5" id="accordion-content">
+                <!-- Temperature -->
+                <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-xl">
+                  <div class="flex items-center justify-between text-slate-500 mb-1.5">
+                    <label class="text-xs font-semibold text-slate-700">Temperature</label>
+                    <span class="material-symbols-outlined text-sm text-amber-500">thermostat</span>
+                  </div>
+                  <input type="text" id="weather-temp-input" value="34°C (93°F - Warm)" class="w-full bg-white border border-slate-200 text-slate-900 px-2.5 py-1.5 rounded-md text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-primary mb-2 shadow-2xs" />
+                  <div class="flex flex-wrap gap-1 text-[10px]">
+                    <button type="button" class="temp-preset-btn px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-600 border border-slate-200" data-temp="42°C (108°F - Heatwave)">42°C Heatwave</button>
+                    <button type="button" class="temp-preset-btn px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-600 border border-slate-200" data-temp="34°C (93°F - Warm)">34°C Warm</button>
+                    <button type="button" class="temp-preset-btn px-2 py-0.5 rounded bg-white hover:bg-slate-100 text-slate-600 border border-slate-200" data-temp="22°C (72°F - Mild)">22°C Mild</button>
+                  </div>
+                </div>
+                <!-- Conditions -->
+                <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-xl">
+                  <div class="flex items-center justify-between text-slate-500 mb-1.5">
+                    <label class="text-xs font-semibold text-slate-700">Conditions</label>
+                    <span class="material-symbols-outlined text-sm text-sky-500" id="weather-cond-icon">wb_sunny</span>
+                  </div>
+                  <select id="weather-cond-select" class="w-full bg-white border border-slate-200 text-slate-900 px-2.5 py-1.5 rounded-md text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-primary mb-2 cursor-pointer shadow-2xs">
+                    <option value="Clear & Sunny" data-icon="wb_sunny" selected>Clear &amp; Sunny</option>
+                    <option value="Monsoon Rain & Lightning" data-icon="thunderstorm">Monsoon Rain &amp; Lightning</option>
+                    <option value="Severe Heatwave / Peak Load" data-icon="solar_power">Severe Heatwave / Peak Load</option>
+                    <option value="Heavy Dust Storm & Wind" data-icon="air">Heavy Dust Storm &amp; Wind</option>
+                  </select>
+                  <input type="text" id="weather-cond-custom" placeholder="Or enter custom condition..." class="w-full bg-white border border-slate-200 text-slate-800 px-2 py-1 rounded text-[11px] placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs" />
+                </div>
+                <!-- Storm Advisory -->
+                <div class="bg-slate-50 border border-slate-200 p-3.5 rounded-xl">
+                  <div class="flex items-center justify-between text-slate-500 mb-1.5">
+                    <label class="text-xs font-semibold text-slate-700">Grid &amp; Storm Advisory</label>
+                    <span class="material-symbols-outlined text-sm text-emerald-600" id="weather-storm-icon">check_circle</span>
+                  </div>
+                  <select id="weather-storm-select" class="w-full bg-white border border-slate-200 text-slate-900 px-2.5 py-1.5 rounded-md text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-primary mb-2 cursor-pointer shadow-2xs">
+                    <option value="No warnings (Normal Grid Ops)" data-icon="check_circle" data-color="text-emerald-600" selected>No warnings (Normal Grid Ops)</option>
+                    <option value="Monsoon Rain Alert (Tripping Risk)" data-icon="warning" data-color="text-amber-500">Monsoon Rain Alert</option>
+                    <option value="Heatwave Peak Load Advisory" data-icon="local_fire_department" data-color="text-red-500">Heatwave Peak Advisory</option>
+                    <option value="High Wind / Feeder Tripping Warning" data-icon="report_problem" data-color="text-amber-600">High Wind Tripping</option>
+                  </select>
+                  <input type="text" id="weather-storm-custom" placeholder="Or enter custom warning..." class="w-full bg-white border border-slate-200 text-slate-800 px-2 py-1 rounded text-[11px] placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-primary shadow-2xs" />
+                </div>
+              </div>
+            </section>
+
+            <!-- Submit Section -->
+            <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div class="flex flex-col">
+                <span class="text-sm font-bold text-slate-900">Ready to initiate autonomous case</span>
+                <span class="text-xs text-slate-500">All 5 specialized agents will cross-examine telemetry, smart meter logs, and statutory tariff caps.</span>
+              </div>
+              <button class="w-full sm:w-auto px-6 py-3 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-bold shadow-md shadow-primary/25 hover:shadow-lg transition-all flex items-center justify-center gap-2 shrink-0 cursor-pointer" id="start-investigation-btn" type="button">
+                <span>Start AI Investigation</span>
+                <span class="material-symbols-outlined text-base">arrow_forward</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: How it Works Guide -->
+          <div class="lg:col-span-4 space-y-4">
+            <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-xs">
+              <div class="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100">
+                <div class="w-7 h-7 rounded-lg bg-blue-50 text-primary flex items-center justify-center">
+                  <span class="material-symbols-outlined text-base">auto_awesome</span>
+                </div>
+                <h3 class="text-sm font-bold text-slate-900">How the Swarm Works</h3>
+              </div>
+              <div class="space-y-3.5 text-xs text-slate-600">
+                <div class="flex items-start gap-3">
+                  <div class="w-6 h-6 rounded-full bg-blue-50 text-primary border border-blue-200 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">1</div>
+                  <div>
+                    <span class="font-semibold text-slate-900 block">Ingests & Audits Bill OCR</span>
+                    Extracts kWh consumption, off-peak/peak rates, and NEPRA statutory fuel adjustments (FPA).
+                  </div>
+                </div>
+                <div class="flex items-start gap-3">
+                  <div class="w-6 h-6 rounded-full bg-blue-50 text-primary border border-blue-200 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">2</div>
+                  <div>
+                    <span class="font-semibold text-slate-900 block">Cross-References Outages</span>
+                    Correlates consumer blackout timestamps with substation SCADA breaker trips.
+                  </div>
+                </div>
+                <div class="flex items-start gap-3">
+                  <div class="w-6 h-6 rounded-full bg-blue-50 text-primary border border-blue-200 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">3</div>
+                  <div>
+                    <span class="font-semibold text-slate-900 block">Generates Official Dossier</span>
+                    Produces actionable dispatch plans, dispute briefs, and a downloadable PDF report.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================================================== -->
+      <!-- VIEW 3: LIVE AGENT PIPELINE                          -->
+      <!-- ==================================================== -->
+      <div id="view-pipeline" class="view-panel hidden p-8 max-w-7xl mx-auto w-full space-y-6 animate-fade-in">
+        
+        <!-- STANDBY STATE (Displayed when investigation has not been started) -->
+        <div id="pipeline-standby-banner" class="bg-white rounded-2xl border border-amber-200 p-8 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 bg-gradient-to-r from-amber-50/60 via-white to-slate-50">
+          <div class="flex items-start gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0 shadow-xs">
+              <span class="material-symbols-outlined text-3xl">hourglass_empty</span>
+            </div>
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-xs font-bold border border-amber-200">Investigation Not Started</span>
+                <span class="text-xs text-slate-400">• Standby Mode</span>
+              </div>
+              <h2 class="text-xl font-bold text-slate-900">Multi-Agent Pipeline on Standby</h2>
+              <p class="text-xs sm:text-sm text-slate-600 max-w-xl leading-relaxed">
+                No active investigation is running. Initialize a case by entering your incident description or attaching a utility bill in "Start Investigation" to dispatch the autonomous agent swarm.
+              </p>
+            </div>
+          </div>
+          <button class="px-5 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-xl text-xs sm:text-sm font-semibold shadow-sm transition-all flex items-center gap-2 shrink-0 cursor-pointer" onclick="switchView('investigate')">
+            <span class="material-symbols-outlined text-base">add_circle</span>
+            <span>Start Investigation Now</span>
+          </button>
+        </div>
+
+        <!-- Pipeline Header Card -->
+        <div class="bg-white rounded-2xl border border-[#E2E8F0] p-6 shadow-xs flex flex-col gap-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="space-y-1.5">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-primary border border-blue-100">
+                  <span class="w-2 h-2 rounded-full bg-primary" id="pipeline-status-indicator"></span>
+                  <span id="pipeline-badge-text">Standby</span>
+                </span>
+                <span class="text-xs text-slate-500 font-medium" id="pipeline-case-label">Case #GG-2026-0142</span>
+                <span class="text-xs text-slate-400">•</span>
+                <span class="text-xs text-slate-500 font-medium flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[14px]">location_on</span>
+                  <span id="pipeline-location-text">Islamabad (Sector F-7 / Blue Area Feeder - IESCO)</span>
+                </span>
+              </div>
+              <h1 class="text-2xl font-bold text-[#0F172A] tracking-tight" id="pipeline-main-title">
+                Investigation Pipeline: Multi-Agent Swarm
+              </h1>
+              <p class="text-xs sm:text-sm text-[#334155] leading-relaxed" id="pipeline-subtitle">
+                Autonomous AI agents checking bill charges, verifying outage timestamps, and assessing utility tariff credits.
+              </p>
+            </div>
+            <!-- Action buttons in header -->
+            <div class="flex items-center gap-2 shrink-0">
+              <button class="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs transition-colors cursor-pointer" onclick="shareInvestigationSummary()" type="button">
+                <span class="material-symbols-outlined text-base text-slate-500">share</span>
+                <span>Share</span>
+              </button>
+              <button id="pipeline-pdf-btn" class="flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary text-white hover:bg-primary-hover font-medium text-xs transition-all shadow-xs cursor-pointer" type="button" onclick="downloadCurrentPdf()">
+                <span class="material-symbols-outlined text-base">download</span>
+                <span>Download PDF</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Progress Bar Strip -->
+          <div class="pt-4 border-t border-slate-100 flex flex-col gap-2">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-semibold text-[#0F172A] flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse" id="progress-pulse-dot"></span>
+                <span id="pipeline-status-text">Investigation standby. Awaiting case launch.</span>
+              </span>
+              <span class="font-bold text-primary" id="pipeline-pct-text">0% Completed</span>
+            </div>
+            <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+              <div class="bg-primary h-full rounded-full transition-all duration-700 ease-out" id="pipeline-bar-fill" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Step Pipeline Stepper -->
+        <div class="bg-white rounded-2xl border border-[#E2E8F0] p-5 shadow-xs overflow-x-auto">
+          <div class="flex items-center justify-between min-w-[760px] gap-2">
+            <!-- Step 1 -->
+            <div class="flex items-center gap-3 flex-1" id="step-node-1">
+              <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center shrink-0 font-semibold border border-slate-200" id="step-icon-1">
+                1
+              </div>
+              <div class="flex flex-col min-w-0">
+                <span class="text-sm font-semibold text-[#0F172A] truncate" id="step-title-1">1. Bill Ingestion</span>
+                <span class="text-xs text-slate-400 font-medium" id="step-badge-1">Standby</span>
+              </div>
+            </div>
+            <div class="h-0.5 flex-1 max-w-[40px] bg-slate-200" id="step-div-1"></div>
+
+            <!-- Step 2 -->
+            <div class="flex items-center gap-3 flex-1 opacity-70" id="step-node-2">
+              <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center shrink-0 font-semibold border border-slate-200" id="step-icon-2">
+                2
+              </div>
+              <div class="flex flex-col min-w-0">
+                <span class="text-sm font-medium text-slate-700 truncate" id="step-title-2">2. Outage Check</span>
+                <span class="text-xs text-slate-400 font-medium" id="step-badge-2">Queued</span>
+              </div>
+            </div>
+            <div class="h-0.5 flex-1 max-w-[40px] bg-slate-200" id="step-div-2"></div>
+
+            <!-- Step 3 -->
+            <div class="flex items-center gap-3 flex-1 opacity-70" id="step-node-3">
+              <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center shrink-0 font-semibold border border-slate-200" id="step-icon-3">
+                3
+              </div>
+              <div class="flex flex-col min-w-0">
+                <span class="text-sm font-medium text-slate-700 truncate" id="step-title-3">3. Cross-Exam</span>
+                <span class="text-xs text-slate-400 font-medium" id="step-badge-3">Queued</span>
+              </div>
+            </div>
+            <div class="h-0.5 flex-1 max-w-[40px] bg-slate-200" id="step-div-3"></div>
+
+            <!-- Step 4 -->
+            <div class="flex items-center gap-3 flex-1 opacity-70" id="step-node-4">
+              <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center shrink-0 font-semibold border border-slate-200" id="step-icon-4">
+                4
+              </div>
+              <div class="flex flex-col min-w-0">
+                <span class="text-sm font-medium text-slate-700 truncate" id="step-title-4">4. Regulation Check</span>
+                <span class="text-xs text-slate-400 font-medium" id="step-badge-4">Queued</span>
+              </div>
+            </div>
+            <div class="h-0.5 flex-1 max-w-[40px] bg-slate-200" id="step-div-4"></div>
+
+            <!-- Step 5 -->
+            <div class="flex items-center gap-3 flex-1 opacity-70" id="step-node-5">
+              <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center shrink-0 font-semibold border border-slate-200" id="step-icon-5">
+                5
+              </div>
+              <div class="flex flex-col min-w-0">
+                <span class="text-sm font-medium text-slate-700 truncate" id="step-title-5">5. Final Report</span>
+                <span class="text-xs text-slate-400 font-medium" id="step-badge-5">Queued</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 Specialized Agent Cards -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-7 space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-xl">smart_toy</span>
+                <h2 class="text-base font-bold text-[#0F172A]">AI Agent Team Working on Your Case</h2>
+              </div>
+              <span class="text-xs font-semibold text-slate-500" id="agents-active-count">5 Agents Standby</span>
+            </div>
+
+            <!-- Agent 1: Bill Auditor -->
+            <div class="bg-white rounded-xl p-4 border border-[#E2E8F0] shadow-xs flex items-start justify-between gap-4" id="agent-card-1">
+              <div class="flex items-start gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-blue-50 text-primary flex items-center justify-center shrink-0 border border-blue-100">
+                  <span class="material-symbols-outlined text-xl">receipt_long</span>
+                </div>
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2">
+                    <h3 class="text-sm font-bold text-[#0F172A]">Bill Auditor</h3>
+                    <span class="text-xs text-slate-400">• Tariff Specialist</span>
+                  </div>
+                  <p class="text-xs text-[#334155] leading-relaxed" id="agent-1-desc">
+                    Analyzes uploaded electricity bills: audits kWh consumption, fuel price adjustments (FPA), and baseline tariffs.
+                  </p>
+                </div>
+              </div>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold shrink-0" id="agent-1-badge">Standby</span>
+            </div>
+
+            <!-- Agent 2: Outage Investigator -->
+            <div class="bg-white rounded-xl p-4 border border-[#E2E8F0] shadow-xs flex items-start justify-between gap-4" id="agent-card-2">
+              <div class="flex items-start gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center shrink-0 border border-slate-200">
+                  <span class="material-symbols-outlined text-xl">power_off</span>
+                </div>
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2">
+                    <h3 class="text-sm font-bold text-[#0F172A]">Outage Investigator</h3>
+                    <span class="text-xs text-slate-400">• Grid Telemetry</span>
+                  </div>
+                  <p class="text-xs text-[#334155] leading-relaxed" id="agent-2-desc">
+                    Cross-references consumer blackout reports with substation SCADA breaker trip events.
+                  </p>
+                </div>
+              </div>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold shrink-0" id="agent-2-badge">Standby</span>
+            </div>
+
+            <!-- Agent 3: Environment Analyst -->
+            <div class="bg-white rounded-xl p-4 border border-[#E2E8F0] shadow-xs flex items-start justify-between gap-4" id="agent-card-3">
+              <div class="flex items-start gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center shrink-0 border border-slate-200">
+                  <span class="material-symbols-outlined text-xl">wb_sunny</span>
+                </div>
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2">
+                    <h3 class="text-sm font-bold text-[#0F172A]">Environment Analyst</h3>
+                    <span class="text-xs text-slate-400">• Weather Correlator</span>
+                  </div>
+                  <p class="text-xs text-[#334155] leading-relaxed" id="agent-3-desc">
+                    Checks ambient temperatures and lightning alerts to rule out legitimate storm force majeure.
+                  </p>
+                </div>
+              </div>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold shrink-0" id="agent-3-badge">Standby</span>
+            </div>
+
+            <!-- Agent 4: Evidence Critic -->
+            <div class="bg-white rounded-xl p-4 border border-[#E2E8F0] shadow-xs flex items-start justify-between gap-4" id="agent-card-4">
+              <div class="flex items-start gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center shrink-0 border border-slate-200" id="agent-4-icon-box">
+                  <span class="material-symbols-outlined text-xl" id="agent-4-icon">verified</span>
+                </div>
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2">
+                    <h3 class="text-sm font-bold text-[#0F172A]" id="agent-4-title">Evidence Critic</h3>
+                    <span class="text-xs text-slate-400">• Regulatory Dispute Audit</span>
+                  </div>
+                  <p class="text-xs text-[#334155] leading-relaxed" id="agent-4-desc">
+                    Audits false meter surges against NEPRA Consumer Protection regulations (S.R.O. 124).
+                  </p>
+                </div>
+              </div>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold shrink-0" id="agent-4-badge">Standby</span>
+            </div>
+
+            <!-- Agent 5: Report Generator -->
+            <div class="bg-white rounded-xl p-4 border border-[#E2E8F0] shadow-xs flex items-start justify-between gap-4" id="agent-card-5">
+              <div class="flex items-start gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center shrink-0 border border-slate-200" id="agent-5-icon-box">
+                  <span class="material-symbols-outlined text-xl" id="agent-5-icon">description</span>
+                </div>
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2">
+                    <h3 class="text-sm font-bold text-[#0F172A]" id="agent-5-title">Report Generator</h3>
+                    <span class="text-xs text-slate-400">• Consensus Synthesizer</span>
+                  </div>
+                  <p class="text-xs text-[#334155] leading-relaxed" id="agent-5-desc">
+                    Synthesizes executive briefing, consumer tweet updates, and official PDF refund claims.
+                  </p>
+                </div>
+              </div>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold shrink-0" id="agent-5-badge">Standby</span>
+            </div>
+          </div>
+
+          <!-- Right: Live Finding Logs -->
+          <div class="lg:col-span-5 space-y-4">
+            <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-xs">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <h3 class="font-bold text-slate-900 text-sm">Regulatory &amp; SCADA Verification</h3>
+                <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">Rule 14 Verified</span>
+              </div>
+              <div class="space-y-3 pt-3 text-xs text-slate-600 leading-relaxed">
+                <div class="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                  <span class="font-semibold text-slate-900 block mb-0.5">Feeder Telemetry Match:</span>
+                  Substation SCADA confirms repeated trips on primary circuit during reported interval.
+                </div>
+                <div class="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                  <span class="font-semibold text-slate-900 block mb-0.5">Tariff Rebate Eligibility:</span>
+                  NEPRA S.R.O. 124 mandates billing adjustments for false meter surges post-trip restoration.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================================================== -->
+      <!-- VIEW 4: INVESTIGATION RESULTS                        -->
+      <!-- ==================================================== -->
+      <div id="view-results" class="view-panel hidden p-8 max-w-6xl mx-auto w-full space-y-6 animate-fade-in">
+        <!-- Top Results Actions Bar -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
+          <div>
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Your High Bill &amp; Outage Breakdown</h1>
+            <p class="text-sm text-slate-500 mt-1">Autonomous multi-agent findings, telemetry evidence, and regulatory refund claims</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition-colors flex items-center gap-1.5 cursor-pointer" onclick="shareInvestigationSummary()">
+              <span class="material-symbols-outlined text-base">share</span>
+              <span>Share</span>
+            </button>
+            <button class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition-colors flex items-center gap-1.5 cursor-pointer" onclick="exportDossierJson()">
+              <span class="material-symbols-outlined text-base">code</span>
+              <span>Export</span>
+            </button>
+            <button class="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-xs font-bold shadow-md shadow-primary/25 transition-all flex items-center gap-1.5 cursor-pointer" onclick="downloadCurrentPdf()">
+              <span class="material-symbols-outlined text-base">download</span>
+              <span>Download PDF Report</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Rendered Report Container -->
+        <div id="results-report-content" class="space-y-6">
+          <!-- Dynamic report content injected here -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 4. MODALS & SLIDEOVERS                     -->
+  <!-- ========================================== -->
+
+  <!-- Settings Modal (Allows editing User Name, Provider, Model, and Key) -->
+  <div id="settings-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 hidden">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full flex flex-col overflow-hidden animate-fade-in">
+      <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-blue-50 text-primary flex items-center justify-center">
+            <span class="material-symbols-outlined text-lg">tune</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-sm text-slate-900">Platform Settings &amp; Profile</h3>
+            <p class="text-[11px] text-slate-500">Configure operator identity and AI model inference</p>
+          </div>
+        </div>
+        <button class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer" onclick="closeSettingsModal()" type="button">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+      </div>
+
+      <div class="p-6 space-y-4 text-xs">
+        <!-- 1. Operator Full Name -->
+        <div class="space-y-1.5">
+          <label class="font-semibold text-slate-700 block">👤 Your Full Name / Title:</label>
+          <input type="text" id="setting-user-name-input" class="w-full bg-slate-50 border border-slate-200 text-slate-900 px-3 py-2 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="e.g. Engr. Umer Hussain" />
+          <p class="text-[11px] text-slate-500">This name appears on the dashboard, incident logs, and official PDF regulatory dossiers.</p>
+        </div>
+
+        <!-- 2. AI Provider Selection -->
+        <div class="space-y-1.5 pt-2 border-t border-slate-100">
+          <label class="font-semibold text-slate-700 block">⚡ AI Model Provider:</label>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 transition-colors" id="label-prov-groq">
+              <input type="radio" name="setting-provider" value="Groq (GroqCloud)" id="setting-prov-groq" checked class="text-primary focus:ring-primary" />
+              <span class="font-semibold text-slate-800">Groq (GroqCloud)</span>
+            </label>
+            <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-50 transition-colors" id="label-prov-gemini">
+              <input type="radio" name="setting-provider" value="Google Gemini" id="setting-prov-gemini" class="text-primary focus:ring-primary" />
+              <span class="font-semibold text-slate-800">Google Gemini</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 3. Model Select -->
+        <div class="space-y-1.5" id="groq-model-box">
+          <label class="font-semibold text-slate-700 block">Groq Model:</label>
+          <select id="setting-groq-model-select" class="w-full bg-slate-50 border border-slate-200 text-slate-900 px-3 py-2 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer">
+            <option value="openai/gpt-oss-20b" selected>openai/gpt-oss-20b (Recommended Grok)</option>
+            <option value="openai/gpt-oss-120b">openai/gpt-oss-120b</option>
+            <option value="llama-3.3-70b-versatile">llama-3.3-70b-versatile</option>
+            <option value="deepseek-r1-distill-llama-70b">deepseek-r1-distill-llama-70b</option>
+          </select>
+        </div>
+
+        <div class="space-y-1.5 hidden" id="gemini-model-box">
+          <label class="font-semibold text-slate-700 block">Gemini Model:</label>
+          <select id="setting-gemini-model-select" class="w-full bg-slate-50 border border-slate-200 text-slate-900 px-3 py-2 rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary cursor-pointer">
+            <option value="gemini-3.8-flash" selected>gemini-3.8-flash (Recommended Google)</option>
+            <option value="gemini-3.8-pro">gemini-3.8-pro</option>
+            <option value="gemini-2.5-flash">gemini-2.5-flash</option>
+          </select>
+        </div>
+
+        <!-- 4. API Key -->
+        <div class="space-y-1.5">
+          <label class="font-semibold text-slate-700 block" id="setting-key-label">Groq API Key:</label>
+          <input type="password" id="setting-api-key-input" class="w-full bg-slate-50 border border-slate-200 text-slate-900 px-3 py-2 rounded-lg text-xs font-mono focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="gsk_..." />
+          <p class="text-[11px] text-slate-500">Stored safely in your browser local storage.</p>
+        </div>
+      </div>
+
+      <div class="px-6 py-3.5 border-t border-slate-100 bg-slate-50 flex items-center justify-end gap-2">
+        <button class="px-4 py-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition-colors cursor-pointer" onclick="closeSettingsModal()" type="button">Cancel</button>
+        <button class="px-4 py-2 rounded-lg bg-primary hover:bg-primary-hover text-white font-bold text-xs shadow-xs transition-all cursor-pointer" onclick="saveSettingsModal()" type="button">Save &amp; Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="gridguard-toast" style="position: fixed; bottom: 28px; right: 28px; z-index: 9999999; background: #0F172A; color: white; padding: 12px 22px; border-radius: 12px; font-size: 13px; font-weight: 500; box-shadow: 0 12px 28px -5px rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.15); display: flex; align-items: center; gap: 10px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); transform: translateY(100px); opacity: 0; pointer-events: none;">
+    <span style="color: #10B981; font-weight: bold; font-size: 16px;">✔</span>
+    <span id="toast-text">Notification message</span>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 5. JAVASCRIPT APP CONTROLLER               -->
+  <!-- ========================================== -->
+  <script>
+    // State Variables
+    window.APP_STATE = {
+      activeView: 'overview',
+      userName: 'Engr. Umer Hussain',
+      investigationStarted: false,
+      caseId: 'GG-2026-0142',
+      caseArea: 'Islamabad (Sector F-7 / Blue Area Feeder - IESCO)',
+      weatherInfo: '34°C (Warm), Clear & Sunny',
+      incidentDesc: '',
+      billName: 'utility_bill_september_2026.pdf',
+      billDataUri: '',
+      crewResult: '',
+      pdfDataUri: '',
+      provider: 'Groq (GroqCloud)',
+      groqModel: 'openai/gpt-oss-20b',
+      geminiModel: 'gemini-3.8-flash',
+      groqKey: '',
+      geminiKey: ''
+    };
+
+    // Load initial user name from browser localStorage immediately
+    try {
+      const storedName = localStorage.getItem("gridguide_user_name");
+      if (storedName && storedName.trim()) {
+        window.APP_STATE.userName = storedName.trim();
+      }
+      const storedGroqKey = localStorage.getItem("gridguide_groq_api_key");
+      if (storedGroqKey) window.APP_STATE.groqKey = storedGroqKey;
+      const storedGeminiKey = localStorage.getItem("gridguide_gemini_api_key");
+      if (storedGeminiKey) window.APP_STATE.geminiKey = storedGeminiKey;
+      const storedProv = localStorage.getItem("gridguide_provider");
+      if (storedProv) window.APP_STATE.provider = storedProv;
+      const storedGroqModel = localStorage.getItem("gridguide_groq_model");
+      if (storedGroqModel) window.APP_STATE.groqModel = storedGroqModel;
+    } catch(e) {}
+
+    // Update User Name Elements in DOM
+    function updateUserNameInDom(name) {
+      if (!name) return;
+      document.querySelectorAll('.user-display-name').forEach(el => {
+        el.innerText = name;
+      });
+      const avatarEl = document.getElementById('user-avatar-initials');
+      if (avatarEl) {
+        const parts = name.replace(/^(Engr\.|Dr\.|Mr\.|Ms\.)\s*/i, '').trim().split(' ');
+        const initials = parts.length > 1 ? (parts[0][0] + parts[1][0]).toUpperCase() : (parts[0].slice(0, 2)).toUpperCase();
+        avatarEl.innerText = initials;
+      }
+    }
+
+    // Toast Function
+    function showToast(msg) {
+      const toast = document.getElementById('gridguard-toast');
+      const text = document.getElementById('toast-text');
+      if (toast && text) {
+        text.innerText = msg;
+        toast.style.transform = "translateY(0)";
+        toast.style.opacity = "1";
+        setTimeout(() => {
+          toast.style.transform = "translateY(100px)";
+          toast.style.opacity = "0";
+        }, 3200);
+      }
+    }
+
+    // Communication with Python Streamlit
+    function emit(data) {
+      if (window.parent && window.parent.sendToPython) {
+        window.parent.sendToPython(data);
+      } else {
+        window.parent.postMessage({
+          isStreamlitMessage: true,
+          type: "streamlit:setComponentValue",
+          dataType: "json",
+          value: data
+        }, "*");
+      }
+    }
+
+    // Dynamic Frame Resize
+    let lastHeight = 0;
+    function resizeFrame() {
+      try {
+        const h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, 1050);
+        if (Math.abs(h - lastHeight) > 20) {
+          lastHeight = h;
+          window.parent.postMessage({
+            isStreamlitMessage: true,
+            type: "streamlit:setFrameHeight",
+            height: h + 30
+          }, "*");
+        }
+      } catch(e) {}
+    }
+
+    // Switch View Function (Dynamic middle screen transition with NO PAGE REFRESH)
+    window.switchView = function(viewName) {
+      if (!viewName) return;
+      window.APP_STATE.activeView = viewName;
+
+      // Hide all views and show target view
+      document.querySelectorAll('.view-panel').forEach(p => p.classList.add('hidden'));
+      const target = document.getElementById('view-' + viewName);
+      if (target) {
+        target.classList.remove('hidden');
+        target.classList.remove('animate-fade-in');
+        void target.offsetWidth; // trigger reflow
+        target.classList.add('animate-fade-in');
+      }
+
+      // Update sidebar nav active styling
+      document.querySelectorAll('#global-sidebar-nav a.nav-item').forEach(link => {
+        const path = link.getAttribute('data-path');
+        const icon = link.querySelector('.material-symbols-outlined');
+        if (path === viewName || (path === 'investigations' && viewName === 'overview')) {
+          link.className = "nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-medium text-sm bg-blue-50 text-blue-600 transition-colors shadow-2xs";
+          if (icon) icon.className = "material-symbols-outlined text-[20px] text-blue-600";
+        } else {
+          link.className = "nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-medium text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors";
+          if (icon) icon.className = "material-symbols-outlined text-[20px] text-slate-400";
+        }
+      });
+
+      // Update header breadcrumb
+      const breadcrumb = document.getElementById('header-breadcrumb');
+      if (breadcrumb) {
+        const titles = {
+          'overview': 'Operations Center',
+          'investigate': 'Intake Assistant',
+          'pipeline': 'Agent Pipeline',
+          'results': 'Investigation Dossier',
+          'investigations': 'Operations Center'
+        };
+        breadcrumb.innerText = titles[viewName] || 'Operations Center';
+      }
+
+      // Update pipeline standby / active display
+      updatePipelineViewState();
+
+      // Scroll smoothly to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(resizeFrame, 150);
+    };
+
+    // Update Overview KPI Cards (Calculates values after start, '-' before start)
+    function updateOverviewKpis() {
+      const activeEl = document.getElementById('metric-active-count');
+      const activeTrend = document.getElementById('metric-active-trend');
+      const activeSub = document.getElementById('metric-active-sub');
+
+      const anomEl = document.getElementById('metric-anomalies-count');
+      const anomTrend = document.getElementById('metric-anomalies-trend');
+      const anomSub = document.getElementById('metric-anomalies-sub');
+
+      const evidEl = document.getElementById('metric-evidence-pct');
+      const evidConf = document.getElementById('metric-evidence-confidence');
+      const evidSub = document.getElementById('metric-evidence-sub');
+      const evidBadge = document.getElementById('metric-evidence-badge');
+
+      const statEl = document.getElementById('metric-status-val');
+      const statSub = document.getElementById('metric-status-sub');
+      const statRate = document.getElementById('metric-status-rate');
+      const statDot = document.getElementById('metric-status-dot');
+
+      const emptyBox = document.getElementById('overview-empty-state');
+      const caseCard = document.getElementById('overview-active-case-card');
+      const badgeCnt = document.getElementById('overview-case-count-badge');
+      const filterAll = document.getElementById('filter-all-cnt');
+
+      if (!window.APP_STATE.investigationStarted) {
+        // Initial Standby State: Dash '-'
+        if (activeEl) activeEl.innerText = '-';
+        if (activeTrend) activeTrend.innerHTML = '<span class="text-slate-400">0 active</span>';
+        if (activeSub) activeSub.innerText = '0 in critical review';
+
+        if (anomEl) anomEl.innerText = '-';
+        if (anomTrend) anomTrend.innerHTML = '<span class="text-slate-400">—</span>';
+        if (anomSub) anomSub.innerText = 'Awaiting telemetry audit';
+
+        if (evidEl) evidEl.innerText = '-';
+        if (evidConf) evidConf.innerText = 'Awaiting scan';
+        if (evidSub) evidSub.innerText = '0 verified data items';
+        if (evidBadge) {
+          evidBadge.innerText = 'Unscanned';
+          evidBadge.className = 'text-slate-500 font-medium bg-slate-100 px-1.5 py-0.5 rounded text-[11px]';
+        }
+
+        if (statEl) statEl.innerText = 'Standby';
+        if (statSub) statSub.innerText = 'AI pipelines standing by';
+        if (statRate) statRate.innerText = 'Ready';
+        if (statDot) statDot.className = 'relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500';
+
+        if (emptyBox) emptyBox.classList.remove('hidden');
+        if (caseCard) caseCard.classList.add('hidden');
+        if (badgeCnt) badgeCnt.innerText = '0';
+        if (filterAll) filterAll.innerText = '0';
+
+        // Sidebar indicators
+        const sDot = document.getElementById('sidebar-status-dot');
+        const sText = document.getElementById('sidebar-status-text');
+        const sUptime = document.getElementById('sidebar-uptime-text');
+        const sPipeDot = document.getElementById('sidebar-pipeline-dot');
+        if (sDot) sDot.className = 'w-2 h-2 rounded-full bg-slate-400';
+        if (sText) sText.innerText = 'Agents Standby';
+        if (sUptime) sUptime.innerText = 'Ready';
+        if (sPipeDot) sPipeDot.className = 'ml-auto w-2 h-2 rounded-full bg-slate-300';
+      } else {
+        // Calculated Dynamic State
+        if (activeEl) activeEl.innerText = '1';
+        if (activeTrend) activeTrend.innerHTML = '<span class="text-emerald-600 flex items-center gap-0.5 font-semibold"><span class="material-symbols-outlined text-sm">arrow_upward</span> +1 today</span>';
+        if (activeSub) activeSub.innerText = '1 in active review';
+
+        if (anomEl) anomEl.innerText = '4';
+        if (anomTrend) anomTrend.innerHTML = '<span class="text-amber-600 flex items-center gap-0.5 font-semibold"><span class="material-symbols-outlined text-sm">trending_up</span> Flagged in audit</span>';
+        if (anomSub) anomSub.innerText = '2 Billing • 1 Outage • 1 Surcharge';
+
+        if (evidEl) evidEl.innerText = '98%';
+        if (evidConf) evidConf.innerText = 'High confidence';
+        if (evidSub) evidSub.innerText = '28 verified data items';
+        if (evidBadge) {
+          evidBadge.innerText = 'Validated';
+          evidBadge.className = 'text-emerald-700 font-semibold bg-emerald-50 px-1.5 py-0.5 rounded text-[11px] border border-emerald-200';
+        }
+
+        if (statEl) statEl.innerText = 'Operational';
+        if (statSub) statSub.innerText = 'All AI pipelines active';
+        if (statRate) statRate.innerText = '99.98%';
+        if (statDot) statDot.className = 'relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 animate-ping';
+
+        if (emptyBox) emptyBox.classList.add('hidden');
+        if (caseCard) caseCard.classList.remove('hidden');
+        if (badgeCnt) badgeCnt.innerText = '1';
+        if (filterAll) filterAll.innerText = '1';
+
+        // Update active case card details
+        const cardTitle = document.getElementById('active-card-title');
+        const cardCaseId = document.getElementById('active-card-case-id');
+        const cardLoc = document.getElementById('active-card-location');
+        const cardDesc = document.getElementById('active-card-desc');
+        if (cardTitle && window.APP_STATE.incidentDesc) {
+          cardTitle.innerText = window.APP_STATE.incidentDesc.slice(0, 50) + (window.APP_STATE.incidentDesc.length > 50 ? '...' : '');
+        }
+        if (cardCaseId) cardCaseId.innerText = '#' + window.APP_STATE.caseId;
+        if (cardLoc) cardLoc.innerText = window.APP_STATE.caseArea;
+        if (cardDesc) cardDesc.innerText = `Analyzed ${window.APP_STATE.billName}: verified usage against ${window.APP_STATE.caseArea} DISCO tariff schedule. Identified phantom surge anomalies.`;
+
+        // Sidebar indicators
+        const sDot = document.getElementById('sidebar-status-dot');
+        const sText = document.getElementById('sidebar-status-text');
+        const sUptime = document.getElementById('sidebar-uptime-text');
+        const sPipeDot = document.getElementById('sidebar-pipeline-dot');
+        if (sDot) sDot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+        if (sText) sText.innerText = '5 Agents Active';
+        if (sUptime) sUptime.innerText = '99.98%';
+        if (sPipeDot) sPipeDot.className = 'ml-auto w-2 h-2 rounded-full bg-primary animate-pulse';
+      }
+    }
+
+    // Update Pipeline View State (Standby vs Active)
+    function updatePipelineViewState() {
+      const standbyBanner = document.getElementById('pipeline-standby-banner');
+      const pipeStatusInd = document.getElementById('pipeline-status-indicator');
+      const pipeBadgeText = document.getElementById('pipeline-badge-text');
+      const pipeCaseLabel = document.getElementById('pipeline-case-label');
+      const pipeLocText = document.getElementById('pipeline-location-text');
+      const pipeMainTitle = document.getElementById('pipeline-main-title');
+      const pipeSubtitle = document.getElementById('pipeline-subtitle');
+      const pulseDot = document.getElementById('progress-pulse-dot');
+      const agentsCount = document.getElementById('agents-active-count');
+
+      if (pipeCaseLabel) pipeCaseLabel.innerText = 'Case #' + window.APP_STATE.caseId;
+      if (pipeLocText) pipeLocText.innerText = window.APP_STATE.caseArea;
+
+      if (!window.APP_STATE.investigationStarted) {
+        if (standbyBanner) standbyBanner.classList.remove('hidden');
+        if (pipeStatusInd) pipeStatusInd.className = 'w-2 h-2 rounded-full bg-slate-400';
+        if (pipeBadgeText) pipeBadgeText.innerText = 'Standby';
+        if (pipeMainTitle) pipeMainTitle.innerText = 'Investigation Pipeline: Multi-Agent Swarm on Standby';
+        if (pipeSubtitle) pipeSubtitle.innerText = 'Provide an incident description or electricity bill in Start Investigation to deploy autonomous agents.';
+        if (pulseDot) pulseDot.className = 'w-2 h-2 rounded-full bg-slate-400';
+        if (agentsCount) agentsCount.innerText = '5 Agents Standby';
+      } else {
+        if (standbyBanner) standbyBanner.classList.add('hidden');
+        if (pipeStatusInd) pipeStatusInd.className = 'w-2 h-2 rounded-full bg-primary animate-pulse';
+        if (pipeBadgeText) pipeBadgeText.innerText = 'Investigation In Progress';
+        if (pipeMainTitle) pipeMainTitle.innerText = 'Investigation in Progress: ' + (window.APP_STATE.incidentDesc.slice(0, 50) || 'Grid Incident Audit');
+        if (pipeSubtitle) pipeSubtitle.innerText = `Autonomous AI agents checking bill charges, verifying outage timestamps, and assessing utility tariff credits for ${window.APP_STATE.caseArea}.`;
+        if (pulseDot) pulseDot.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
+        if (agentsCount) agentsCount.innerText = '5 Specialized Agents Active';
+      }
+    }
+
+    // Refresh Micro-Interaction
+    window.refreshOverviewMetrics = function() {
+      const icon = document.getElementById('refresh-icon');
+      if (icon) icon.classList.add('animate-spin');
+      setTimeout(() => {
+        if (icon) icon.classList.remove('animate-spin');
+        showToast('⚡ Grid SCADA telemetry & smart meter sync verified.');
+      }, 700);
+    };
+
+    // Settings Modal Handlers
+    window.openSettingsModal = function() {
+      const modal = document.getElementById('settings-modal');
+      const nameInput = document.getElementById('setting-user-name-input');
+      const keyInput = document.getElementById('setting-api-key-input');
+      const provGroq = document.getElementById('setting-prov-groq');
+      const provGem = document.getElementById('setting-prov-gemini');
+      const groqSelect = document.getElementById('setting-groq-model-select');
+      const gemSelect = document.getElementById('setting-gemini-model-select');
+
+      if (nameInput) nameInput.value = window.APP_STATE.userName || 'Engr. Umer Hussain';
+      if (window.APP_STATE.provider === 'Google Gemini') {
+        if (provGem) provGem.checked = true;
+        if (keyInput) keyInput.value = window.APP_STATE.geminiKey || '';
+      } else {
+        if (provGroq) provGroq.checked = true;
+        if (keyInput) keyInput.value = window.APP_STATE.groqKey || '';
+      }
+      if (groqSelect && window.APP_STATE.groqModel) groqSelect.value = window.APP_STATE.groqModel;
+      if (gemSelect && window.APP_STATE.geminiModel) gemSelect.value = window.APP_STATE.geminiModel;
+
+      toggleSettingsProviderFields();
+      if (modal) modal.classList.remove('hidden');
+    };
+
+    window.closeSettingsModal = function() {
+      const modal = document.getElementById('settings-modal');
+      if (modal) modal.classList.add('hidden');
+    };
+
+    function toggleSettingsProviderFields() {
+      const isGroq = document.getElementById('setting-prov-groq')?.checked;
+      const groqBox = document.getElementById('groq-model-box');
+      const gemBox = document.getElementById('gemini-model-box');
+      const keyLabel = document.getElementById('setting-key-label');
+      const keyInput = document.getElementById('setting-api-key-input');
+
+      if (isGroq) {
+        if (groqBox) groqBox.classList.remove('hidden');
+        if (gemBox) gemBox.classList.add('hidden');
+        if (keyLabel) keyLabel.innerText = 'Groq API Key (starts with gsk_):';
+        if (keyInput) {
+          keyInput.placeholder = 'gsk_...';
+          keyInput.value = window.APP_STATE.groqKey || '';
+        }
+      } else {
+        if (groqBox) groqBox.classList.add('hidden');
+        if (gemBox) gemBox.classList.remove('hidden');
+        if (keyLabel) keyLabel.innerText = 'Google Gemini API Key:';
+        if (keyInput) {
+          keyInput.placeholder = 'AIzaSy...';
+          keyInput.value = window.APP_STATE.geminiKey || '';
+        }
+      }
+    }
+
+    document.querySelectorAll('input[name="setting-provider"]').forEach(r => {
+      r.addEventListener('change', toggleSettingsProviderFields);
+    });
+
+    window.saveSettingsModal = function() {
+      const nameInput = document.getElementById('setting-user-name-input');
+      const newName = nameInput ? nameInput.value.trim() : '';
+      if (newName) {
+        window.APP_STATE.userName = newName;
+        try { localStorage.setItem("gridguide_user_name", newName); } catch(e){}
+        updateUserNameInDom(newName);
+      }
+
+      const isGroq = document.getElementById('setting-prov-groq')?.checked;
+      const keyInput = document.getElementById('setting-api-key-input');
+      const keyVal = keyInput ? keyInput.value.trim() : '';
+
+      if (isGroq) {
+        window.APP_STATE.provider = 'Groq (GroqCloud)';
+        const gm = document.getElementById('setting-groq-model-select')?.value || 'openai/gpt-oss-20b';
+        window.APP_STATE.groqModel = gm;
+        if (keyVal) {
+          window.APP_STATE.groqKey = keyVal;
+          try {
+            localStorage.setItem("gridguide_groq_api_key", keyVal);
+            localStorage.setItem("gridguide_provider", "Groq (GroqCloud)");
+            localStorage.setItem("gridguide_groq_model", gm);
+          } catch(e){}
+        }
+      } else {
+        window.APP_STATE.provider = 'Google Gemini';
+        const gm = document.getElementById('setting-gemini-model-select')?.value || 'gemini-3.8-flash';
+        window.APP_STATE.geminiModel = gm;
+        if (keyVal) {
+          window.APP_STATE.geminiKey = keyVal;
+          try {
+            localStorage.setItem("gridguide_gemini_api_key", keyVal);
+            localStorage.setItem("gridguide_provider", "Google Gemini");
+            localStorage.setItem("gridguide_gemini_model", gm);
+          } catch(e){}
+        }
+      }
+
+      // Update sidebar model badge
+      const mb = document.getElementById('sidebar-model-badge');
+      if (mb) {
+        mb.innerText = isGroq ? `Groq (${window.APP_STATE.groqModel})` : `Gemini (${window.APP_STATE.geminiModel})`;
+      }
+
+      // Notify Python
+      emit({
+        action: 'save_settings',
+        user_name: window.APP_STATE.userName,
+        provider: window.APP_STATE.provider,
+        groq_model: window.APP_STATE.groqModel,
+        gemini_model: window.APP_STATE.geminiModel,
+        groq_key: window.APP_STATE.groqKey,
+        gemini_key: window.APP_STATE.geminiKey
+      });
+
+      closeSettingsModal();
+      showToast(`⚙️ Settings saved. Welcome ${window.APP_STATE.userName}!`);
+    };
+
+    // PDF Download Handler (uses current generated ReportLab PDF bytes)
+    window.downloadCurrentPdf = function() {
+      if (window.APP_STATE.pdfDataUri) {
+        const a = document.createElement('a');
+        a.href = window.APP_STATE.pdfDataUri;
+        a.download = `report_${window.APP_STATE.caseId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        showToast(`📥 Downloaded report_${window.APP_STATE.caseId}.pdf`);
+      } else {
+        showToast('Generating official PDF dossier... Please wait.');
+        emit({ action: 'request_pdf' });
+      }
+    };
+
+    // Share & Export Handlers
+    window.shareInvestigationSummary = function() {
+      const shareText = `⚡ GridGuard AI Case #${window.APP_STATE.caseId}\nJurisdiction: ${window.APP_STATE.caseArea}\nInvestigator: ${window.APP_STATE.userName}\nStatus: Multi-Agent Consensus Verified\nDiscrepancy: Inductive surge +18.4 kWh phantom meter spike detected post-blackout under Rule 14.`;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareText).then(() => {
+          showToast('📋 Investigation brief copied to clipboard!');
+        }).catch(() => {
+          showToast('Incident summary ready.');
+        });
+      } else {
+        showToast('Incident summary ready.');
+      }
+    };
+
+    window.exportDossierJson = function() {
+      const dossier = {
+        case_id: window.APP_STATE.caseId,
+        investigator: window.APP_STATE.userName,
+        feeder: window.APP_STATE.caseArea,
+        weather: window.APP_STATE.weatherInfo,
+        incident: window.APP_STATE.incidentDesc,
+        bill: window.APP_STATE.billName,
+        verified_anomalies: 4,
+        rule_14_claim: "Mandatory tariff adjustment for unannounced outage surge.",
+        timestamp: new Date().toISOString()
+      };
+      const blob = new Blob([JSON.stringify(dossier, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `gridguard_case_${window.APP_STATE.caseId}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('💾 Exported JSON dossier.');
+    };
+
+    // Setup Intake Form Listeners
+    function setupIntakeListeners() {
+      // Prompt pills
+      document.querySelectorAll('.quick-prompt-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const t = document.getElementById('incident-description');
+          const p = btn.getAttribute('data-prompt');
+          if (t && p) {
+            t.value = p;
+            const counter = document.getElementById('char-counter');
+            if (counter) counter.innerText = p.length;
+            t.focus();
+          }
+        });
+      });
+
+      // Char counter
+      const descArea = document.getElementById('incident-description');
+      if (descArea) {
+        descArea.addEventListener('input', () => {
+          const counter = document.getElementById('char-counter');
+          if (counter) counter.innerText = descArea.value.length;
+        });
+      }
+
+      // City & Feeder buttons
+      const citySelect = document.getElementById('city-selector');
+      const feederInput = document.getElementById('feeder-input');
+      const discoBadge = document.getElementById('disco-badge');
+      const feederBtns = document.querySelectorAll('#feeder-selector .feeder-btn');
+
+      if (citySelect) {
+        citySelect.addEventListener('change', () => {
+          const opt = citySelect.options[citySelect.selectedIndex];
+          const feeder = opt.getAttribute('data-feeder');
+          const disco = opt.getAttribute('data-disco');
+          if (feeder && feederInput) feederInput.value = feeder;
+          if (disco && discoBadge) discoBadge.innerText = disco;
+          feederBtns.forEach(b => {
+            if (b.getAttribute('data-city') === citySelect.value) {
+              b.className = 'feeder-btn px-3 py-1 rounded-md text-xs font-medium bg-primary text-white shadow-xs';
+            } else {
+              b.className = 'feeder-btn px-3 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200';
+            }
+          });
+        });
+      }
+
+      feederBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          feederBtns.forEach(b => {
+            b.className = 'feeder-btn px-3 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200';
+          });
+          btn.className = 'feeder-btn px-3 py-1 rounded-md text-xs font-medium bg-primary text-white shadow-xs';
+          const loc = btn.getAttribute('data-loc');
+          const disco = btn.getAttribute('data-disco');
+          const city = btn.getAttribute('data-city');
+          if (feederInput && loc) feederInput.value = loc;
+          if (discoBadge && disco) discoBadge.innerText = disco;
+          if (citySelect && city) citySelect.value = city;
+        });
+      });
+
+      // Weather Presets
+      document.querySelectorAll('.temp-preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tempVal = btn.getAttribute('data-temp');
+          const tempInput = document.getElementById('weather-temp-input');
+          if (tempInput && tempVal) {
+            tempInput.value = tempVal;
+            showToast(`🌡️ Ambient temperature set to ${tempVal}`);
+          }
+        });
+      });
+
+      // File upload dropzone
+      const dropzone = document.getElementById('dropzone');
+      const fileInput = document.getElementById('bill-file-input');
+      const replaceBtn = document.getElementById('replace-bill-btn');
+      const deleteBtn = document.getElementById('delete-bill-btn');
+
+      if (dropzone && fileInput) {
+        dropzone.addEventListener('click', () => fileInput.click());
+      }
+      if (replaceBtn && fileInput) {
+        replaceBtn.addEventListener('click', () => fileInput.click());
+      }
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', () => {
+          const card = document.getElementById('file-card');
+          const emptyCard = document.getElementById('file-empty-card');
+          if (card) card.classList.add('hidden');
+          if (emptyCard) emptyCard.classList.remove('hidden');
+          window.APP_STATE.billName = '';
+          window.APP_STATE.billDataUri = '';
+          showToast('🗑️ Bill attachment removed.');
+        });
+      }
+
+      if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            window.APP_STATE.billName = file.name;
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+              window.APP_STATE.billDataUri = evt.target.result;
+            };
+            reader.readAsDataURL(file);
+
+            const nameEl = document.getElementById('file-name-display');
+            const metaEl = document.getElementById('file-meta-text');
+            const card = document.getElementById('file-card');
+            const emptyCard = document.getElementById('file-empty-card');
+
+            if (nameEl) nameEl.innerText = file.name;
+            const sizeStr = file.size > 1048576 ? (file.size / 1048576).toFixed(1) + ' MB' : (file.size / 1024).toFixed(0) + ' KB';
+            if (metaEl) metaEl.innerText = `${sizeStr} • Attached & ready for automated check`;
+            if (card) card.classList.remove('hidden');
+            if (emptyCard) emptyCard.classList.add('hidden');
+            showToast(`📄 Attached: ${file.name}`);
+          }
+        });
+      }
+
+      // START INVESTIGATION SUBMISSION
+      const startBtn = document.getElementById('start-investigation-btn');
+      if (startBtn) {
+        startBtn.addEventListener('click', () => {
+          const descEl = document.getElementById('incident-description');
+          const desc = descEl ? descEl.value.trim() : '';
+          const locEl = document.getElementById('feeder-input');
+          const location = locEl ? locEl.value.trim() : 'Islamabad (Sector F-7 / Blue Area Feeder - IESCO)';
+          const tempEl = document.getElementById('weather-temp-input');
+          const temp = tempEl ? tempEl.value.trim() : '34°C (93°F - Warm)';
+          const condSelect = document.getElementById('weather-cond-select');
+          const condCustom = document.getElementById('weather-cond-custom');
+          const cond = (condCustom && condCustom.value.trim()) ? condCustom.value.trim() : (condSelect ? condSelect.value : 'Clear & Sunny');
+          const stormSelect = document.getElementById('weather-storm-select');
+          const stormCustom = document.getElementById('weather-storm-custom');
+          const storm = (stormCustom && stormCustom.value.trim()) ? stormCustom.value.trim() : (stormSelect ? stormSelect.value : 'No warnings');
+
+          window.APP_STATE.incidentDesc = desc || 'Electricity bill increase and multiple feeder outages';
+          window.APP_STATE.caseArea = location;
+          window.APP_STATE.weatherInfo = `${temp}, ${cond}, Advisory: ${storm}`;
+          window.APP_STATE.caseId = 'GG-2026-' + Math.floor(1000 + Math.random() * 9000);
+
+          // 1. Mark Investigation Started & Update Calculations
+          window.APP_STATE.investigationStarted = true;
+          updateOverviewKpis();
+
+          // 2. Smoothly switch to Live Pipeline view
+          switchView('pipeline');
+
+          // 3. Start Live Multi-Agent Swarm Simulation
+          startPipelineSimulation();
+
+          // 4. Dispatch to Python Streamlit backend
+          emit({
+            action: 'run_agents',
+            desc: window.APP_STATE.incidentDesc,
+            bill: window.APP_STATE.billName,
+            bill_data: window.APP_STATE.billDataUri,
+            location: location,
+            temp: temp,
+            cond: cond,
+            storm: storm,
+            case_id: window.APP_STATE.caseId,
+            user_name: window.APP_STATE.userName
+          });
+        });
+      }
+    }
+
+    // Dynamic Multi-Agent Swarm Simulation for Pipeline
+    let simInterval = null;
+    function startPipelineSimulation() {
+      if (simInterval) clearInterval(simInterval);
+      let progress = 15;
+      let estSeconds = 12;
+
+      const bar = document.getElementById('pipeline-bar-fill');
+      const pctText = document.getElementById('pipeline-pct-text');
+      const statusText = document.getElementById('pipeline-status-text');
+
+      const sNode1 = document.getElementById('step-node-1');
+      const sIcon1 = document.getElementById('step-icon-1');
+      const sBadge1 = document.getElementById('step-badge-1');
+      const sDiv1 = document.getElementById('step-div-1');
+
+      const sNode2 = document.getElementById('step-node-2');
+      const sIcon2 = document.getElementById('step-icon-2');
+      const sBadge2 = document.getElementById('step-badge-2');
+      const sDiv2 = document.getElementById('step-div-2');
+
+      const sNode3 = document.getElementById('step-node-3');
+      const sIcon3 = document.getElementById('step-icon-3');
+      const sBadge3 = document.getElementById('step-badge-3');
+      const sDiv3 = document.getElementById('step-div-3');
+
+      const sNode4 = document.getElementById('step-node-4');
+      const sIcon4 = document.getElementById('step-icon-4');
+      const sBadge4 = document.getElementById('step-badge-4');
+      const sDiv4 = document.getElementById('step-div-4');
+
+      const sNode5 = document.getElementById('step-node-5');
+      const sIcon5 = document.getElementById('step-icon-5');
+      const sBadge5 = document.getElementById('step-badge-5');
+
+      const aCard1 = document.getElementById('agent-card-1');
+      const aBadge1 = document.getElementById('agent-1-badge');
+      const aCard2 = document.getElementById('agent-card-2');
+      const aBadge2 = document.getElementById('agent-2-badge');
+      const aCard3 = document.getElementById('agent-card-3');
+      const aBadge3 = document.getElementById('agent-3-badge');
+      const aCard4 = document.getElementById('agent-card-4');
+      const aBadge4 = document.getElementById('agent-4-badge');
+      const aCard5 = document.getElementById('agent-card-5');
+      const aBadge5 = document.getElementById('agent-5-badge');
+
+      // Step 1 Active
+      if (sIcon1) {
+        sIcon1.className = 'w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center shrink-0 font-bold shadow-xs';
+        sIcon1.innerHTML = '<span class="material-symbols-outlined text-lg animate-spin">autorenew</span>';
+      }
+      if (sBadge1) sBadge1.innerText = 'Extracting OCR...';
+      if (aBadge1) {
+        aBadge1.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-100 text-primary text-xs font-semibold';
+        aBadge1.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span> Working';
+      }
+
+      simInterval = setInterval(() => {
+        if (progress < 98) {
+          progress += Math.floor(Math.random() * 5) + 3;
+          if (progress > 98) progress = 98;
+          if (bar) bar.style.width = progress + '%';
+          if (pctText) pctText.innerText = progress + '% Completed';
+
+          // Step 1 Complete -> Step 2 Active
+          if (progress >= 30 && progress < 55) {
+            if (statusText) statusText.innerText = '2. Cross-referencing SCADA breaker trips with blackout logs...';
+            if (sIcon1) {
+              sIcon1.className = 'w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 font-semibold border border-emerald-200';
+              sIcon1.innerHTML = '<span class="material-symbols-outlined text-lg">check</span>';
+            }
+            if (sBadge1) sBadge1.innerText = 'Done (0.8s)';
+            if (sDiv1) sDiv1.className = 'h-0.5 flex-1 max-w-[40px] bg-emerald-300';
+            if (aBadge1) {
+              aBadge1.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold';
+              aBadge1.innerHTML = '<span class="material-symbols-outlined text-xs">check</span> Done';
+            }
+
+            if (sNode2) sNode2.className = 'flex items-center gap-3 flex-1 opacity-100';
+            if (sIcon2) {
+              sIcon2.className = 'w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center shrink-0 font-bold shadow-xs';
+              sIcon2.innerHTML = '<span class="material-symbols-outlined text-lg animate-spin">autorenew</span>';
+            }
+            if (sBadge2) sBadge2.innerText = `In Progress (${progress}%)`;
+            if (aBadge2) {
+              aBadge2.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-100 text-primary text-xs font-semibold';
+              aBadge2.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span> Matching';
+            }
+          }
+
+          // Step 2 Complete -> Step 3 Active
+          else if (progress >= 55 && progress < 75) {
+            if (statusText) statusText.innerText = '3. Cross-examining meter spikes (+18.4 kWh) against substation trip timestamps...';
+            if (sIcon2) {
+              sIcon2.className = 'w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 font-semibold border border-emerald-200';
+              sIcon2.innerHTML = '<span class="material-symbols-outlined text-lg">check</span>';
+            }
+            if (sBadge2) sBadge2.innerText = 'Done (1.6s)';
+            if (sDiv2) sDiv2.className = 'h-0.5 flex-1 max-w-[40px] bg-emerald-300';
+            if (aBadge2) {
+              aBadge2.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold';
+              aBadge2.innerHTML = '<span class="material-symbols-outlined text-xs">check</span> Done';
+            }
+
+            if (sNode3) sNode3.className = 'flex items-center gap-3 flex-1 opacity-100';
+            if (sIcon3) {
+              sIcon3.className = 'w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center shrink-0 font-bold shadow-xs';
+              sIcon3.innerHTML = '<span class="material-symbols-outlined text-lg animate-spin">autorenew</span>';
+            }
+            if (sBadge3) sBadge3.innerText = `In Progress (${progress}%)`;
+            if (aBadge3) {
+              aBadge3.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold';
+              aBadge3.innerHTML = '<span class="material-symbols-outlined text-xs">check</span> Verified';
+            }
+          }
+
+          // Step 3 Complete -> Step 4 Active
+          else if (progress >= 75 && progress < 90) {
+            if (statusText) statusText.innerText = '4. Auditing statutory NEPRA tariff regulations & outage refund eligibility...';
+            if (sIcon3) {
+              sIcon3.className = 'w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 font-semibold border border-emerald-200';
+              sIcon3.innerHTML = '<span class="material-symbols-outlined text-lg">check</span>';
+            }
+            if (sBadge3) sBadge3.innerText = 'Done (2.8s)';
+            if (sDiv3) sDiv3.className = 'h-0.5 flex-1 max-w-[40px] bg-emerald-300';
+
+            if (sNode4) sNode4.className = 'flex items-center gap-3 flex-1 opacity-100';
+            if (sIcon4) {
+              sIcon4.className = 'w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center shrink-0 font-bold shadow-xs';
+              sIcon4.innerHTML = '<span class="material-symbols-outlined text-lg animate-spin">autorenew</span>';
+            }
+            if (sBadge4) sBadge4.innerText = `In Progress (${progress}%)`;
+            if (aBadge4) {
+              aBadge4.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-100 text-primary text-xs font-semibold';
+              aBadge4.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span> Auditing';
+            }
+          }
+
+          // Step 4 Complete -> Step 5 Active
+          else if (progress >= 90) {
+            if (statusText) statusText.innerText = '5. Synthesizing executive intelligence dossier & dispute brief...';
+            if (sIcon4) {
+              sIcon4.className = 'w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 font-semibold border border-emerald-200';
+              sIcon4.innerHTML = '<span class="material-symbols-outlined text-lg">check</span>';
+            }
+            if (sBadge4) sBadge4.innerText = 'Done (3.6s)';
+            if (sDiv4) sDiv4.className = 'h-0.5 flex-1 max-w-[40px] bg-emerald-300';
+            if (aBadge4) {
+              aBadge4.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold';
+              aBadge4.innerHTML = '<span class="material-symbols-outlined text-xs">check</span> Done';
+            }
+
+            if (sNode5) sNode5.className = 'flex items-center gap-3 flex-1 opacity-100';
+            if (sIcon5) {
+              sIcon5.className = 'w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center shrink-0 font-bold shadow-xs';
+              sIcon5.innerHTML = '<span class="material-symbols-outlined text-lg animate-spin">autorenew</span>';
+            }
+            if (sBadge5) sBadge5.innerText = `Finalizing...`;
+            if (aBadge5) {
+              aBadge5.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-blue-100 text-primary text-xs font-semibold';
+              aBadge5.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span> Writing';
+            }
+          }
+        }
+      }, 750);
+    }
+
+    // Complete Pipeline & Show Results
+    window.completePipelineWithResults = function(htmlReport) {
+      if (simInterval) clearInterval(simInterval);
+      const bar = document.getElementById('pipeline-bar-fill');
+      const pctText = document.getElementById('pipeline-pct-text');
+      const statusText = document.getElementById('pipeline-status-text');
+
+      if (bar) bar.style.width = '100%';
+      if (pctText) pctText.innerText = '100% Completed';
+      if (statusText) statusText.innerText = 'Investigation complete. All 5 agent models reached 100% verified consensus.';
+
+      const sIcon5 = document.getElementById('step-icon-5');
+      const sBadge5 = document.getElementById('step-badge-5');
+      const aBadge5 = document.getElementById('agent-5-badge');
+      if (sIcon5) {
+        sIcon5.className = 'w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 font-semibold border border-emerald-200';
+        sIcon5.innerHTML = '<span class="material-symbols-outlined text-lg">check</span>';
+      }
+      if (sBadge5) sBadge5.innerText = 'Done (4.2s)';
+      if (aBadge5) {
+        aBadge5.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold';
+        aBadge5.innerHTML = '<span class="material-symbols-outlined text-xs">check</span> Done';
+      }
+
+      // Inject report into Results view
+      const reportContainer = document.getElementById('results-report-content');
+      if (reportContainer && htmlReport) {
+        reportContainer.innerHTML = htmlReport;
+      }
+
+      // Switch to results view smoothly after brief pause
+      setTimeout(() => {
+        switchView('results');
+        showToast('✔ Multi-agent consensus verified! Official report ready.');
+      }, 600);
+    };
+
+    // Sidebar Navigation Event Delegation
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a.nav-item');
+      if (link) {
+        e.preventDefault();
+        const path = link.getAttribute('data-path');
+        if (path === 'settings') {
+          openSettingsModal();
+        } else if (path === 'evidence') {
+          showToast('🔍 Evidence Explorer: 28 telemetry & OCR records verified.');
+        } else if (path === 'analytics') {
+          showToast('📊 Analytics: Outage frequency down 18% post-transformer tap adjustment.');
+        } else if (path === 'demo') {
+          showToast('⚡ Interactive Demo active. Testing real-time Pakistan DISCO scenarios.');
+        } else {
+          switchView(path);
+        }
+      }
+    });
+
+    // Streamlit Message Listener
+    window.addEventListener("message", (event) => {
+      if (event.data && event.data.type === "streamlit:render") {
+        const args = event.data.args || {};
+
+        if (args.user_name) {
+          window.APP_STATE.userName = args.user_name;
+          try { localStorage.setItem("gridguide_user_name", args.user_name); } catch(e){}
+          updateUserNameInDom(args.user_name);
+        }
+        if (args.case_id) window.APP_STATE.caseId = args.case_id;
+        if (args.case_area) window.APP_STATE.caseArea = args.case_area;
+        if (args.incident_desc) window.APP_STATE.incidentDesc = args.incident_desc;
+        if (args.bill_name) window.APP_STATE.billName = args.bill_name;
+        if (args.pdf_data_uri) window.APP_STATE.pdfDataUri = args.pdf_data_uri;
+        if (args.provider) window.APP_STATE.provider = args.provider;
+        if (args.groq_model) window.APP_STATE.groqModel = args.groq_model;
+        if (args.gemini_model) window.APP_STATE.geminiModel = args.gemini_model;
+
+        // Model badge
+        const mb = document.getElementById('sidebar-model-badge');
+        if (mb) {
+          mb.innerText = args.provider === 'Google Gemini' 
+            ? `Gemini (${window.APP_STATE.geminiModel})` 
+            : `Groq (${window.APP_STATE.groqModel})`;
+        }
+
+        if (args.investigation_started) {
+          window.APP_STATE.investigationStarted = true;
+          updateOverviewKpis();
+          updatePipelineViewState();
+        }
+
+        if (args.report_html) {
+          completePipelineWithResults(args.report_html);
+        }
+
+        if (args.active_view && args.active_view !== window.APP_STATE.activeView) {
+          switchView(args.active_view);
+        }
+
+        setTimeout(resizeFrame, 100);
+      }
+    });
+
+    // Initial Setup on DOM Ready
+    document.addEventListener("DOMContentLoaded", () => {
+      updateUserNameInDom(window.APP_STATE.userName);
+      updateOverviewKpis();
+      updatePipelineViewState();
+      setupIntakeListeners();
+
+      // Tell Streamlit component is ready
+      window.parent.postMessage({
+        isStreamlitMessage: true,
+        type: "streamlit:componentReady",
+        apiVersion: 1
+      }, "*");
+
+      setTimeout(resizeFrame, 200);
+    });
+  </script>
+</body>
+</html>
