@@ -21,7 +21,13 @@ import pdfplumber
 import pypdf
 from PIL import Image
 
-from crewai import Agent, Task, Crew, Process, LLM
+try:
+    from crewai import Agent, Task, Crew, Process, LLM
+    HAS_CREWAI = True
+except Exception as _e_crew:
+    Agent, Task, Crew, Process, LLM = None, None, None, None, None
+    HAS_CREWAI = False
+    print(f"Notice: CrewAI import unavailable ({_e_crew}). Using resilient native multi-agent engine.")
 
 from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
@@ -637,9 +643,72 @@ General Sales Tax (GST @ 18%): Rs. 3,892.50
         "has_real_ocr": False
     }
 
+def run_native_multiagent_investigation(desc, location="", weather="", bill_ocr_context="", provider="Groq (GroqCloud)", api_key="", model=""):
+    import urllib.request
+    import json
+    
+    loc_str = f" in {location}" if location else ""
+    weather_str = f" Environmental / Weather Conditions: {weather}." if weather else ""
+    ocr_context_str = f"\n\n{bill_ocr_context}\n" if bill_ocr_context else ""
+    full_incident = f"{desc}{loc_str}.{weather_str}{ocr_context_str}"
+
+    prompt = f"""
+You are GridGuard AI, an autonomous multi-agent utility and grid incident intelligence swarm composed of:
+1. Telemetry Analyst (SCADA breaker logs, AMI meter interval data, and OCR bill text)
+2. Dispatch Coordinator (Ground crew safety, meter recalibration, and tariff credit calculations)
+3. Communications Specialist (Stakeholder briefs, executive summaries, and consumer dispute advisories)
+
+INCIDENT DOSSIER:
+{full_incident}
+
+MANDATORY INSTRUCTIONS:
+1. Strictly use the ACTUAL bill figures provided above (Billed Units, Total Amount, Consumer Ref, DISCO, and extracted document text). Do NOT invent or hallucinate different billing numbers unless written in the OCR document above.
+2. Audit billed units (kWh), applicable tariff brackets, fuel price adjustments (FPA), and charges against the reported incident and outage timeline.
+3. Identify any discrepancy, overbilling, or phantom surge on feeder restoration.
+4. Provide structured, executive-grade findings in markdown with:
+   ### 1. Root Cause & Telemetry Analysis
+   ### 2. Tariff Audit & Overcharge Calculation
+   ### 3. Field Mitigation & Dispatch Plan
+   ### 4. Consumer Restitution & NEPRA Statutory Claim
+"""
+    if provider == "Groq (GroqCloud)":
+        url = "https://api.groq.com/openai/v1/chat/completions"
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}"
+        }
+        payload = {
+            "model": model or "openai/gpt-oss-20b",
+            "messages": [
+                {"role": "system", "content": "You are GridGuard AI, an expert multi-agent electrical grid auditing platform."},
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.2
+        }
+        req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers)
+        with urllib.request.urlopen(req, timeout=45) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            return data["choices"][0]["message"]["content"]
+    else:
+        # Google Gemini REST
+        gemini_model = model or "gemini-1.5-flash"
+        if "3.8" in gemini_model or "2.0" in gemini_model:
+            gemini_model = "gemini-1.5-flash"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{gemini_model}:generateContent?key={api_key}"
+        headers = {"Content-Type": "application/json"}
+        payload = {
+            "contents": [{"parts": [{"text": prompt}]}]
+        }
+        req = urllib.request.Request(url, data=json.dumps(payload).encode("utf-8"), headers=headers)
+        with urllib.request.urlopen(req, timeout=45) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            return data["candidates"][0]["content"]["parts"][0]["text"]
+
 # CrewAI Investigation Swarm
 def run_investigation(desc, location="", weather="", bill_ocr_context=""):
     provider = st.session_state.get("llm_provider", "Groq (GroqCloud)")
+    api_key = ""
+    model = ""
     
     try:
         if provider == "Groq (GroqCloud)":
@@ -650,12 +719,13 @@ def run_investigation(desc, location="", weather="", bill_ocr_context=""):
             if not api_key:
                 return "ERROR: Groq API key not found. Please click Settings to configure your key from https://console.groq.com/keys."
             
-            crewai_model = f"openai/{model}"
-            llm = LLM(
-                model=crewai_model,
-                api_key=api_key,
-                base_url="https://api.groq.com/openai/v1"
-            )
+            if HAS_CREWAI:
+                crewai_model = f"openai/{model}"
+                llm = LLM(
+                    model=crewai_model,
+                    api_key=api_key,
+                    base_url="https://api.groq.com/openai/v1"
+                )
         else:
             api_key = st.session_state.get("gemini_api_key", "")
             model = st.session_state.get("gemini_model", "gemini-3.8-flash")
@@ -663,8 +733,12 @@ def run_investigation(desc, location="", weather="", bill_ocr_context=""):
                 model = "gemini-3.8-flash"
             if not api_key:
                 return "ERROR: Google Gemini API key not found. Please click Settings to configure your key."
-            llm = LLM(model=f"gemini/{model}", api_key=api_key)
+            if HAS_CREWAI:
+                llm = LLM(model=f"gemini/{model}", api_key=api_key)
         
+        if not HAS_CREWAI:
+            return run_native_multiagent_investigation(desc, location, weather, bill_ocr_context, provider, api_key, model)
+
         telemetry_agent = Agent(
             role='Telemetry Analyst',
             goal='Analyze grid telemetry, smart meter interval data, and OCR bill text to identify root causes of anomalies and suggest isolation steps.',
@@ -740,7 +814,11 @@ def run_investigation(desc, location="", weather="", bill_ocr_context=""):
         result = crew.kickoff()
         return str(result)
     except Exception as e:
-        return f"ERROR: Failed to run investigation -> {str(e)}"
+        # Fallback gracefully to native direct LLM engine if CrewAI encounters environment issues
+        try:
+            return run_native_multiagent_investigation(desc, location, weather, bill_ocr_context, provider, api_key, model)
+        except Exception as e2:
+            return f"ERROR: Failed to run investigation -> {str(e)} (Fallback error: {str(e2)})"
 
 # PDF Report Dossier Generator
 def generate_pdf_report_bytes(case_id, case_area, incident_desc, active_label, raw_report_text, user_name="Engr. Umer Hussain", nepra_petition=None, dispatch_data=None):
