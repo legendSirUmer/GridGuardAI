@@ -1006,8 +1006,8 @@
   <!-- ========================================== -->
 
   <!-- Settings Modal (Allows editing User Name, Provider, Model, and Key) -->
-  <div id="settings-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 hidden">
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full flex flex-col overflow-hidden animate-fade-in">
+  <div id="settings-modal" class="fixed inset-0 z-50 flex items-start justify-center bg-slate-900/60 backdrop-blur-sm p-4 pt-12 sm:pt-16 overflow-y-auto hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999999;">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full flex flex-col overflow-hidden animate-fade-in my-auto sm:my-8" style="max-height: 85vh;">
       <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
         <div class="flex items-center gap-2.5">
           <div class="w-8 h-8 rounded-lg bg-blue-50 text-primary flex items-center justify-center">
@@ -1170,17 +1170,27 @@
       }
     }
 
-    // Dynamic Frame Resize
+    // Dynamic Frame Resize (Protected against feedback loops)
     let lastHeight = 0;
     function resizeFrame() {
       try {
-        const h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, 1050);
-        if (Math.abs(h - lastHeight) > 20) {
-          lastHeight = h;
+        // Never resize while settings modal is open
+        const modal = document.getElementById('settings-modal');
+        if (modal && !modal.classList.contains('hidden')) return;
+
+        const activePanel = document.querySelector('.view-panel:not(.hidden)');
+        if (!activePanel) return;
+
+        // Base height on actual content panel + header and padding
+        const panelHeight = activePanel.scrollHeight || activePanel.offsetHeight || 850;
+        const targetH = Math.max(panelHeight + 110, 950);
+
+        if (Math.abs(targetH - lastHeight) > 50) {
+          lastHeight = targetH;
           window.parent.postMessage({
             isStreamlitMessage: true,
             type: "streamlit:setFrameHeight",
-            height: h + 30
+            height: targetH
           }, "*");
         }
       } catch(e) {}
@@ -1415,12 +1425,18 @@
       if (gemSelect && window.APP_STATE.geminiModel) gemSelect.value = window.APP_STATE.geminiModel;
 
       toggleSettingsProviderFields();
-      if (modal) modal.classList.remove('hidden');
+      if (modal) {
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
     };
 
     window.closeSettingsModal = function() {
       const modal = document.getElementById('settings-modal');
-      if (modal) modal.classList.add('hidden');
+      if (modal) {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
     };
 
     function toggleSettingsProviderFields() {
@@ -2005,8 +2021,6 @@
         if (args.active_view && args.active_view !== window.APP_STATE.activeView) {
           switchView(args.active_view);
         }
-
-        setTimeout(resizeFrame, 100);
       }
     });
 

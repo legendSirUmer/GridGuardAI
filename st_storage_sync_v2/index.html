@@ -20,7 +20,10 @@
     if (event.data && event.data.type === "streamlit:render") {
       const args = event.data.args || {};
       
-      // Save credentials to browser localStorage if provided
+      // Save credentials & user name to browser localStorage if provided
+      if (args.save_user_name && args.save_user_name.trim()) {
+        try { localStorage.setItem("gridguide_user_name", args.save_user_name.trim()); } catch(e){}
+      }
       if (args.save_groq_key && args.save_groq_key.trim()) {
         try { localStorage.setItem("gridguide_groq_api_key", args.save_groq_key.trim()); } catch(e){}
       }
@@ -48,12 +51,14 @@
       }
       
       // Read current storage values
+      let userName = "";
       let groqKey = "";
       let geminiKey = "";
       let provider = "";
       let groqModel = "";
       let geminiModel = "";
       try {
+        userName = localStorage.getItem("gridguide_user_name") || "";
         groqKey = localStorage.getItem("gridguide_groq_api_key") || "";
         geminiKey = localStorage.getItem("gridguide_gemini_api_key") || "";
         provider = localStorage.getItem("gridguide_provider") || "";
@@ -67,6 +72,7 @@
         type: "streamlit:setComponentValue",
         dataType: "json",
         value: {
+          user_name: userName,
           groq_api_key: groqKey,
           gemini_api_key: geminiKey,
           provider: provider,
