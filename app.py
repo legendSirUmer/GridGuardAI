@@ -385,23 +385,25 @@ st.markdown("""
 <style>
     [data-testid="stHeader"], header[data-testid="stHeader"], .stApp > header { display: none !important; }
     [data-testid="stSidebar"], section[data-testid="stSidebar"], [data-testid="collapsedControl"] { display: none !important; width: 0 !important; }
-    .stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"] { width: 100vw !important; max-width: 100vw !important; margin: 0 !important; padding: 0 !important; overflow-x: hidden !important; }
+    .stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"] { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; overflow-x: hidden !important; }
     [data-testid="stMainBlockContainer"], .block-container, div[data-testid="stAppViewBlockContainer"] {
-        width: 100vw !important;
-        max-width: 100vw !important;
+        width: 100% !important;
+        max-width: 100% !important;
         padding: 0 !important;
         margin: 0 !important;
+        overflow-x: hidden !important;
     }
     div.stCustomComponentV1 {
-        width: 100vw !important;
-        max-width: 100vw !important;
+        width: 100% !important;
+        max-width: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
+        overflow-x: hidden !important;
     }
     iframe {
         border: none !important;
-        width: 100vw !important;
-        max-width: 100vw !important;
+        width: 100% !important;
+        max-width: 100% !important;
         border-radius: 0 !important;
         box-shadow: none !important;
         display: block !important;

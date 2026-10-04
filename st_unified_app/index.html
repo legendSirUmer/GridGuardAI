@@ -92,6 +92,19 @@
       border-radius: 12px;
       z-index: 10;
     }
+    @media (max-width: 640px) {
+      #feeder-gis-map {
+        height: 240px;
+      }
+      .leaflet-control-zoom {
+        display: none !important;
+      }
+    }
+    /* Prevent unwanted mobile horizontal scroll */
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
     .leaflet-popup-content-wrapper {
       border-radius: 10px;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
@@ -106,19 +119,25 @@
 <body class="bg-background text-[#0F172A] antialiased selection:bg-blue-100 selection:text-blue-900">
 
   <!-- ========================================== -->
-  <!-- 1. PERSISTENT GLOBAL SIDEBAR               -->
+  <!-- 1. PERSISTENT GLOBAL SIDEBAR (RESPONSIVE)  -->
   <!-- ========================================== -->
-  <aside class="fixed left-0 top-0 h-screen w-64 bg-white border-r border-[#E2E8F0] flex flex-col z-50 justify-between select-none shadow-xs">
+  <aside id="global-sidebar" class="fixed left-0 top-0 h-screen w-64 bg-white border-r border-[#E2E8F0] flex flex-col z-50 justify-between select-none shadow-xl md:shadow-xs -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
     <div class="flex flex-col flex-1 min-h-0">
       <!-- App Brand Header -->
-      <div class="h-16 px-6 flex items-center gap-3 border-b border-[#E2E8F0]">
-        <div class="h-9 w-9 rounded-lg bg-primary flex items-center justify-center text-white shadow-sm shadow-primary/30">
-          <span class="material-symbols-outlined text-xl">bolt</span>
+      <div class="h-16 px-4 sm:px-6 flex items-center justify-between border-b border-[#E2E8F0]">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="h-9 w-9 rounded-lg bg-primary flex items-center justify-center text-white shadow-sm shadow-primary/30 shrink-0">
+            <span class="material-symbols-outlined text-xl">bolt</span>
+          </div>
+          <div class="flex flex-col justify-center min-w-0">
+            <span class="font-bold text-slate-900 text-base leading-tight tracking-tight truncate">GridGuard AI</span>
+            <span class="text-xs text-slate-500 font-medium truncate">Grid Incident Intelligence</span>
+          </div>
         </div>
-        <div class="flex flex-col justify-center">
-          <span class="font-bold text-slate-900 text-base leading-tight tracking-tight">GridGuard AI</span>
-          <span class="text-xs text-slate-500 font-medium">Grid Incident Intelligence</span>
-        </div>
+        <!-- Mobile Drawer Close Button -->
+        <button type="button" class="md:hidden p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors" onclick="toggleMobileSidebar(false)" aria-label="Close Sidebar">
+          <span class="material-symbols-outlined text-xl">close</span>
+        </button>
       </div>
 
       <!-- Navigation Links (100% Consistent across all views) -->
@@ -201,18 +220,26 @@
     </div>
   </aside>
 
+  <!-- Mobile Sidebar Backdrop Overlay -->
+  <div id="sidebar-backdrop" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden md:hidden transition-opacity opacity-0" onclick="toggleMobileSidebar(false)"></div>
+
   <!-- ========================================== -->
   <!-- 2. MAIN APP SHELL                          -->
   <!-- ========================================== -->
-  <div class="pl-64 flex flex-col min-h-screen">
+  <div class="pl-0 md:pl-64 flex flex-col min-h-screen w-full min-w-0 overflow-x-hidden">
     <!-- Top Header Bar -->
-    <header class="h-16 bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 px-8 flex items-center justify-between">
-      <!-- Breadcrumbs & Quick Search -->
-      <div class="flex items-center gap-4">
-        <div class="flex items-center gap-2 text-xs font-medium text-slate-500">
-          <span class="text-slate-400">GridGuard AI</span>
-          <span class="text-slate-300">/</span>
-          <span class="text-slate-900 font-semibold" id="header-breadcrumb">Operations Center</span>
+    <header class="h-16 bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 px-3 sm:px-6 md:px-8 flex items-center justify-between gap-2">
+      <!-- Left: Mobile Menu Toggle, Breadcrumbs & Quick Search -->
+      <div class="flex items-center gap-2 sm:gap-4 min-w-0">
+        <!-- Mobile Menu Hamburger Button -->
+        <button id="mobile-menu-btn" class="md:hidden p-1.5 -ml-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg focus:outline-none shrink-0 cursor-pointer" onclick="toggleMobileSidebar(true)" type="button" aria-label="Open Navigation Menu">
+          <span class="material-symbols-outlined text-2xl">menu</span>
+        </button>
+
+        <div class="flex items-center gap-1.5 sm:gap-2 text-xs font-medium text-slate-500 truncate">
+          <span class="text-slate-400 hidden sm:inline">GridGuard AI</span>
+          <span class="text-slate-300 hidden sm:inline">/</span>
+          <span class="text-slate-900 font-semibold truncate" id="header-breadcrumb">Operations Center</span>
         </div>
         <div class="relative w-72 hidden md:block">
           <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base">search</span>
@@ -222,23 +249,24 @@
       </div>
 
       <!-- Action items -->
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-1.5 sm:gap-3 shrink-0">
         <!-- New Investigation Quick Action Button -->
-        <button class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-primary hover:bg-primary-hover text-white text-xs font-semibold rounded-lg shadow-sm transition-all cursor-pointer" type="button" onclick="switchView('investigate')">
+        <button class="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3.5 py-1.5 bg-primary hover:bg-primary-hover text-white text-xs font-semibold rounded-lg shadow-sm transition-all cursor-pointer shrink-0" type="button" onclick="switchView('investigate')">
           <span class="material-symbols-outlined text-base">add_circle</span>
-          <span>Start Investigation</span>
+          <span class="hidden sm:inline">Start Investigation</span>
+          <span class="sm:hidden text-[11px]">New Case</span>
         </button>
 
         <!-- Notifications -->
-        <button class="relative p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer" type="button" onclick="showToast('⚡ All grid SCADA telemetry streams nominal.')">
-          <span class="material-symbols-outlined text-[20px]">notifications</span>
-          <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary ring-2 ring-white"></span>
+        <button class="relative p-1.5 sm:p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer" type="button" onclick="showToast('⚡ All grid SCADA telemetry streams nominal.')">
+          <span class="material-symbols-outlined text-[19px] sm:text-[20px]">notifications</span>
+          <span class="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 w-2 h-2 rounded-full bg-primary ring-2 ring-white"></span>
         </button>
 
         <div class="h-5 w-px bg-slate-200"></div>
 
         <!-- Header User Chip -->
-        <div class="flex items-center gap-2 cursor-pointer hover:bg-slate-50 px-2 py-1 rounded-lg transition-colors" onclick="openSettingsModal()">
+        <div class="flex items-center gap-1 sm:gap-2 cursor-pointer hover:bg-slate-50 p-1 rounded-lg transition-colors" onclick="openSettingsModal()">
           <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs shrink-0 ring-1 ring-blue-200">
             <span class="material-symbols-outlined text-base">person</span>
           </div>
@@ -258,7 +286,7 @@
       <!-- ==================================================== -->
       <!-- VIEW 1: OPERATIONS CENTER (OVERVIEW)                 -->
       <!-- ==================================================== -->
-      <div id="view-overview" class="view-panel p-8 max-w-7xl mx-auto w-full space-y-8 animate-fade-in">
+      <div id="view-overview" class="view-panel p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6 sm:space-y-8 animate-fade-in">
         <!-- Greeting & Top Controls -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -270,9 +298,9 @@
           </div>
           <!-- Filter & Action controls -->
           <div class="flex items-center gap-2 flex-wrap">
-            <div class="flex items-center bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 shadow-xs text-xs">
-              <span class="material-symbols-outlined text-blue-600 text-base mr-1.5">location_on</span>
-              <select id="overview-area-select" class="font-semibold text-slate-800 bg-transparent border-0 outline-none cursor-pointer pr-1 text-xs" onchange="window.selectActiveArea(this.value)" title="Switch monitored grid area">
+            <div class="flex items-center bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 shadow-xs text-xs max-w-full">
+              <span class="material-symbols-outlined text-blue-600 text-base mr-1.5 shrink-0">location_on</span>
+              <select id="overview-area-select" class="font-semibold text-slate-800 bg-transparent border-0 outline-none cursor-pointer pr-1 text-xs truncate max-w-[210px] sm:max-w-none" onchange="window.selectActiveArea(this.value)" title="Switch monitored grid area">
                 <option value="islamabad" selected>Islamabad (Sector F-7 / Blue Area - IESCO)</option>
                 <option value="lahore">Lahore (Gulberg III / Main Boulevard - LESCO)</option>
                 <option value="karachi">Karachi (Clifton Block 5 / Sea View - K-Electric)</option>
@@ -598,7 +626,7 @@
       <!-- ==================================================== -->
       <!-- VIEW 2: START INVESTIGATION (INTAKE ASSISTANT)       -->
       <!-- ==================================================== -->
-      <div id="view-investigate" class="view-panel hidden p-8 max-w-6xl mx-auto w-full flex flex-col animate-fade-in">
+      <div id="view-investigate" class="view-panel hidden p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto w-full flex flex-col space-y-6 animate-fade-in">
         <div class="mb-6">
           <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-subtle text-primary border border-primary-light text-xs font-semibold mb-3">
             <span class="material-symbols-outlined text-sm">sparkles</span>
@@ -915,7 +943,7 @@
       <!-- ==================================================== -->
       <!-- VIEW 3: LIVE AGENT PIPELINE                          -->
       <!-- ==================================================== -->
-      <div id="view-pipeline" class="view-panel hidden p-8 max-w-7xl mx-auto w-full space-y-6 animate-fade-in">
+      <div id="view-pipeline" class="view-panel hidden p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-4 sm:space-y-6 animate-fade-in">
         
         <!-- STANDBY STATE (Displayed when investigation has not been started) -->
         <div id="pipeline-standby-banner" class="bg-white rounded-2xl border border-amber-200 p-8 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 bg-gradient-to-r from-amber-50/60 via-white to-slate-50">
@@ -1187,7 +1215,7 @@
       <!-- ==================================================== -->
       <!-- VIEW 4: ALL INVESTIGATIONS                           -->
       <!-- ==================================================== -->
-      <div id="view-investigations" class="view-panel hidden p-8 max-w-7xl mx-auto w-full space-y-6 animate-fade-in">
+      <div id="view-investigations" class="view-panel hidden p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-4 sm:space-y-6 animate-fade-in">
         <!-- Header Banner -->
         <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -1260,7 +1288,7 @@
       <!-- ==================================================== -->
       <!-- VIEW 5: INVESTIGATION RESULTS                        -->
       <!-- ==================================================== -->
-      <div id="view-results" class="view-panel hidden p-8 max-w-6xl mx-auto w-full space-y-6 animate-fade-in">
+      <div id="view-results" class="view-panel hidden p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto w-full space-y-4 sm:space-y-6 animate-fade-in">
         <!-- Top Results Actions Bar -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2">
           <div>
@@ -1422,7 +1450,7 @@
       <!-- ==================================================== -->
       <!-- VIEW 6: EVIDENCE EXPLORER & CHAIN OF CUSTODY         -->
       <!-- ==================================================== -->
-      <div id="view-evidence" class="view-panel hidden p-8 max-w-7xl mx-auto w-full space-y-6 animate-fade-in">
+      <div id="view-evidence" class="view-panel hidden p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-4 sm:space-y-6 animate-fade-in">
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -1515,7 +1543,7 @@
       <!-- ==================================================== -->
       <!-- VIEW 7: ANALYTICS & GRID INTELLIGENCE                -->
       <!-- ==================================================== -->
-      <div id="view-analytics" class="view-panel hidden p-8 max-w-7xl mx-auto w-full space-y-6 animate-fade-in">
+      <div id="view-analytics" class="view-panel hidden p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-4 sm:space-y-6 animate-fade-in">
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -2004,10 +2032,37 @@ Loading statutory dispute petition...
       } catch(e) {}
     }
 
+    // Responsive Mobile Drawer Toggle
+    window.toggleMobileSidebar = function(show) {
+      const sidebar = document.getElementById('global-sidebar');
+      const backdrop = document.getElementById('sidebar-backdrop');
+      if (!sidebar) return;
+      const isCurrentlyOpen = !sidebar.classList.contains('-translate-x-full');
+      const shouldOpen = show !== undefined ? show : !isCurrentlyOpen;
+      if (shouldOpen) {
+        sidebar.classList.remove('-translate-x-full');
+        if (backdrop) {
+          backdrop.classList.remove('hidden');
+          setTimeout(() => backdrop.classList.remove('opacity-0'), 10);
+        }
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        if (backdrop) {
+          backdrop.classList.add('opacity-0');
+          setTimeout(() => backdrop.classList.add('hidden'), 300);
+        }
+      }
+    };
+
     // Switch View Function (Dynamic middle screen transition with NO PAGE REFRESH)
     window.switchView = function(viewName, isFromPython) {
       if (!viewName) return;
       window.APP_STATE.activeView = viewName;
+
+      // Close mobile drawer on navigation
+      if (window.innerWidth < 768) {
+        toggleMobileSidebar(false);
+      }
 
       // Hide all views and show target view
       document.querySelectorAll('.view-panel').forEach(p => p.classList.add('hidden'));
@@ -4262,6 +4317,9 @@ Loading statutory dispute petition...
       if (link) {
         e.preventDefault();
         const path = link.getAttribute('data-path');
+        if (window.innerWidth < 768) {
+          toggleMobileSidebar(false);
+        }
         if (path === 'settings') {
           openSettingsModal();
         } else if (path === 'demo') {
