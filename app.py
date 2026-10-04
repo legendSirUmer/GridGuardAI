@@ -1253,6 +1253,12 @@ if component_val:
                 f.write(pdf_bytes)
             st.rerun()
 
+    elif action == "area_changed":
+        new_loc = component_val.get("location")
+        if new_loc:
+            st.session_state.case_area = new_loc.strip()
+            st.rerun()
+
     elif action == "view_switched":
         new_page = component_val.get("page")
         if new_page:

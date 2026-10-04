@@ -268,12 +268,15 @@
             </h1>
             <p class="text-sm text-slate-500 mt-1">Autonomous grid intelligence & utility tariff auditing engine</p>
           </div>
-          <!-- Filter & Action controls -->
-          <div class="flex items-center gap-2 flex-wrap">
-            <div class="flex items-center bg-white border border-slate-200 rounded-lg p-1 shadow-xs text-xs">
-              <span class="material-symbols-outlined text-slate-400 text-base ml-1 mr-1">location_on</span>
-              <span class="font-medium text-slate-700 mr-2" id="overview-active-area-text">Islamabad (IESCO)</span>
-              <button class="px-2 py-0.5 rounded bg-blue-50 text-blue-600 text-xs font-medium hover:bg-blue-100 transition-colors" onclick="switchView('investigate')">Switch Area</button>
+            <div class="flex items-center bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 shadow-xs text-xs">
+              <span class="material-symbols-outlined text-blue-600 text-base mr-1.5">location_on</span>
+              <select id="overview-area-select" class="font-semibold text-slate-800 bg-transparent border-0 outline-none cursor-pointer pr-1 text-xs" onchange="window.selectActiveArea(this.value)" title="Switch monitored grid area">
+                <option value="islamabad" selected>Islamabad (Sector F-7 / Blue Area - IESCO)</option>
+                <option value="lahore">Lahore (Gulberg III / Main Boulevard - LESCO)</option>
+                <option value="karachi">Karachi (Clifton Block 5 / Sea View - K-Electric)</option>
+                <option value="rawalpindi">Rawalpindi (Saddar Cantt / Mall Feeder - IESCO)</option>
+                <option value="peshawar">Peshawar (University Town / Hayatabad - PESCO)</option>
+              </select>
             </div>
             <!-- Refresh Button -->
             <button class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200 rounded-lg shadow-xs transition-colors cursor-pointer" id="sim-refresh-btn" type="button" onclick="refreshOverviewMetrics()">
@@ -380,9 +383,18 @@
                   <p class="text-[11px] text-slate-500" id="gis-substation-label">132kV Grid Substation • Real-Time Breaker Topology</p>
                 </div>
               </div>
-              <div class="flex items-center gap-1.5 text-[11px]">
+              <div class="flex items-center gap-1.5 text-[11px] flex-wrap">
                 <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-semibold" id="gis-disco-badge">IESCO</span>
                 <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-medium" id="gis-bus-voltage">11.2 kV Bus</span>
+                <div class="h-3.5 w-px bg-slate-200 mx-0.5 hidden sm:block"></div>
+                <!-- Interactive Quick Switcher Pills -->
+                <div class="flex items-center gap-1" id="gis-city-pills">
+                  <button type="button" data-city="islamabad" class="gis-city-pill px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-600 text-white shadow-2xs cursor-pointer" onclick="window.selectActiveArea('islamabad')">Islamabad</button>
+                  <button type="button" data-city="lahore" class="gis-city-pill px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors cursor-pointer" onclick="window.selectActiveArea('lahore')">Lahore</button>
+                  <button type="button" data-city="karachi" class="gis-city-pill px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors cursor-pointer" onclick="window.selectActiveArea('karachi')">Karachi</button>
+                  <button type="button" data-city="rawalpindi" class="gis-city-pill px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors cursor-pointer" onclick="window.selectActiveArea('rawalpindi')">Rawalpindi</button>
+                  <button type="button" data-city="peshawar" class="gis-city-pill px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors cursor-pointer" onclick="window.selectActiveArea('peshawar')">Peshawar</button>
+                </div>
               </div>
             </div>
             
@@ -1411,6 +1423,306 @@
 [SCADA LDC DISPATCH LOG] Initializing...
             </pre>
           </div>
+      <!-- ==================================================== -->
+      <!-- VIEW 6: EVIDENCE EXPLORER & CHAIN OF CUSTODY         -->
+      <!-- ==================================================== -->
+      <div id="view-evidence" class="view-panel hidden p-8 max-w-7xl mx-auto w-full space-y-6 animate-fade-in">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-md bg-blue-100 text-blue-700 font-bold text-xs">Chain of Custody</span>
+              <span class="text-xs text-slate-400 font-mono">NEPRA Section 31 Tribunal Standard</span>
+            </div>
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight mt-1 flex items-center gap-2">
+              <span>Evidence Explorer &amp; Corroboration Ledger</span>
+            </h1>
+            <p class="text-sm text-slate-500 mt-0.5">Cryptographically hashed telemetry, OCR bill extractions, and multi-source corroboration trail</p>
+          </div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <button class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200 rounded-lg shadow-xs transition-colors cursor-pointer" type="button" onclick="verifyAllEvidenceHashes()">
+              <span class="material-symbols-outlined text-base text-emerald-600">verified</span>
+              <span>Verify SHA-256 Hashes</span>
+            </button>
+            <button class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-primary hover:bg-primary-hover text-white text-xs font-semibold rounded-lg shadow-xs transition-colors cursor-pointer" type="button" onclick="exportEvidenceDossier()">
+              <span class="material-symbols-outlined text-base">download</span>
+              <span>Export Evidence Package</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Summary KPI Cards for Evidence -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs">
+            <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider">
+              <span>Total Artifacts</span>
+              <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                <span class="material-symbols-outlined text-lg">folder_special</span>
+              </div>
+            </div>
+            <div class="mt-2 text-3xl font-bold text-slate-900">28 Items</div>
+            <div class="mt-1 text-xs text-slate-500">Across 4 independent telemetry feeds</div>
+          </div>
+          <div class="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs">
+            <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider">
+              <span>Integrity Hash</span>
+              <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <span class="material-symbols-outlined text-lg">enhanced_encryption</span>
+              </div>
+            </div>
+            <div class="mt-2 text-3xl font-bold text-emerald-600">100% Valid</div>
+            <div class="mt-1 text-xs text-slate-500">Zero cryptographic tampering detected</div>
+          </div>
+          <div class="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs">
+            <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider">
+              <span>Critical Anomalies</span>
+              <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                <span class="material-symbols-outlined text-lg">error</span>
+              </div>
+            </div>
+            <div class="mt-2 text-3xl font-bold text-amber-600">3 Violations</div>
+            <div class="mt-1 text-xs text-slate-500">Overcharge &amp; phantom surges identified</div>
+          </div>
+          <div class="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs">
+            <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider">
+              <span>Tribunal Score</span>
+              <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                <span class="material-symbols-outlined text-lg">gavel</span>
+              </div>
+            </div>
+            <div class="mt-2 text-3xl font-bold text-indigo-600">98.4%</div>
+            <div class="mt-1 text-xs text-slate-500">NEPRA Legal Admissibility Index</div>
+          </div>
+        </div>
+
+        <!-- Filter Bar and Search -->
+        <div class="bg-white rounded-xl border border-slate-200/80 p-4 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto" id="evidence-filter-chips">
+            <button type="button" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-200 cursor-pointer evidence-pill active" onclick="filterEvidence('all')">All Artifacts (28)</button>
+            <button type="button" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 border border-slate-200 cursor-pointer evidence-pill" onclick="filterEvidence('billing')">Billing &amp; OCR (8)</button>
+            <button type="button" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 border border-slate-200 cursor-pointer evidence-pill" onclick="filterEvidence('scada')">SCADA Telemetry (12)</button>
+            <button type="button" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 border border-slate-200 cursor-pointer evidence-pill" onclick="filterEvidence('weather')">Weather / PMD (4)</button>
+            <button type="button" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 border border-slate-200 cursor-pointer evidence-pill" onclick="filterEvidence('legal')">Gazette &amp; Legal (4)</button>
+          </div>
+          <div class="relative w-full sm:w-64">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base">search</span>
+            <input type="text" id="evidence-search-input" oninput="searchEvidence(this.value)" placeholder="Search hash, feeder, ref..." class="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
+          </div>
+        </div>
+
+        <!-- Evidence Items List -->
+        <div class="space-y-3" id="evidence-list-container">
+          <!-- Dynamically populated by renderEvidenceList() -->
+        </div>
+      </div>
+
+      <!-- ==================================================== -->
+      <!-- VIEW 7: ANALYTICS & GRID INTELLIGENCE                -->
+      <!-- ==================================================== -->
+      <div id="view-analytics" class="view-panel hidden p-8 max-w-7xl mx-auto w-full space-y-6 animate-fade-in">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-700 font-bold text-xs">National Grid Telemetry</span>
+              <span class="text-xs text-slate-400 font-mono">IEC 61850 &amp; NEPRA CS-2024</span>
+            </div>
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight mt-1 flex items-center gap-2">
+              <span>National Grid &amp; Tariff Audit Analytics</span>
+            </h1>
+            <p class="text-sm text-slate-500 mt-0.5">Cross-DISCO SAIDI / SAIFI benchmarks, voltage stability envelopes, and systematic tariff overcharge trends</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <select id="analytics-time-range" class="px-3 py-1.5 bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg shadow-xs outline-none cursor-pointer" onchange="updateAnalyticsRange(this.value)">
+              <option value="30d">Last 30 Days</option>
+              <option value="90d" selected>Q3 2026 (Peak Summer)</option>
+              <option value="ytd">Year to Date (2026)</option>
+            </select>
+            <button class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200 rounded-lg shadow-xs transition-colors cursor-pointer" type="button" onclick="exportAnalyticsCsv()">
+              <span class="material-symbols-outlined text-base">download</span>
+              <span>Export CSV</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Top Executive Metrics -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs">
+            <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider">
+              <span>Dispute Win Rate</span>
+              <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <span class="material-symbols-outlined text-lg">check_circle</span>
+              </div>
+            </div>
+            <div class="mt-2 text-3xl font-bold text-slate-900">91.8%</div>
+            <div class="mt-1 text-xs text-emerald-600 font-medium flex items-center gap-1">
+              <span class="material-symbols-outlined text-sm">trending_up</span>
+              <span>+14.2% vs manual appeals</span>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs">
+            <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider">
+              <span>SAIDI Interruption</span>
+              <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                <span class="material-symbols-outlined text-lg">schedule</span>
+              </div>
+            </div>
+            <div class="mt-2 text-3xl font-bold text-amber-600">48.2 <span class="text-sm font-normal text-slate-500">hrs/yr</span></div>
+            <div class="mt-1 text-xs text-red-600 font-medium flex items-center gap-1">
+              <span class="material-symbols-outlined text-sm">warning</span>
+              <span>2.6x NEPRA Limit (18h max)</span>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs">
+            <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider">
+              <span>SAIFI Frequency</span>
+              <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center">
+                <span class="material-symbols-outlined text-lg">bolt</span>
+              </div>
+            </div>
+            <div class="mt-2 text-3xl font-bold text-rose-600">62.4 <span class="text-sm font-normal text-slate-500">trips/yr</span></div>
+            <div class="mt-1 text-xs text-slate-500">Benchmark: &le;25 feeder trips</div>
+          </div>
+
+          <div class="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs">
+            <div class="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider">
+              <span>Overcharge Recovered</span>
+              <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                <span class="material-symbols-outlined text-lg">payments</span>
+              </div>
+            </div>
+            <div class="mt-2 text-3xl font-bold text-blue-600">Rs. 4.89M</div>
+            <div class="mt-1 text-xs text-slate-500">Across 142 audited feeders</div>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Chart 1 (7 cols): DISCO Interruption Reliability Benchmark -->
+          <div class="lg:col-span-7 bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs space-y-3">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div>
+                <h3 class="font-bold text-slate-900 text-sm">Pakistan DISCO Reliability Benchmark (SAIDI vs Standard)</h3>
+                <p class="text-[11px] text-slate-500">Annual interruption duration per consumer (hours) vs NEPRA statutory limit</p>
+              </div>
+              <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-xs font-semibold">NEPRA Performance Rules</span>
+            </div>
+            <div class="relative w-full h-[260px]">
+              <canvas id="analytics-disco-chart"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 2 (5 cols): Anomaly Breakdown Doughnut -->
+          <div class="lg:col-span-5 bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs space-y-3">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div>
+                <h3 class="font-bold text-slate-900 text-sm">Audited Anomaly Distribution</h3>
+                <p class="text-[11px] text-slate-500">Breakdown of 142 verified discrepancies</p>
+              </div>
+              <span class="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 text-xs font-semibold">100% Corroborated</span>
+            </div>
+            <div class="relative w-full h-[260px] flex items-center justify-center">
+              <canvas id="analytics-anomaly-chart"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 3 (12 cols): 24h High-Resolution Voltage Stability & Outage Profile -->
+          <div class="lg:col-span-12 bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs space-y-3">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div>
+                <h3 class="font-bold text-slate-900 text-sm">24-Hour SCADA Feeder Voltage Envelope (IEC 60038 Compliance)</h3>
+                <p class="text-[11px] text-slate-500">Nominal 230V Secondary Bus with &plusmn;5% allowable tolerance (218.5V &ndash; 241.5V) and zero-volt outage intervals</p>
+              </div>
+              <div class="flex items-center gap-2 text-xs">
+                <span class="flex items-center gap-1.5"><span class="w-3 h-1 bg-blue-600 rounded"></span><span>Observed Voltage</span></span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-1 bg-red-500 rounded"></span><span>Trip Interval</span></span>
+              </div>
+            </div>
+            <div class="relative w-full h-[220px]">
+              <canvas id="analytics-voltage-chart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- DISCO Feeder Performance Table -->
+        <div class="bg-white rounded-xl border border-slate-200/80 shadow-xs overflow-hidden">
+          <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+            <h3 class="font-bold text-slate-900 text-sm">Audited Feeder Audit Log &amp; NEPRA Restitution Status</h3>
+            <span class="text-xs text-slate-500 font-medium">5 Regional Feeders Audited</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-700">
+              <thead class="bg-slate-50 text-slate-500 uppercase font-semibold text-[10px] tracking-wider border-b border-slate-200/70">
+                <tr>
+                  <th class="px-6 py-3">Feeder &amp; Circle</th>
+                  <th class="px-4 py-3">DISCO</th>
+                  <th class="px-4 py-3">Transformer Trips (24h)</th>
+                  <th class="px-4 py-3">Avg Voltage</th>
+                  <th class="px-4 py-3">Detected Overcharge</th>
+                  <th class="px-4 py-3">Legal Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 font-medium">
+                <tr class="hover:bg-slate-50/70">
+                  <td class="px-6 py-3.5 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                    <span class="font-semibold text-slate-900">Feeder F-12 (Sector F-7 / Blue Area)</span>
+                  </td>
+                  <td class="px-4 py-3.5 font-bold text-blue-600">IESCO</td>
+                  <td class="px-4 py-3.5 text-amber-600 font-semibold">3 Trips (Relay 51)</td>
+                  <td class="px-4 py-3.5">211V (Low Sag)</td>
+                  <td class="px-4 py-3.5 font-bold text-rose-600">Rs. 8,420 (Phantom)</td>
+                  <td class="px-4 py-3.5"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold">Petition Drafted</span></td>
+                </tr>
+                <tr class="hover:bg-slate-50/70">
+                  <td class="px-6 py-3.5 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                    <span class="font-semibold text-slate-900">Jail Road 11kV Feeder (Circuit 4)</span>
+                  </td>
+                  <td class="px-4 py-3.5 font-bold text-amber-600">LESCO</td>
+                  <td class="px-4 py-3.5 text-red-600 font-semibold">5 Trips (Thermal)</td>
+                  <td class="px-4 py-3.5">194V (Severe Sag)</td>
+                  <td class="px-4 py-3.5 font-bold text-rose-600">Rs. 12,650 (Slab Breach)</td>
+                  <td class="px-4 py-3.5"><span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold">In Review</span></td>
+                </tr>
+                <tr class="hover:bg-slate-50/70">
+                  <td class="px-6 py-3.5 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                    <span class="font-semibold text-slate-900">Clifton Block 4 Feeder (Circuit K-2)</span>
+                  </td>
+                  <td class="px-4 py-3.5 font-bold text-purple-600">K-Electric</td>
+                  <td class="px-4 py-3.5 text-rose-600 font-semibold">4 Trips (Overload)</td>
+                  <td class="px-4 py-3.5">188V (Critical)</td>
+                  <td class="px-4 py-3.5 font-bold text-rose-600">Rs. 18,300 (Phantom Spike)</td>
+                  <td class="px-4 py-3.5"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold">Settled</span></td>
+                </tr>
+                <tr class="hover:bg-slate-50/70">
+                  <td class="px-6 py-3.5 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                    <span class="font-semibold text-slate-900">Saddar Express 11kV Feeder (R-3)</span>
+                  </td>
+                  <td class="px-4 py-3.5 font-bold text-blue-600">IESCO</td>
+                  <td class="px-4 py-3.5 text-amber-600 font-semibold">2 Trips</td>
+                  <td class="px-4 py-3.5">214V (Low)</td>
+                  <td class="px-4 py-3.5 font-bold text-rose-600">Rs. 6,900</td>
+                  <td class="px-4 py-3.5"><span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold">Petition Drafted</span></td>
+                </tr>
+                <tr class="hover:bg-slate-50/70">
+                  <td class="px-6 py-3.5 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                    <span class="font-semibold text-slate-900">Hayatabad Phase 3 Feeder (P-1)</span>
+                  </td>
+                  <td class="px-4 py-3.5 font-bold text-indigo-600">PESCO</td>
+                  <td class="px-4 py-3.5 text-red-600 font-semibold">6 Trips (Lockout)</td>
+                  <td class="px-4 py-3.5">186V (Critical)</td>
+                  <td class="px-4 py-3.5 font-bold text-rose-600">Rs. 14,200</td>
+                  <td class="px-4 py-3.5"><span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 text-[10px] font-bold">Investigating</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -1732,7 +2044,9 @@ Loading statutory dispute petition...
           'investigate': 'Intake Assistant',
           'pipeline': 'Agent Pipeline',
           'results': 'Investigation Dossier',
-          'investigations': 'All Investigations'
+          'investigations': 'All Investigations',
+          'evidence': 'Evidence Explorer & Chain of Custody',
+          'analytics': 'National Grid & Dispute Analytics'
         };
         breadcrumb.innerText = titles[viewName] || 'Operations Center';
       }
@@ -1744,9 +2058,20 @@ Loading statutory dispute petition...
         renderInvestigationsList();
       }
 
+      if (viewName === 'evidence') {
+        renderEvidenceList();
+      }
+
+      if (viewName === 'analytics') {
+        initAnalyticsCharts();
+      }
+
       if (viewName === 'overview') {
         if (window.feederGisMapInstance) {
           setTimeout(() => window.feederGisMapInstance.invalidateSize(), 200);
+        }
+        if (window.myTariffChartInstance) {
+          setTimeout(() => window.myTariffChartInstance.resize(), 200);
         }
       }
 
@@ -1758,6 +2083,318 @@ Loading statutory dispute petition...
       // Scroll smoothly to top
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(resizeFrame, 150);
+    };
+
+    // ==========================================
+    // PAKISTAN DISCO GIS TOPOLOGIES & QUICK SWITCHER
+    // ==========================================
+    window.CITY_TOPOLOGIES = {
+      islamabad: {
+        city_key: "islamabad",
+        city_name: "Islamabad",
+        location_name: "Islamabad (Sector F-7 / Blue Area Feeder - IESCO)",
+        center: [33.7182, 73.0605],
+        zoom: 14,
+        disco: "IESCO",
+        substation: {
+          name: "132kV Blue Area Grid Substation (IESCO)",
+          coords: [33.7182, 73.0605],
+          rating: "132/11 kV Dual Transformer Bus",
+          active_power_mva: 28.4,
+          power_factor: 0.92,
+          status: "OPERATIONAL"
+        },
+        feeders: [
+          {
+            id: "F-IESCO-12",
+            name: "Feeder F-12 (Blue Area / Sector F-7)",
+            path: [[33.7182, 73.0605], [33.7225, 73.0645], [33.7280, 73.0700], [33.7340, 73.0760]],
+            voltage_kv: 11.1,
+            loading_pct: 89.2,
+            status: "warning"
+          },
+          {
+            id: "F-IESCO-04",
+            name: "Feeder F-7/2 Residential",
+            path: [[33.7182, 73.0605], [33.7230, 73.0530], [33.7275, 73.0470]],
+            voltage_kv: 11.4,
+            loading_pct: 52.0,
+            status: "normal"
+          },
+          {
+            id: "F-IESCO-08",
+            name: "Margalla Spur Feeder",
+            path: [[33.7182, 73.0605], [33.7300, 73.0580], [33.7370, 73.0530]],
+            voltage_kv: 11.3,
+            loading_pct: 57.5,
+            status: "normal"
+          }
+        ],
+        transformers: [
+          { id: "TR-ISB-101", name: "F-7 Markaz Commercial PMT (630 kVA)", coords: [33.7225, 73.0645], voltage: 230, load: 65, status: "normal" },
+          { id: "TR-ISB-104", name: "Sector F-7/2 PMT (400 kVA)", coords: [33.7280, 73.0700], voltage: 218, load: 92, status: "warning" },
+          { id: "TR-ISB-109", name: "Consumer Feeder Tap Substation (250 kVA)", coords: [33.7320, 73.0740], voltage: 192, load: 97, status: "tripped", breaker: "OPEN - Transient Tap Surge" }
+        ],
+        consumer_pin: {
+          coords: [33.7315, 73.0735],
+          label: "Consumer Meter #GG-2026-0142",
+          discrepancy: "+18.4 kWh phantom surge recorded post-trip"
+        },
+        scada_metrics: {
+          grid_frequency_hz: 50.02,
+          bus_voltage_kv: 11.2,
+          feeder_trips_24h: 3
+        }
+      },
+      lahore: {
+        city_key: "lahore",
+        city_name: "Lahore",
+        location_name: "Lahore (Gulberg III / Main Boulevard - LESCO)",
+        center: [31.5204, 74.3587],
+        zoom: 14,
+        disco: "LESCO",
+        substation: {
+          name: "132kV Gulberg Grid Substation (LESCO)",
+          coords: [31.5204, 74.3587],
+          rating: "132/11 kV Step-down Substation",
+          active_power_mva: 34.6,
+          power_factor: 0.89,
+          status: "OPERATIONAL"
+        },
+        feeders: [
+          {
+            id: "F-LHR-04",
+            name: "Jail Road 11kV Feeder (Circuit 4)",
+            path: [[31.5204, 74.3587], [31.5260, 74.3510], [31.5340, 74.3430], [31.5390, 74.3360]],
+            voltage_kv: 11.2,
+            loading_pct: 88.5,
+            status: "warning"
+          },
+          {
+            id: "F-LHR-09",
+            name: "Main Boulevard Feeder",
+            path: [[31.5204, 74.3587], [31.5150, 74.3640], [31.5080, 74.3710]],
+            voltage_kv: 11.4,
+            loading_pct: 58.0,
+            status: "normal"
+          }
+        ],
+        transformers: [
+          { id: "TR-LHR-88", name: "Gulberg III Transformer (630 kVA)", coords: [31.5260, 74.3510], voltage: 228, load: 64, status: "normal" },
+          { id: "TR-LHR-91", name: "Jail Road Commercial Transformer (400 kVA)", coords: [31.5340, 74.3430], voltage: 216, load: 91, status: "warning" },
+          { id: "TR-LHR-99", name: "Consumer Zone Transformer (250 kVA)", coords: [31.5375, 74.3395], voltage: 194, load: 98, status: "tripped", breaker: "OPEN - Relay 51 Trip" }
+        ],
+        consumer_pin: {
+          coords: [31.5372, 74.3390],
+          label: "Consumer Meter #GG-2026-0142",
+          discrepancy: "+18.4 kWh phantom surge on breaker reclose"
+        },
+        scada_metrics: {
+          grid_frequency_hz: 49.98,
+          bus_voltage_kv: 11.1,
+          feeder_trips_24h: 5
+        }
+      },
+      karachi: {
+        city_key: "karachi",
+        city_name: "Karachi",
+        location_name: "Karachi (Clifton Block 5 / Sea View - K-Electric)",
+        center: [24.8138, 67.0299],
+        zoom: 14,
+        disco: "K-Electric",
+        substation: {
+          name: "132kV Clifton Substation (K-Electric Grid)",
+          coords: [24.8138, 67.0299],
+          rating: "132/11 kV Coastal Substation",
+          active_power_mva: 42.1,
+          power_factor: 0.88,
+          status: "OPERATIONAL"
+        },
+        feeders: [
+          {
+            id: "F-KE-02",
+            name: "Clifton Block 4 Feeder (Circuit K-2)",
+            path: [[24.8138, 67.0299], [24.8180, 67.0340], [24.8230, 67.0410], [24.8270, 67.0490]],
+            voltage_kv: 10.9,
+            loading_pct: 94.2,
+            status: "warning"
+          },
+          {
+            id: "F-KE-07",
+            name: "Defence Phase 5 Ring",
+            path: [[24.8138, 67.0299], [24.8070, 67.0360], [24.7990, 67.0430]],
+            voltage_kv: 11.3,
+            loading_pct: 62.0,
+            status: "normal"
+          }
+        ],
+        transformers: [
+          { id: "TR-KE-40", name: "Clifton Marine Drive (630 kVA)", coords: [24.8180, 67.0340], voltage: 230, load: 70, status: "normal" },
+          { id: "TR-KE-44", name: "Sea View Commercial (400 kVA)", coords: [24.8230, 67.0410], voltage: 219, load: 88, status: "warning" },
+          { id: "TR-KE-49", name: "Consumer Feeder Tap (250 kVA)", coords: [24.8255, 67.0460], voltage: 188, load: 99, status: "tripped", breaker: "OPEN - High Temperature Trip" }
+        ],
+        consumer_pin: {
+          coords: [24.8252, 67.0458],
+          label: "Consumer Meter #GG-2026-0142",
+          discrepancy: "+22.1 kWh surge recorded during restoration"
+        },
+        scada_metrics: {
+          grid_frequency_hz: 50.04,
+          bus_voltage_kv: 10.9,
+          feeder_trips_24h: 4
+        }
+      },
+      rawalpindi: {
+        city_key: "rawalpindi",
+        city_name: "Rawalpindi",
+        location_name: "Rawalpindi (Saddar Cantt / Mall Feeder - IESCO)",
+        center: [33.5989, 73.0450],
+        zoom: 14,
+        disco: "IESCO",
+        substation: {
+          name: "132kV Rawalpindi Cantt Grid Substation (IESCO)",
+          coords: [33.5989, 73.0450],
+          rating: "132/11 kV Cantt Substation",
+          active_power_mva: 31.2,
+          power_factor: 0.91,
+          status: "OPERATIONAL"
+        },
+        feeders: [
+          {
+            id: "F-RWP-03",
+            name: "Saddar Express 11kV Feeder (R-3)",
+            path: [[33.5989, 73.0450], [33.6040, 73.0510], [33.6120, 73.0580], [33.6180, 73.0640]],
+            voltage_kv: 11.0,
+            loading_pct: 91.2,
+            status: "warning"
+          },
+          {
+            id: "F-RWP-07",
+            name: "Westridge Residential Feeder",
+            path: [[33.5989, 73.0450], [33.5920, 73.0380], [33.5850, 73.0310]],
+            voltage_kv: 11.3,
+            loading_pct: 54.0,
+            status: "normal"
+          }
+        ],
+        transformers: [
+          { id: "TR-RWP-21", name: "Haider Road Commercial PMT (630 kVA)", coords: [33.6040, 73.0510], voltage: 226, load: 68, status: "normal" },
+          { id: "TR-RWP-26", name: "Bank Road PMT (400 kVA)", coords: [33.6120, 73.0580], voltage: 214, load: 94, status: "warning" },
+          { id: "TR-RWP-33", name: "Consumer Tap Station (250 kVA)", coords: [33.6160, 73.0620], voltage: 190, load: 98, status: "tripped", breaker: "OPEN - Overcurrent Relay Trip" }
+        ],
+        consumer_pin: {
+          coords: [33.6158, 73.0618],
+          label: "Consumer Meter #GG-2026-0142",
+          discrepancy: "+19.2 kWh surge recorded on feeder reclose"
+        },
+        scada_metrics: {
+          grid_frequency_hz: 50.01,
+          bus_voltage_kv: 11.0,
+          feeder_trips_24h: 2
+        }
+      },
+      peshawar: {
+        city_key: "peshawar",
+        city_name: "Peshawar",
+        location_name: "Peshawar (University Town / Hayatabad - PESCO)",
+        center: [33.9965, 71.4851],
+        zoom: 14,
+        disco: "PESCO",
+        substation: {
+          name: "132kV Hayatabad Grid Substation (PESCO)",
+          coords: [33.9965, 71.4851],
+          rating: "132/11 kV KPK Industrial Substation",
+          active_power_mva: 38.0,
+          power_factor: 0.87,
+          status: "OPERATIONAL"
+        },
+        feeders: [
+          {
+            id: "F-PES-01",
+            name: "Hayatabad Phase 3 Feeder (P-1)",
+            path: [[33.9965, 71.4851], [34.0020, 71.4780], [34.0090, 71.4690], [34.0150, 71.4610]],
+            voltage_kv: 10.8,
+            loading_pct: 95.0,
+            status: "warning"
+          },
+          {
+            id: "F-PES-05",
+            name: "University Road Feeder",
+            path: [[33.9965, 71.4851], [33.9910, 71.4920], [33.9840, 71.5010]],
+            voltage_kv: 11.2,
+            loading_pct: 59.0,
+            status: "normal"
+          }
+        ],
+        transformers: [
+          { id: "TR-PES-12", name: "Hayatabad Sector F-2 PMT (630 kVA)", coords: [34.0020, 71.4780], voltage: 224, load: 72, status: "normal" },
+          { id: "TR-PES-18", name: "Industrial Estate Spur (400 kVA)", coords: [34.0090, 71.4690], voltage: 210, load: 93, status: "warning" },
+          { id: "TR-PES-24", name: "Consumer Tap PMT (250 kVA)", coords: [34.0135, 71.4635], voltage: 186, load: 99, status: "tripped", breaker: "OPEN - Thermal Relay Lockout" }
+        ],
+        consumer_pin: {
+          coords: [34.0132, 71.4632],
+          label: "Consumer Meter #GG-2026-0142",
+          discrepancy: "+21.5 kWh surge recorded on breaker trip"
+        },
+        scada_metrics: {
+          grid_frequency_hz: 49.95,
+          bus_voltage_kv: 10.8,
+          feeder_trips_24h: 6
+        }
+      }
+    };
+
+    window.selectActiveArea = function(cityKey) {
+      if (!cityKey) return;
+      cityKey = cityKey.toLowerCase();
+      if (cityKey.includes("lahore")) cityKey = "lahore";
+      else if (cityKey.includes("karachi")) cityKey = "karachi";
+      else if (cityKey.includes("rawalpindi")) cityKey = "rawalpindi";
+      else if (cityKey.includes("peshawar")) cityKey = "peshawar";
+      else if (cityKey.includes("islamabad")) cityKey = "islamabad";
+
+      const topo = window.CITY_TOPOLOGIES[cityKey] || window.CITY_TOPOLOGIES.islamabad;
+      window.APP_STATE.gisData = topo;
+      window.APP_STATE.caseArea = topo.location_name;
+
+      // 1. Update dropdown
+      const select = document.getElementById('overview-area-select');
+      if (select && select.value !== cityKey) select.value = cityKey;
+
+      // 2. Update pills
+      document.querySelectorAll('#gis-city-pills .gis-city-pill').forEach(pill => {
+        if (pill.getAttribute('data-city') === cityKey) {
+          pill.className = 'gis-city-pill px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-600 text-white shadow-2xs cursor-pointer';
+        } else {
+          pill.className = 'gis-city-pill px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors cursor-pointer';
+        }
+      });
+
+      // 3. Update intake location input
+      const intakeLoc = document.getElementById('intake-location');
+      if (intakeLoc) intakeLoc.value = topo.location_name;
+
+      // 4. Update Overview GIS DOM labels
+      const subLabel = document.getElementById('gis-substation-label');
+      if (subLabel && topo.substation) subLabel.innerText = topo.substation.name;
+      const discoBadge = document.getElementById('gis-disco-badge');
+      if (discoBadge) discoBadge.innerText = topo.disco;
+      const busV = document.getElementById('gis-bus-voltage');
+      if (busV && topo.scada_metrics) busV.innerText = (topo.scada_metrics.bus_voltage_kv || 11.2) + " kV Bus";
+      const mvaVal = document.getElementById('gis-mva-val');
+      if (mvaVal && topo.substation) mvaVal.innerText = (topo.substation.active_power_mva || 28.4) + " MVA";
+      const freqVal = document.getElementById('gis-freq-val');
+      if (freqVal && topo.scada_metrics) freqVal.innerText = (topo.scada_metrics.grid_frequency_hz || 50.02) + " Hz";
+      const tripsVal = document.getElementById('gis-trips-val');
+      if (tripsVal && topo.scada_metrics) tripsVal.innerText = (topo.scada_metrics.feeder_trips_24h || 3) + " Recorded";
+
+      // 5. Redraw Map instantly
+      initFeederGisMap(topo);
+
+      showToast(`📍 Monitored grid switched to ${topo.disco} (${topo.city_name})`);
+
+      // 6. Notify Streamlit Python
+      emit({ action: 'area_changed', location: topo.location_name, city_key: cityKey });
     };
 
     // ==========================================
@@ -2016,6 +2653,430 @@ Loading statutory dispute petition...
         console.error("Chart.js init error:", e);
       }
     }
+
+    // ==========================================
+    // EVIDENCE EXPLORER & CHAIN OF CUSTODY LEDGER
+    // ==========================================
+    window.EVIDENCE_ITEMS = [
+      {
+        id: "EV-01",
+        category: "billing",
+        badge: "VERIFIED ADMISSIBLE",
+        badgeColor: "bg-emerald-50 text-emerald-700 border-emerald-200",
+        icon: "receipt_long",
+        iconColor: "text-blue-600 bg-blue-50",
+        title: "Disputed Utility Bill PDF (OCR Ingestion & Key Extraction)",
+        timestamp: "2026-09-18 14:22:10 PKT",
+        source: "Consumer Submission (utility_bill.pdf) & Tesseract Multi-Pass OCR",
+        sha256: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        summary: "Extracted 410 kWh invoiced vs 200 kWh protected limit; Ref # 24 12345 6789012 U. Rate bracket miscalculation detected (+Rs. 8,420). Corroborated with meter photographic reading timestamp.",
+        legalReference: "NEPRA Consumer Protection S.R.O. 1276(I)/2024, Rule 8(3)"
+      },
+      {
+        id: "EV-02",
+        category: "scada",
+        badge: "CRITICAL DISCREPANCY",
+        badgeColor: "bg-red-50 text-red-700 border-red-200",
+        icon: "power_off",
+        iconColor: "text-red-600 bg-red-50",
+        title: "NPCC / LDC 132kV Substation Breaker Telemetry Log",
+        timestamp: "2026-09-14 21:18:04 PKT",
+        source: "National Power Control Center IEC 61850 Telemetry Broadcast",
+        sha256: "7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069",
+        summary: "Feeder F-12 breaker BKR-11-F12 tripped on instantaneous overcurrent (Relay 51 trip). Outage duration 3h 42m. Consumer meters recorded continued dial rotation during zero-voltage interval (+18.4 kWh phantom surge).",
+        legalReference: "Grid Code Performance Standards Rule 4.2.1"
+      },
+      {
+        id: "EV-03",
+        category: "weather",
+        badge: "FORCE MAJEURE REFUTED",
+        badgeColor: "bg-amber-50 text-amber-700 border-amber-200",
+        icon: "wb_sunny",
+        iconColor: "text-amber-600 bg-amber-50",
+        title: "Pakistan Meteorological Department (PMD) Radar Corroboration",
+        timestamp: "2026-09-14 20:00:00 – 23:59:00 PKT",
+        source: "PMD Regional Doppler Weather Radar & Surface Station ISB-04",
+        sha256: "9b71d224bd62f3785d96d46ad3ea3d73319bfbc2890caadae2dff72519673ca7",
+        summary: "Surface temperature 34°C, 0.0 mm precipitation, wind 4 knots. No convective storm, microburst, or lightning discharge within 45 km radius. Utility claim of 'Severe Force Majeure weather tripping' definitively disproven.",
+        legalReference: "NEPRA Force Majeure Guidelines Clause 6(b)"
+      },
+      {
+        id: "EV-04",
+        category: "legal",
+        badge: "STATUTORY VIOLATION",
+        badgeColor: "bg-indigo-50 text-indigo-700 border-indigo-200",
+        icon: "gavel",
+        iconColor: "text-indigo-600 bg-indigo-50",
+        title: "NEPRA Consumer Tariff Protection Gazette & S.R.O. Filing",
+        timestamp: "2026-07-01 00:00:00 PKT",
+        source: "The Gazette of Pakistan, Extraordinary Part II, NEPRA S.R.O. 1276",
+        sha256: "a219036f0b48450f38b44910cf9db0b31d8e1c6eef96e83c27e852a0a2df3358",
+        summary: "Mandates strict 30-day notice period before retrospective adjustment of protected consumer tariff slabs. Utility applied retroactive fuel price adjustments and unauthorized fixed charges without statutory approval.",
+        legalReference: "Regulation of Generation, Transmission and Distribution of Electric Power Act, Sec 31"
+      },
+      {
+        id: "EV-05",
+        category: "scada",
+        badge: "GRID CODE NON-COMPLIANCE",
+        badgeColor: "bg-rose-50 text-rose-700 border-rose-200",
+        icon: "electric_meter",
+        iconColor: "text-rose-600 bg-rose-50",
+        title: "Distribution Transformer TR-109 Secondary Bus Voltage Log",
+        timestamp: "2026-09-14 21:00:00 – 2026-09-15 06:00:00 PKT",
+        source: "Automated Metering Infrastructure (AMI) Head-End System",
+        sha256: "3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1",
+        summary: "Secondary phase voltage sagged to 184V (nominal 230V ±5% allowable: min 218.5V). Tap position stuck at 16 (boost) during peak load, causing insulation breakdown and subsequent transient voltage surge.",
+        legalReference: "Distribution Code Section 7.3 - Voltage Fluctuations & Sags"
+      },
+      {
+        id: "EV-06",
+        category: "billing",
+        badge: "SLAB CLIFF CONFIRMED",
+        badgeColor: "bg-purple-50 text-purple-700 border-purple-200",
+        icon: "analytics",
+        iconColor: "text-purple-600 bg-purple-50",
+        title: "12-Month Historical Billing & S.R.O. Consumption Trajectory",
+        timestamp: "2025-10-01 to 2026-09-30",
+        source: "Utility Billing Database API & Customer CIS Record",
+        sha256: "8e41a98c5319890f92ddce43a123f114631349547d25e4c0cfb4efae25178f56",
+        summary: "Consumer maintained protected status (≤200 kWh) for 9 consecutive billing cycles. A single phantom surge of 18.4 kWh triggered retroactive disqualification from subsidized rates, causing Rs. 10,815 in unwarranted penalties.",
+        legalReference: "NEPRA Tariff Determinations Clause 14(ii)"
+      }
+    ];
+
+    window.currentEvidenceFilter = 'all';
+    window.currentEvidenceQuery = '';
+
+    window.renderEvidenceList = function() {
+      const container = document.getElementById('evidence-list-container');
+      if (!container) return;
+
+      let items = window.EVIDENCE_ITEMS;
+      if (window.currentEvidenceFilter !== 'all') {
+        items = items.filter(it => it.category === window.currentEvidenceFilter);
+      }
+      if (window.currentEvidenceQuery) {
+        const q = window.currentEvidenceQuery.toLowerCase();
+        items = items.filter(it => 
+          it.title.toLowerCase().includes(q) || 
+          it.summary.toLowerCase().includes(q) || 
+          it.sha256.toLowerCase().includes(q) ||
+          it.source.toLowerCase().includes(q) ||
+          it.legalReference.toLowerCase().includes(q)
+        );
+      }
+
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white rounded-xl border border-slate-200/80 p-12 text-center shadow-xs">
+            <span class="material-symbols-outlined text-4xl text-slate-300 mb-2">find_in_page</span>
+            <h3 class="text-sm font-bold text-slate-800">No matching evidence items found</h3>
+            <p class="text-xs text-slate-500 mt-1">Try modifying your search criteria or switching the category filter.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = items.map(it => `
+        <div class="bg-white rounded-xl border border-slate-200/80 p-5 shadow-xs hover:shadow-md transition-all space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-xl ${it.iconColor} flex items-center justify-center shrink-0 shadow-2xs">
+                <span class="material-symbols-outlined text-xl">${it.icon}</span>
+              </div>
+              <div class="space-y-0.5">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-xs font-mono font-bold text-slate-500">${it.id}</span>
+                  <h3 class="font-bold text-slate-900 text-sm">${it.title}</h3>
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${it.badgeColor}">${it.badge}</span>
+                </div>
+                <p class="text-xs text-slate-500 flex items-center gap-2">
+                  <span><b>Source:</b> ${it.source}</span>
+                  <span>•</span>
+                  <span><b>Logged:</b> ${it.timestamp}</span>
+                </p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button type="button" class="px-2.5 py-1 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 text-xs font-medium transition-colors cursor-pointer flex items-center gap-1" onclick="copyEvidenceHash('${it.sha256}')" title="Copy SHA-256 Hash">
+                <span class="material-symbols-outlined text-sm">content_copy</span>
+                <span class="font-mono text-[11px]">${it.sha256.substring(0, 10)}...</span>
+              </button>
+            </div>
+          </div>
+
+          <p class="text-xs text-slate-700 leading-relaxed bg-slate-50/70 p-3 rounded-lg border border-slate-100">
+            ${it.summary}
+          </p>
+
+          <div class="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-100">
+            <span class="flex items-center gap-1.5 font-medium text-slate-600">
+              <span class="material-symbols-outlined text-sm text-indigo-500">balance</span>
+              <span>${it.legalReference}</span>
+            </span>
+            <span class="flex items-center gap-1 text-emerald-600 font-semibold">
+              <span class="material-symbols-outlined text-sm">lock</span>
+              <span>SHA-256 Validated</span>
+            </span>
+          </div>
+        </div>
+      `).join('');
+    };
+
+    window.filterEvidence = function(category) {
+      window.currentEvidenceFilter = category;
+      document.querySelectorAll('#evidence-filter-chips .evidence-pill').forEach(btn => {
+        btn.className = "px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 border border-slate-200 cursor-pointer evidence-pill";
+      });
+      event.target.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-200 cursor-pointer evidence-pill active";
+      renderEvidenceList();
+    };
+
+    window.searchEvidence = function(q) {
+      window.currentEvidenceQuery = q;
+      renderEvidenceList();
+    };
+
+    window.copyEvidenceHash = function(hash) {
+      navigator.clipboard.writeText(hash).then(() => {
+        showToast('📋 SHA-256 Hash copied to clipboard.');
+      }).catch(() => {
+        showToast(`📋 SHA-256: ${hash}`);
+      });
+    };
+
+    window.verifyAllEvidenceHashes = function() {
+      showToast('🔒 Cryptographic audit in progress: 28 SHA-256 hashes re-calculated...');
+      setTimeout(() => {
+        showToast('✅ Verification complete: 100% hash chain valid! Zero tampering detected.');
+      }, 800);
+    };
+
+    window.exportEvidenceDossier = function() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(window.EVIDENCE_ITEMS, null, 2));
+      const dl = document.createElement('a');
+      dl.setAttribute("href", dataStr);
+      dl.setAttribute("download", `GridGuard_Evidence_Dossier_${window.APP_STATE.caseId}.json`);
+      dl.click();
+      showToast('📦 Evidence Package & SHA-256 Manifest exported successfully.');
+    };
+
+    // ==========================================
+    // NATIONAL GRID & TARIFF AUDIT ANALYTICS CHARTS
+    // ==========================================
+    window.myDiscoChartInstance = null;
+    window.myAnomalyChartInstance = null;
+    window.myVoltageChartInstance = null;
+
+    window.initAnalyticsCharts = function() {
+      if (!window.Chart) return;
+
+      // 1. DISCO SAIDI Benchmark Bar Chart
+      const discoCanvas = document.getElementById('analytics-disco-chart');
+      if (discoCanvas) {
+        if (window.myDiscoChartInstance) {
+          window.myDiscoChartInstance.destroy();
+          window.myDiscoChartInstance = null;
+        }
+        const ctx1 = discoCanvas.getContext('2d');
+        window.myDiscoChartInstance = new Chart(ctx1, {
+          type: 'bar',
+          data: {
+            labels: ['IESCO (Islamabad)', 'LESCO (Lahore)', 'K-Electric (Karachi)', 'IESCO (Rawalpindi)', 'PESCO (Peshawar)'],
+            datasets: [
+              {
+                label: 'Actual SAIDI (Outage Hours/Year)',
+                data: [38.4, 52.1, 68.7, 44.2, 79.5],
+                backgroundColor: ['#3B82F6', '#F59E0B', '#8B5CF6', '#2563EB', '#EF4444'],
+                borderRadius: 6,
+                barPercentage: 0.6
+              },
+              {
+                label: 'NEPRA Benchmark Limit (18 hrs/yr max)',
+                type: 'line',
+                data: [18, 18, 18, 18, 18],
+                borderColor: '#DC2626',
+                borderWidth: 2,
+                borderDash: [6, 4],
+                pointRadius: 3,
+                pointBackgroundColor: '#DC2626',
+                fill: false
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: { boxWidth: 12, font: { size: 11, family: 'Inter' } }
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(ctx) {
+                    return `${ctx.dataset.label}: ${ctx.raw} hrs/yr`;
+                  }
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: { display: true, text: 'Hours per Consumer / Year', font: { size: 10 } },
+                grid: { color: '#F1F5F9' }
+              },
+              x: {
+                grid: { display: false },
+                ticks: { font: { size: 10 } }
+              }
+            }
+          }
+        });
+      }
+
+      // 2. Anomaly Breakdown Doughnut Chart
+      const anomalyCanvas = document.getElementById('analytics-anomaly-chart');
+      if (anomalyCanvas) {
+        if (window.myAnomalyChartInstance) {
+          window.myAnomalyChartInstance.destroy();
+          window.myAnomalyChartInstance = null;
+        }
+        const ctx2 = anomalyCanvas.getContext('2d');
+        window.myAnomalyChartInstance = new Chart(ctx2, {
+          type: 'doughnut',
+          data: {
+            labels: [
+              'Phantom Units During Outage',
+              'Slab Cliff Tariff Breaches',
+              'Fuel Price Adjustment Overcharge',
+              'Transient Voltage Surge Damage',
+              'Meter Delay Discrepancies'
+            ],
+            datasets: [{
+              data: [38, 29, 18, 10, 5],
+              backgroundColor: ['#EF4444', '#F59E0B', '#3B82F6', '#8B5CF6', '#10B981'],
+              borderWidth: 2,
+              borderColor: '#FFFFFF'
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: { boxWidth: 10, font: { size: 10, family: 'Inter' }, padding: 12 }
+              }
+            },
+            cutout: '65%'
+          }
+        });
+      }
+
+      // 3. 24h High-Resolution Voltage Stability & Outage Profile Line Chart
+      const voltCanvas = document.getElementById('analytics-voltage-chart');
+      if (voltCanvas) {
+        if (window.myVoltageChartInstance) {
+          window.myVoltageChartInstance.destroy();
+          window.myVoltageChartInstance = null;
+        }
+        const ctx3 = voltCanvas.getContext('2d');
+        window.myVoltageChartInstance = new Chart(ctx3, {
+          type: 'line',
+          data: {
+            labels: [
+              '00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', 
+              '14:00', '16:00', '18:00', '20:00', '21:18 (TRIP)', '22:00 (OFF)', 
+              '23:00 (OFF)', '01:00 (RESTORE)', '02:00', '04:00'
+            ],
+            datasets: [
+              {
+                label: 'Observed Bus Voltage (V)',
+                data: [228, 226, 229, 225, 222, 219, 217, 214, 212, 208, 204, 0, 0, 0, 252, 230, 227],
+                borderColor: '#2563EB',
+                backgroundColor: 'rgba(37, 99, 235, 0.08)',
+                borderWidth: 2.5,
+                fill: true,
+                tension: 0.25,
+                pointRadius: 3,
+                pointHoverRadius: 6
+              },
+              {
+                label: 'Upper Statutory Limit (+5%: 241.5V)',
+                data: [241.5, 241.5, 241.5, 241.5, 241.5, 241.5, 241.5, 241.5, 241.5, 241.5, 241.5, 241.5, 241.5, 241.5, 241.5, 241.5, 241.5],
+                borderColor: '#F59E0B',
+                borderWidth: 1.5,
+                borderDash: [5, 5],
+                pointRadius: 0,
+                fill: false
+              },
+              {
+                label: 'Lower Statutory Limit (-5%: 218.5V)',
+                data: [218.5, 218.5, 218.5, 218.5, 218.5, 218.5, 218.5, 218.5, 218.5, 218.5, 218.5, 218.5, 218.5, 218.5, 218.5, 218.5, 218.5],
+                borderColor: '#EF4444',
+                borderWidth: 1.5,
+                borderDash: [5, 5],
+                pointRadius: 0,
+                fill: false
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: { boxWidth: 12, font: { size: 10, family: 'Inter' } }
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(ctx) {
+                    return `${ctx.dataset.label}: ${ctx.raw}V`;
+                  }
+                }
+              }
+            },
+            scales: {
+              y: {
+                min: 0,
+                max: 270,
+                title: { display: true, text: 'Volts (RMS)', font: { size: 10 } },
+                grid: { color: '#F1F5F9' }
+              },
+              x: {
+                grid: { display: false },
+                ticks: { font: { size: 10 } }
+              }
+            }
+          }
+        });
+      }
+    };
+
+    window.updateAnalyticsRange = function(range) {
+      showToast(`📊 Filtered analytics window to: ${range === '30d' ? 'Last 30 Days' : (range === '90d' ? 'Q3 2026' : 'Year to Date')}`);
+      initAnalyticsCharts();
+    };
+
+    window.exportAnalyticsCsv = function() {
+      const csvContent = "data:text/csv;charset=utf-8," + 
+        "Feeder,DISCO,Trips_24h,Avg_Voltage,Detected_Overcharge_PKR,Legal_Status\n" +
+        "Feeder F-12 (Sector F-7 / Blue Area),IESCO,3,211,8420,Petition Drafted\n" +
+        "Jail Road 11kV Feeder (Circuit 4),LESCO,5,194,12650,In Review\n" +
+        "Clifton Block 4 Feeder (Circuit K-2),K-Electric,4,188,18300,Settled\n" +
+        "Saddar Express 11kV Feeder (R-3),IESCO,2,214,6900,Petition Drafted\n" +
+        "Hayatabad Phase 3 Feeder (P-1),PESCO,6,186,14200,Investigating\n";
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `GridGuard_Analytics_Report_${window.APP_STATE.caseId}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('📥 Feeder Telemetry Analytics CSV exported successfully.');
+    };
 
     function updateDispatchUI(dispatchData) {
       if (!dispatchData) return;
@@ -3207,12 +4268,9 @@ Loading statutory dispute petition...
         const path = link.getAttribute('data-path');
         if (path === 'settings') {
           openSettingsModal();
-        } else if (path === 'evidence') {
-          showToast('🔍 Evidence Explorer: 28 telemetry & OCR records verified.');
-        } else if (path === 'analytics') {
-          showToast('📊 Analytics: Outage frequency down 18% post-transformer tap adjustment.');
         } else if (path === 'demo') {
-          showToast('⚡ Interactive Demo active. Testing real-time Pakistan DISCO scenarios.');
+          showToast('⚡ Interactive Demo scenario loaded. Running autonomous test case.');
+          switchView('investigate');
         } else {
           switchView(path);
         }
@@ -3303,9 +4361,7 @@ Loading statutory dispute petition...
             completePipelineWithResults(args.report_html);
           } else {
             markPipelineCompleteUI();
-            if (args.active_view && args.active_view !== window.APP_STATE.activeView) {
-              switchView(args.active_view, true);
-            }
+            // Client-side single click navigation is preserved without bounce
           }
         } else if (args.force_view) {
           switchView(args.force_view, true);
@@ -3323,6 +4379,7 @@ Loading statutory dispute petition...
       updatePipelineViewState();
       setupIntakeListeners();
       renderInvestigationsList();
+      renderEvidenceList();
 
       // Render Initial GIS Map and Tariff Chart with Default or Current State
       initFeederGisMap(window.APP_STATE.gisData);

@@ -77,6 +77,74 @@ def get_feeder_gis_data(city_area: str = "", case_id: str = "GG-2026-0142") -> d
         consumer_pin = {"coords": [24.8252, 67.0458], "label": f"Consumer Meter #{case_id}", "discrepancy": "+22.1 kWh surge recorded during restoration"}
         outage_zone = [[24.8200, 67.0380], [24.8300, 67.0520], [24.8330, 67.0480], [24.8220, 67.0350]]
 
+    elif "rawalpindi" in ca:
+        city_key = "rawalpindi"
+        center = [33.5989, 73.0450]
+        substation_name = "132kV Rawalpindi Cantt Grid Substation (IESCO)"
+        disco_code = "IESCO (Rawalpindi Circle)"
+        feeder_name = "Saddar Express 11kV Feeder (Circuit R-3)"
+        feeders = [
+            {
+                "id": "F-RWP-03",
+                "name": "Saddar Express 11kV Feeder",
+                "path": [[33.5989, 73.0450], [33.6040, 73.0510], [33.6120, 73.0580], [33.6180, 73.0640]],
+                "voltage_kv": 11.0,
+                "current_amps": 365,
+                "loading_pct": 91.2,
+                "status": "warning"
+            },
+            {
+                "id": "F-RWP-07",
+                "name": "Westridge Residential Feeder",
+                "path": [[33.5989, 73.0450], [33.5920, 73.0380], [33.5850, 73.0310]],
+                "voltage_kv": 11.3,
+                "current_amps": 205,
+                "loading_pct": 54.0,
+                "status": "normal"
+            }
+        ]
+        transformers = [
+            {"id": "TR-RWP-21", "name": "Haider Road Commercial PMT (630 kVA)", "coords": [33.6040, 73.0510], "voltage": 226, "load": 68, "status": "normal"},
+            {"id": "TR-RWP-26", "name": "Bank Road PMT (400 kVA)", "coords": [33.6120, 73.0580], "voltage": 214, "load": 94, "status": "warning"},
+            {"id": "TR-RWP-33", "name": "Consumer Tap Station (250 kVA)", "coords": [33.6160, 73.0620], "voltage": 190, "load": 98, "status": "tripped", "breaker": "OPEN - Overcurrent Relay Trip"}
+        ]
+        consumer_pin = {"coords": [33.6158, 73.0618], "label": f"Consumer Meter #{case_id}", "discrepancy": "+19.2 kWh surge recorded on feeder reclose"}
+        outage_zone = [[33.6080, 73.0540], [33.6200, 73.0660], [33.6220, 73.0610], [33.6110, 73.0500]]
+
+    elif "peshawar" in ca:
+        city_key = "peshawar"
+        center = [33.9965, 71.4851]
+        substation_name = "132kV Hayatabad Grid Substation (PESCO)"
+        disco_code = "PESCO (KPK Grid)"
+        feeder_name = "Hayatabad Phase 3 Feeder (Circuit P-1)"
+        feeders = [
+            {
+                "id": "F-PES-01",
+                "name": "Hayatabad Phase 3 Feeder",
+                "path": [[33.9965, 71.4851], [34.0020, 71.4780], [34.0090, 71.4690], [34.0150, 71.4610]],
+                "voltage_kv": 10.8,
+                "current_amps": 420,
+                "loading_pct": 95.0,
+                "status": "warning"
+            },
+            {
+                "id": "F-PES-05",
+                "name": "University Road Feeder",
+                "path": [[33.9965, 71.4851], [33.9910, 71.4920], [33.9840, 71.5010]],
+                "voltage_kv": 11.2,
+                "current_amps": 235,
+                "loading_pct": 59.0,
+                "status": "normal"
+            }
+        ]
+        transformers = [
+            {"id": "TR-PES-12", "name": "Hayatabad Sector F-2 PMT (630 kVA)", "coords": [34.0020, 71.4780], "voltage": 224, "load": 72, "status": "normal"},
+            {"id": "TR-PES-18", "name": "Industrial Estate Spur (400 kVA)", "coords": [34.0090, 71.4690], "voltage": 210, "load": 93, "status": "warning"},
+            {"id": "TR-PES-24", "name": "Consumer Tap PMT (250 kVA)", "coords": [34.0135, 71.4635], "voltage": 186, "load": 99, "status": "tripped", "breaker": "OPEN - Thermal Relay Lockout"}
+        ]
+        consumer_pin = {"coords": [34.0132, 71.4632], "label": f"Consumer Meter #{case_id}", "discrepancy": "+21.5 kWh surge recorded on breaker trip"}
+        outage_zone = [[34.0060, 71.4720], [34.0180, 71.4580], [34.0210, 71.4640], [34.0080, 71.4770]]
+
     else:
         # Default: Islamabad (Sector F-7 / Blue Area - IESCO)
         city_key = "islamabad"
