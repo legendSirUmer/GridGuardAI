@@ -1197,7 +1197,7 @@
     }
 
     // Switch View Function (Dynamic middle screen transition with NO PAGE REFRESH)
-    window.switchView = function(viewName) {
+    window.switchView = function(viewName, isFromPython) {
       if (!viewName) return;
       window.APP_STATE.activeView = viewName;
 
@@ -1239,6 +1239,11 @@
 
       // Update pipeline standby / active display
       updatePipelineViewState();
+
+      // Notify Python backend of user navigation so state stays synced
+      if (!isFromPython) {
+        emit({ action: 'view_switched', page: viewName });
+      }
 
       // Scroll smoothly to top
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2016,10 +2021,11 @@
 
         if (args.report_html) {
           completePipelineWithResults(args.report_html);
-        }
-
-        if (args.active_view && args.active_view !== window.APP_STATE.activeView) {
-          switchView(args.active_view);
+        } else if (args.force_view) {
+          switchView(args.force_view, true);
+        } else if (!window.APP_STATE.hasInitializedView && args.active_view) {
+          window.APP_STATE.hasInitializedView = true;
+          switchView(args.active_view, true);
         }
       }
     });
