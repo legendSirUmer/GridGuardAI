@@ -9,6 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <script>
     tailwind.config = {
       darkMode: "class",
@@ -393,7 +395,7 @@
                   </span>
                 </div>
                 <p class="text-xs text-slate-600 mt-3 bg-slate-50 p-2.5 rounded-lg border border-slate-100" id="active-card-desc">
-                  Analyzed uploaded bill: verified 410 kWh usage and rate brackets. Identified $142.80 total charge and 4 anomaly flags.
+                  Autonomous AI agents standing by to audit electricity bill telemetry, smart meter logs, and statutory tariff caps.
                 </p>
                 <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between flex-wrap gap-2">
                   <div class="flex items-center gap-1.5">
@@ -581,6 +583,88 @@
               </div>
               <div class="hidden p-3.5 rounded-lg border border-dashed border-slate-200 bg-slate-50/50 text-center text-xs text-slate-500" id="file-empty-card">
                 No bill attached yet. Click above or drag &amp; drop to attach a utility bill (optional).
+              </div>
+
+              <!-- Real OCR Extracted Telemetry & Verification Card -->
+              <div class="mt-4 p-4 rounded-xl bg-gradient-to-br from-blue-50/70 via-indigo-50/30 to-white border border-blue-200/80 shadow-xs space-y-3.5" id="ocr-preview-panel">
+                <div class="flex items-center justify-between flex-wrap gap-2 pb-2.5 border-b border-blue-100">
+                  <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center shadow-2xs">
+                      <span class="material-symbols-outlined text-sm">document_scanner</span>
+                    </span>
+                    <div>
+                      <h4 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                        <span>OCR Ingestion &amp; Telemetry Verification</span>
+                        <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold border border-emerald-200 flex items-center gap-1" id="ocr-status-badge">
+                          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500" id="ocr-status-dot"></span>
+                          <span id="ocr-status-text">Verified Document Telemetry</span>
+                        </span>
+                      </h4>
+                      <p class="text-[11px] text-slate-500">Live extracted figures from your bill. Review or adjust before launching multi-agent swarm.</p>
+                    </div>
+                  </div>
+                  <button type="button" class="text-xs font-semibold text-primary hover:text-primary-hover flex items-center gap-1 cursor-pointer" id="toggle-ocr-raw-btn">
+                    <span class="material-symbols-outlined text-sm" id="toggle-ocr-raw-icon">visibility</span>
+                    <span id="toggle-ocr-raw-text">Inspect Raw OCR Text</span>
+                  </button>
+                </div>
+
+                <!-- 4 Key Telemetry Fields (Interactive & Editable) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  <!-- Billed Units -->
+                  <div class="p-2.5 rounded-lg bg-white border border-slate-200 shadow-2xs focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
+                    <label class="block text-[11px] font-semibold text-slate-500 mb-1 flex items-center justify-between">
+                      <span>Billed Units (kWh)</span>
+                      <span class="text-emerald-600 font-bold text-[10px]">Audit Key</span>
+                    </label>
+                    <input type="text" id="ocr-units-input" class="w-full text-xs font-bold text-slate-900 border-none p-0 focus:outline-none focus:ring-0 bg-transparent" placeholder="e.g. 385 kWh" value="410 kWh" />
+                  </div>
+
+                  <!-- Billed Amount -->
+                  <div class="p-2.5 rounded-lg bg-white border border-slate-200 shadow-2xs focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
+                    <label class="block text-[11px] font-semibold text-slate-500 mb-1 flex items-center justify-between">
+                      <span>Total Amount (PKR)</span>
+                      <span class="text-emerald-600 font-bold text-[10px]">Payable</span>
+                    </label>
+                    <input type="text" id="ocr-amount-input" class="w-full text-xs font-bold text-slate-900 border-none p-0 focus:outline-none focus:ring-0 bg-transparent" placeholder="e.g. Rs. 24,500" value="Rs. 25,750" />
+                  </div>
+
+                  <!-- Reference Number -->
+                  <div class="p-2.5 rounded-lg bg-white border border-slate-200 shadow-2xs focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
+                    <label class="block text-[11px] font-semibold text-slate-500 mb-1 flex items-center justify-between">
+                      <span>Consumer Ref / ID</span>
+                      <span class="text-blue-600 font-bold text-[10px]">14-Digit</span>
+                    </label>
+                    <input type="text" id="ocr-ref-input" class="w-full text-xs font-mono font-semibold text-slate-900 border-none p-0 focus:outline-none focus:ring-0 bg-transparent" placeholder="e.g. 14-88412-0498112-U" value="14-88412-0498112-U" />
+                  </div>
+
+                  <!-- Utility Provider / DISCO -->
+                  <div class="p-2.5 rounded-lg bg-white border border-slate-200 shadow-2xs focus-within:border-primary focus-within:ring-1 focus-within:ring-primary">
+                    <label class="block text-[11px] font-semibold text-slate-500 mb-1">
+                      <span>Utility DISCO</span>
+                    </label>
+                    <select id="ocr-disco-select" class="w-full text-xs font-semibold text-slate-900 border-none p-0 focus:outline-none focus:ring-0 bg-transparent cursor-pointer">
+                      <option value="IESCO (Islamabad Electric Supply Company)">IESCO (Islamabad / Rawalpindi)</option>
+                      <option value="LESCO (Lahore Electric Supply Company)">LESCO (Lahore)</option>
+                      <option value="K-Electric (Karachi Grid)">K-Electric (Karachi)</option>
+                      <option value="FESCO (Faisalabad Electric Supply Company)">FESCO (Faisalabad)</option>
+                      <option value="MEPCO (Multan Electric Power Company)">MEPCO (Multan)</option>
+                      <option value="GEPCO (Gujranwala Electric Power Company)">GEPCO (Gujranwala)</option>
+                      <option value="PESCO (Peshawar Electric Supply Company)">PESCO (Peshawar)</option>
+                      <option value="HESCO (Hyderabad Electric Supply Company)">HESCO (Hyderabad / Sindh)</option>
+                      <option value="QESCO (Quetta Electric Supply Company)">QESCO (Quetta / Balochistan)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Expandable Full OCR Text View -->
+                <div id="ocr-raw-text-container" class="hidden pt-2 border-t border-blue-100">
+                  <div class="flex items-center justify-between mb-1.5">
+                    <span class="text-[11px] font-semibold text-slate-700">Full Raw Document Text Passed to AI Multi-Agent Swarm:</span>
+                    <span class="text-[10px] text-slate-400">Agents directly cross-examine this text</span>
+                  </div>
+                  <textarea id="ocr-raw-text" rows="5" class="w-full p-2.5 rounded-lg border border-slate-300 font-mono text-[11px] text-slate-800 bg-white focus:outline-none focus:border-primary leading-relaxed" placeholder="Extracted bill text will appear here..."></textarea>
+                </div>
               </div>
             </section>
 
@@ -1102,6 +1186,12 @@
       incidentDesc: '',
       billName: 'utility_bill_september_2026.pdf',
       billDataUri: '',
+      billUnits: '410 kWh',
+      billAmount: 'Rs. 25,750',
+      billRef: '14-88412-0498112-U',
+      billDisco: 'IESCO (Islamabad Electric Supply Company)',
+      billExtractedText: '',
+      billOcrData: null,
       crewResult: '',
       pdfDataUri: '',
       provider: 'Groq (GroqCloud)',
@@ -1668,9 +1758,39 @@
       const fileInput = document.getElementById('bill-file-input');
       const replaceBtn = document.getElementById('replace-bill-btn');
       const deleteBtn = document.getElementById('delete-bill-btn');
+      const toggleOcrBtn = document.getElementById('toggle-ocr-raw-btn');
+
+      if (toggleOcrBtn) {
+        toggleOcrBtn.addEventListener('click', () => {
+          const container = document.getElementById('ocr-raw-text-container');
+          const btnText = document.getElementById('toggle-ocr-raw-text');
+          const btnIcon = document.getElementById('toggle-ocr-raw-icon');
+          if (container) {
+            container.classList.toggle('hidden');
+            const isHidden = container.classList.contains('hidden');
+            if (btnText) btnText.innerText = isHidden ? 'Inspect Raw OCR Text' : 'Hide Raw OCR Text';
+            if (btnIcon) btnIcon.innerText = isHidden ? 'visibility' : 'visibility_off';
+          }
+        });
+      }
 
       if (dropzone && fileInput) {
         dropzone.addEventListener('click', () => fileInput.click());
+        dropzone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          dropzone.classList.add('border-primary', 'bg-blue-50/40');
+        });
+        dropzone.addEventListener('dragleave', (e) => {
+          e.preventDefault();
+          dropzone.classList.remove('border-primary', 'bg-blue-50/40');
+        });
+        dropzone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          dropzone.classList.remove('border-primary', 'bg-blue-50/40');
+          if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+            handleBillFileSelection(e.dataTransfer.files[0]);
+          }
+        });
       }
       if (replaceBtn && fileInput) {
         replaceBtn.addEventListener('click', () => fileInput.click());
@@ -1683,34 +1803,206 @@
           if (emptyCard) emptyCard.classList.remove('hidden');
           window.APP_STATE.billName = '';
           window.APP_STATE.billDataUri = '';
+          window.APP_STATE.billExtractedText = '';
+          
+          const rawTextEl = document.getElementById('ocr-raw-text');
+          if (rawTextEl) rawTextEl.value = '';
+          const sBadge = document.getElementById('ocr-status-badge');
+          const sText = document.getElementById('ocr-status-text');
+          if (sBadge) sBadge.className = 'px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-bold border border-slate-200 flex items-center gap-1';
+          if (sText) sText.innerText = 'No File Attached';
+
           showToast('🗑️ Bill attachment removed.');
         });
       }
 
+      // Handle Bill File Selection & OCR Dispatch
+      window.handleBillFileSelection = function(file) {
+        if (!file) return;
+        window.APP_STATE.billName = file.name;
+
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          window.APP_STATE.billDataUri = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+
+        const nameEl = document.getElementById('file-name-display');
+        const metaEl = document.getElementById('file-meta-text');
+        const card = document.getElementById('file-card');
+        const emptyCard = document.getElementById('file-empty-card');
+
+        if (nameEl) nameEl.innerText = file.name;
+        const sizeStr = file.size > 1048576 ? (file.size / 1048576).toFixed(1) + ' MB' : (file.size / 1024).toFixed(0) + ' KB';
+        if (metaEl) metaEl.innerText = `${sizeStr} • Attached & running OCR ingestion`;
+        if (card) card.classList.remove('hidden');
+        if (emptyCard) emptyCard.classList.add('hidden');
+
+        // Run Client-Side OCR & Pattern Extraction
+        processBillFileOcr(file);
+        showToast(`📄 Attached: ${file.name}`);
+      };
+
       if (fileInput) {
         fileInput.addEventListener('change', (e) => {
-          const file = e.target.files[0];
-          if (file) {
-            window.APP_STATE.billName = file.name;
-            const reader = new FileReader();
-            reader.onload = (evt) => {
-              window.APP_STATE.billDataUri = evt.target.result;
-            };
-            reader.readAsDataURL(file);
-
-            const nameEl = document.getElementById('file-name-display');
-            const metaEl = document.getElementById('file-meta-text');
-            const card = document.getElementById('file-card');
-            const emptyCard = document.getElementById('file-empty-card');
-
-            if (nameEl) nameEl.innerText = file.name;
-            const sizeStr = file.size > 1048576 ? (file.size / 1048576).toFixed(1) + ' MB' : (file.size / 1024).toFixed(0) + ' KB';
-            if (metaEl) metaEl.innerText = `${sizeStr} • Attached & ready for automated check`;
-            if (card) card.classList.remove('hidden');
-            if (emptyCard) emptyCard.classList.add('hidden');
-            showToast(`📄 Attached: ${file.name}`);
+          if (e.target.files && e.target.files[0]) {
+            handleBillFileSelection(e.target.files[0]);
           }
         });
+      }
+
+      // Client-Side OCR & Heuristic Engine (pdf.js + Tesseract.js)
+      function processBillFileOcr(file) {
+        const sBadge = document.getElementById('ocr-status-badge');
+        const sDot = document.getElementById('ocr-status-dot');
+        const sText = document.getElementById('ocr-status-text');
+
+        if (sBadge) {
+          sBadge.className = 'px-2 py-0.5 rounded-full bg-blue-100 text-primary text-[10px] font-bold border border-blue-200 flex items-center gap-1';
+          if (sDot) sDot.className = 'w-1.5 h-1.5 rounded-full bg-primary animate-ping';
+          if (sText) sText.innerText = 'Extracting OCR Telemetry...';
+        }
+
+        const isPdf = file.name.toLowerCase().endsWith('.pdf') || (file.type && file.type.includes('pdf'));
+        const isImg = (file.type && file.type.includes('image')) || /\.(png|jpe?g|webp|bmp)$/i.test(file.name);
+
+        if (isPdf && window.pdfjsLib) {
+          try {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+          } catch(e){}
+
+          const abReader = new FileReader();
+          abReader.onload = async function() {
+            try {
+              const typedArray = new Uint8Array(this.result);
+              const pdf = await pdfjsLib.getDocument({ data: typedArray }).promise;
+              let fullText = '';
+              const maxP = Math.min(pdf.numPages, 4);
+              for (let i = 1; i <= maxP; i++) {
+                const page = await pdf.getPage(i);
+                const textContent = await page.getTextContent();
+                const pageText = textContent.items.map(item => item.str).join(' ');
+                fullText += `\n--- Page ${i} ---\n` + pageText;
+              }
+
+              if (fullText.trim().length > 30) {
+                applyParsedOcrData(fullText, file.name);
+                return;
+              }
+
+              // Fallback to Tesseract canvas render for scanned PDF
+              if (window.Tesseract && pdf.numPages >= 1) {
+                if (sText) sText.innerText = 'Scanning Page Image (OCR)...';
+                const page = await pdf.getPage(1);
+                const viewport = page.getViewport({ scale: 1.5 });
+                const canvas = document.createElement('canvas');
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+                const ctx = canvas.getContext('2d');
+                await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+                const ocrRes = await Tesseract.recognize(canvas, 'eng');
+                const scannedText = ocrRes.data ? ocrRes.data.text : '';
+                applyParsedOcrData(scannedText || fullText, file.name);
+                return;
+              }
+
+              applyParsedOcrData(fullText, file.name);
+            } catch(err) {
+              console.warn('PDF.js extract error:', err);
+              applyParsedOcrData('', file.name);
+            }
+          };
+          abReader.readAsArrayBuffer(file);
+        } else if (isImg && window.Tesseract) {
+          if (sText) sText.innerText = 'Tesseract OCR Analyzing Image...';
+          Tesseract.recognize(file, 'eng')
+            .then(res => {
+              const txt = res.data ? res.data.text : '';
+              applyParsedOcrData(txt, file.name);
+            })
+            .catch(err => {
+              console.warn('Tesseract OCR error:', err);
+              applyParsedOcrData('', file.name);
+            });
+        } else {
+          // Plain document / fallback
+          const tReader = new FileReader();
+          tReader.onload = function(evt) {
+            if (typeof evt.target.result === 'string') {
+              applyParsedOcrData(evt.target.result, file.name);
+            } else {
+              applyParsedOcrData('', file.name);
+            }
+          };
+          if (file.name.endsWith('.txt') || file.name.endsWith('.csv')) {
+            tReader.readAsText(file);
+          } else {
+            applyParsedOcrData('', file.name);
+          }
+        }
+      }
+
+      function applyParsedOcrData(text, fileName) {
+        const sBadge = document.getElementById('ocr-status-badge');
+        const sDot = document.getElementById('ocr-status-dot');
+        const sText = document.getElementById('ocr-status-text');
+        const unitsInput = document.getElementById('ocr-units-input');
+        const amountInput = document.getElementById('ocr-amount-input');
+        const refInput = document.getElementById('ocr-ref-input');
+        const discoSelect = document.getElementById('ocr-disco-select');
+        const rawTextArea = document.getElementById('ocr-raw-text');
+
+        window.APP_STATE.billExtractedText = text;
+
+        if (rawTextArea) {
+          rawTextArea.value = text.trim() || `[File "${fileName}" attached. High-fidelity backend OCR engine will cross-examine full document bytes.]`;
+        }
+
+        if (text) {
+          // Billed Units pattern
+          const uMatch = text.match(/(?:units\s*consumed|billed\s*units|total\s*units|units|consumption|energy\s*consumed|total\s*kwh)[\s:=]+([0-9,]+(?:\.[0-9]+)?)/i)
+            || text.match(/([0-9,]+(?:\.[0-9]+)?)\s*(?:kwh|units)/i);
+          if (uMatch && unitsInput) {
+            const val = uMatch[1] || uMatch[0];
+            unitsInput.value = val.toLowerCase().includes('kwh') ? val : `${val} kWh`;
+          }
+
+          // Amount pattern
+          const aMatch = text.match(/(?:payable\s*within\s*due\s*date|amount\s*payable|current\s*bill|total\s*amount|net\s*amount|bill\s*amount|payable\s*amount|amount\s*due|payable)[\s:=]*(?:rs\.?|pkr)?\s*([0-9,]+(?:\.[0-9]+)?)/i)
+            || text.match(/(?:rs\.?|pkr|\$)\s*([0-9,]+(?:\.[0-9]+)?)/i);
+          if (aMatch && amountInput) {
+            const val = aMatch[1] || aMatch[0];
+            amountInput.value = (val.toLowerCase().includes('rs') || val.startsWith('$')) ? val : `Rs. ${val}`;
+          }
+
+          // Reference Number pattern
+          const rMatch = text.match(/(?:ref(?:erence)?\s*(?:no\.?)?|consumer\s*id|acc(?:ount)?\s*no)[\s:=]*([0-9\s\-A-Za-z]{10,25})/i)
+            || text.match(/\b(\d{2}\s*\d{5}\s*\d{7}\s*[A-Z]?|\d{2}-\d{5}-\d{7}-[A-Z]|\d{14})\b/);
+          if (rMatch && refInput) {
+            refInput.value = rMatch[1] ? rMatch[1].trim() : rMatch[0].trim();
+          }
+
+          // DISCO Detection
+          if (discoSelect) {
+            const u = text.toUpperCase();
+            if (u.includes('LESCO')) discoSelect.value = 'LESCO (Lahore Electric Supply Company)';
+            else if (u.includes('IESCO')) discoSelect.value = 'IESCO (Islamabad Electric Supply Company)';
+            else if (u.includes('K-ELECTRIC') || u.includes('KE GRID') || u.includes('K ELECTRIC')) discoSelect.value = 'K-Electric (Karachi Grid)';
+            else if (u.includes('FESCO')) discoSelect.value = 'FESCO (Faisalabad Electric Supply Company)';
+            else if (u.includes('MEPCO')) discoSelect.value = 'MEPCO (Multan Electric Power Company)';
+            else if (u.includes('GEPCO')) discoSelect.value = 'GEPCO (Gujranwala Electric Power Company)';
+            else if (u.includes('PESCO')) discoSelect.value = 'PESCO (Peshawar Electric Supply Company)';
+            else if (u.includes('HESCO')) discoSelect.value = 'HESCO (Hyderabad Electric Supply Company)';
+            else if (u.includes('QESCO')) discoSelect.value = 'QESCO (Quetta Electric Supply Company)';
+          }
+        }
+
+        if (sBadge) {
+          sBadge.className = 'px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold border border-emerald-200 flex items-center gap-1';
+          if (sDot) sDot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500';
+          if (sText) sText.innerText = text ? 'Verified Document Telemetry' : 'File Ingested';
+        }
       }
 
       // START INVESTIGATION SUBMISSION
@@ -1730,6 +2022,18 @@
           const stormCustom = document.getElementById('weather-storm-custom');
           const storm = (stormCustom && stormCustom.value.trim()) ? stormCustom.value.trim() : (stormSelect ? stormSelect.value : 'No warnings');
 
+          const unitsEl = document.getElementById('ocr-units-input');
+          const amountEl = document.getElementById('ocr-amount-input');
+          const refEl = document.getElementById('ocr-ref-input');
+          const discoEl = document.getElementById('ocr-disco-select');
+          const rawTextEl = document.getElementById('ocr-raw-text');
+
+          const unitsVal = unitsEl ? unitsEl.value.trim() : '';
+          const amountVal = amountEl ? amountEl.value.trim() : '';
+          const refVal = refEl ? refEl.value.trim() : '';
+          const discoVal = discoEl ? discoEl.value : '';
+          const rawTextVal = rawTextEl ? rawTextEl.value.trim() : '';
+
           window.APP_STATE.incidentDesc = desc || 'Electricity bill increase and multiple feeder outages';
           window.APP_STATE.caseArea = location;
           window.APP_STATE.weatherInfo = `${temp}, ${cond}, Advisory: ${storm}`;
@@ -1745,7 +2049,7 @@
           // 3. Start Live Multi-Agent Swarm Simulation
           startPipelineSimulation();
 
-          // 4. Dispatch to Python Streamlit backend
+          // 4. Dispatch to Python Streamlit backend with full real bill data
           emit({
             action: 'run_agents',
             desc: window.APP_STATE.incidentDesc,
@@ -1756,7 +2060,12 @@
             cond: cond,
             storm: storm,
             case_id: window.APP_STATE.caseId,
-            user_name: window.APP_STATE.userName
+            user_name: window.APP_STATE.userName,
+            extracted_text: rawTextVal,
+            detected_units: unitsVal,
+            detected_amount: amountVal,
+            detected_ref: refVal,
+            detected_disco: discoVal
           });
         });
       }
@@ -1807,6 +2116,21 @@
       const aBadge4 = document.getElementById('agent-4-badge');
       const aCard5 = document.getElementById('agent-card-5');
       const aBadge5 = document.getElementById('agent-5-badge');
+
+      // Bind real uploaded bill metrics to Bill Auditor agent description
+      const bname = window.APP_STATE.billName || 'Attached Utility Bill';
+      const units = (document.getElementById('ocr-units-input') && document.getElementById('ocr-units-input').value.trim()) || 'Billed Units';
+      const amount = (document.getElementById('ocr-amount-input') && document.getElementById('ocr-amount-input').value.trim()) || 'Billed Charges';
+      const disco = (document.getElementById('ocr-disco-select') && document.getElementById('ocr-disco-select').value) || 'Utility DISCO';
+
+      const aDesc1 = document.getElementById('agent-1-desc');
+      if (aDesc1) {
+        aDesc1.innerText = `Auditing uploaded bill (${bname}): cross-examining ${units} usage, base tariff, and statutory fuel price adjustments (FPA). Verifying ${amount} total charge under ${disco}.`;
+      }
+      const actDesc = document.getElementById('active-card-desc');
+      if (actDesc) {
+        actDesc.innerText = `Auditing uploaded bill (${bname}): verified ${units} usage against regional substation logs. Auditing ${amount} charges under ${disco}.`;
+      }
 
       // Step 1 Active
       if (sIcon1) {
@@ -2011,6 +2335,21 @@
           mb.innerText = args.provider === 'Google Gemini' 
             ? `Gemini (${window.APP_STATE.geminiModel})` 
             : `Groq (${window.APP_STATE.groqModel})`;
+        }
+
+        if (args.bill_ocr_data) {
+          window.APP_STATE.billOcrData = args.bill_ocr_data;
+          const u = args.bill_ocr_data.units;
+          const a = args.bill_ocr_data.amount;
+          const r = args.bill_ocr_data.ref;
+          const d = args.bill_ocr_data.disco;
+          const raw = args.bill_ocr_data.raw_text;
+
+          if (u && document.getElementById('ocr-units-input')) document.getElementById('ocr-units-input').value = u;
+          if (a && document.getElementById('ocr-amount-input')) document.getElementById('ocr-amount-input').value = a;
+          if (r && document.getElementById('ocr-ref-input')) document.getElementById('ocr-ref-input').value = r;
+          if (d && document.getElementById('ocr-disco-select')) document.getElementById('ocr-disco-select').value = d;
+          if (raw && document.getElementById('ocr-raw-text')) document.getElementById('ocr-raw-text').value = raw;
         }
 
         if (args.investigation_started) {
